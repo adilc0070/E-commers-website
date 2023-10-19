@@ -12,6 +12,12 @@ let insertUser=async(req,res)=>{
         })
         let userData=newUser.save()  
     } catch (error) {
-        
+        res.status(500).send(error)
     }
+}
+
+
+
+module.exports={
+    insertUser
 }

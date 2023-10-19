@@ -11,13 +11,33 @@ let insertUser=async(req,res)=>{
             isBlock:0
         })
         let userData=newUser.save()  
+        
     } catch (error) {
         res.status(500).send(error)
     }
 }
 
 
+let signUpPage=async(req,res)=>{
+    try {
+        res.render('signup')
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+let loginUser=async(req,res)=>{
+    try {
+        res.render('login')
+    } catch (error) {
+        res.status(500).send(error) 
+    }
+}
+
+
 
 module.exports={
-    insertUser
+    insertUser,
+    loginUser,
+    signUpPage
 }

@@ -10,9 +10,9 @@ function validateEmail(email) {
 
 let insertUser = async (req, res) => {
     try {
-        // if (!validateEmail(req.body.email)) {
-        //     res.render('signup',{msg:"Please Enter Valid Email"})
-        // }else{
+        if (!validateEmail(req.body.email)) {
+            res.render('signup',{msg:"Please Enter Valid Email"})
+        }else{
             console.log("hi");
             let newUser = new user({
                 name: req.body.name,
@@ -22,11 +22,15 @@ let insertUser = async (req, res) => {
                 is_block: 0
             })
             console.log(newUser);
-            let userData=await newUser.save()
+            let userData=await user.insertMany([newUser])
             if(userData){
+                console.log("otp render");
+                generateOtp()
                 res.render('otp')
+            }else{
+                res.send('kernilla')
             }
-        // }
+        }
     } catch (error) {
         res.status(500).send(error)
     }
@@ -36,7 +40,7 @@ let insertUser = async (req, res) => {
 let signUpPage = async (req, res) => {
     try {
 
-        res.render('signup',)
+        res.render('signup')
     } catch (error) {
         res.status(500).send(error)
     }
@@ -44,7 +48,7 @@ let signUpPage = async (req, res) => {
 
 let loginPage = async (req, res) => {
     try {
-        res.render('login')
+        res.render('signIn')
     } catch (error) {
         res.status(500).send(error)
     }
@@ -65,20 +69,24 @@ let loginUser = async (req, res) => {
 
 function generateOtp() {
     otp=Math.floor(100000 + Math.random() * 999999)
+    console.log(otp);
 }
 
-const sendVerifyMail = async (email, otp) => {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        auth: {
-          user: "process.env.EMAIL",
-          pass: "process.env.PASSWORD",
-  },
-});
+// const sendVerifyMail = async (email, otp) => {
+//     try {
+//       const transporter = nodemailer.createTransport({
+//         host: "smtp.gmail.com",
+//         port: 587,
+//         secure: false,
+//         requireTLS: true,
+//         auth: {
+//           user: "process.env.EMAIL",
+//           pass: "process.env.PASSWORD",
+//             },
+//     })0
+//     } catch (error) {
+    
+// }}
 
 
 
@@ -92,7 +100,6 @@ let sentOtp=async(req,res)=>{
 let otpLoad = async (req, res) => {
     try {
         res.render('otp')
-    
     } catch (error) {
         res.status(500).send(error)
     }
@@ -101,7 +108,7 @@ let otpLoad = async (req, res) => {
 let otpVerify = async (req, res) => {
     try {
         if(otp==req.body.otp){
-            res.render('signIn')
+            res.redirect('/signin')
         }else{
             res.render('otp',{msg:"Invalid OTP"})
         }
@@ -116,5 +123,5 @@ module.exports = {
     signUpPage,
     loginUser,
     otpLoad,
-    otpVerify
+    otpVerify,
 }

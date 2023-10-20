@@ -10,7 +10,7 @@ app.set('view engine','ejs')
 app.set('views','./views')
 app.use('/',userRoute)
 app.get('*',(req,res)=>{
-    res.status(404).render(404)
+    res.status(404).render('404')
 })
 
 app.listen(9100,()=>console.log('server started on http://localhost:9100'))

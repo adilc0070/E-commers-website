@@ -17,7 +17,7 @@ let userSceama=mongoose.Schema({
         required:true
     },
     is_block:{
-        type:Boolean,
+        type:Number,
         default:0
     }
 })

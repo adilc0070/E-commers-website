@@ -14,8 +14,13 @@ userRoute.use(express.static(path.join(__dirname,'public')))
 userRoute.get('/signup',userController.signUpPage)
 userRoute.post('/signup',userController.insertUser)
 
+userRoute.get('/otp',userController.otpLoad)
+userRoute.post('/otp',userController.otpVerify)
 
-userRoute.get('/signin',(req,res)=>{})
+
+
+userRoute.get('/signin',userController.loginPage)
+userRoute.post('/signin',userController.loginUser)
 // userRoute.post('/signIn',)
 
 

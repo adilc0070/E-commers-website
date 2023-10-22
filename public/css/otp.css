@@ -45,8 +45,8 @@ form .input-field {
 }
 .input-field input {
   height: 45px;
-  width: 42px;
-  border-radius: 6px;
+  width: 60%;
+  border-radius: 10px;
   outline: none;
   font-size: 1.125rem;
   text-align: center;

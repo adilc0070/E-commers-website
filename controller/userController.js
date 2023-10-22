@@ -152,6 +152,7 @@ module.exports = {
     loginPage,
     signUpPage,
     loginUser,
+    sendVerifyMail,
     otpLoad,
     otpVerify,
 }

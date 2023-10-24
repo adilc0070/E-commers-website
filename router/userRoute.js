@@ -11,6 +11,8 @@ userRoute.set('view engine','ejs')
 userRoute.set('views','./views/user')
 userRoute.use(express.static(path.join(__dirname,'public')))
 
+userRoute.get('/',userController.homePage)
+
 userRoute.get('/signup',userController.signUpPage)
 userRoute.post('/signup',userController.insertUser)
 

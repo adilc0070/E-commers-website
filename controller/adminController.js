@@ -1,7 +1,8 @@
 let adminModel=require('../model/adminModel')
 let user=require('../model/userModel')
 let bcrypt=require('bcrypt')
-
+let env=require('dotenv')
+env.config()
 
 //--------------------email validation function---------------------
 function validateEmail(email) {
@@ -30,12 +31,12 @@ let adminLogon=async(req,res)=>{
             return res.render('adminLogIn',{msg:'Please Enter Valid Email'})
         }
 
-        let adminData=await adminModel.findOne({email:adminEmail})
+        let adminData=await adminEmail==process.env.email
         if(!adminData){
             return res.render('adminLogIn',{msg:'Sorry Admin not Found'})
         }
 
-        let isMatch=await bcrypt.compare(adminPassword,adminData.password)
+        let isMatch=await adminPassword==process.env.password
         if(isMatch){
             req.session.admin_id=adminData._id;
             return res.redirect('/admin/dashboard')
@@ -47,4 +48,11 @@ let adminLogon=async(req,res)=>{
     } catch (error) {
         res.render('adminLogIn',{msg:'Something went wrong'})
     }
+}
+
+
+module.exports={
+    adminLogin,
+    adminLogon,
+    
 }

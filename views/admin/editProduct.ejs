@@ -1,0 +1,158 @@
+<%- include('../admin/layout/adminSidebar.ejs') -%>
+<%- include('../admin/layout/adminHeader.ejs') -%>
+
+  <div class="main-panel">
+    <div class="content-wrapper">
+
+
+
+
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Edit Product</h4>
+            <!-- <p class="card-description"> Basic form elements </p> -->
+            <form class="forms-sample " action="/admin/updateProduct?id=<%= products._id %>" method="post"
+              enctype="multipart/form-data">
+
+              <div class="form-group  row">
+                <div class="col-6  text-light">
+                  <label for="exampleInputName1">Product Titile</label>
+                  <input type="text" class="form-control  text-light" name="product_name"
+                    value="<%= products.product_name %>" id="exampleInputName1" placeholder="Name" required>
+                </div>
+                <div class="col-6">
+                  <label for="exampleInputName1">Price</label>
+                  <input type="number" class="form-control text-light" id="exampleInputName1"
+                    value="<%= products.price %>" name="price" placeholder="price" required>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                      <label class="col-sm-3 col-form-label">Frame Shap</label>
+                      <select name="frame_shape" class="form-control text-light" required>
+                       
+                        <% for(i in categories){%>
+                          <option <% if(products.category==categories[i].category_name ){%>selected<%}%>
+                              <% if(categories[i].block==1) {%>
+                                disabled
+                                <%}%>
+                                  ><%= categories[i].name %>
+                          </option>
+                          <%}%>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                      <label class="col-sm-3 col-form-label">Number of Stock</label>
+                      <input type="number" value="<%= products.stock %>" class="form-control text-light"
+                        id="exampleInputName1" name="stock" placeholder="Enter Stock" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group mt-2">
+                <label for="exampleTextarea1">Description</label>
+                <textarea name="description" value="<%= products.description %>" class="form-control text-light"
+                  id="exampleTextarea1" rows="6" required><%= products.description %></textarea>
+              </div>
+              <div class="">
+                <!-- <label class="col-sm-3 col-form-label">Images</label> -->
+                <div class="row d-flex justify-content-center ">
+
+              
+
+
+                  <!-- Image Upload 1 -->
+                  <div class="col-lg-3 col-md-6">
+                    <div class="rounded-image-preview">
+                      <label for="imageInput1" class="image-label">Image 1
+                        <div class="rounded-image-preview">
+                          <img id="imagePreview1" src="/products/images/<%= products.images.image1 %>" alt="Preview" />
+                        </div>
+                        <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput"
+                          onchange="updateImagePreview(this, 'imagePreview1', '/products/images/<%= products.images.image1 %>', 'removeButton1')">
+                      </label>
+                    </div>
+                    <button type="button" style="display: none;" class="remove-button" id="removeButton1"
+                      onclick="removeImagePreview('imagePreview1', '/products/images/<%= products.images.image1 %>', 'removeButton1','imageInput1')">Remove</button>
+                  </div>
+
+                  <!-- Image Upload 2 -->
+                  <div class="col-lg-3 col-md-6">
+                    <div class="rounded-image-preview">
+                      <label for="imageInput2" class="image-label">Image 2
+                        <div class="rounded-image-preview">
+                          <img id="imagePreview2" src="/products/images/<%= products.images.image2 %>" alt="Preview" />
+                        </div>
+                        <input name="image2" type="file" accept="image/*" id="imageInput2" class="imageInput"
+                          onchange="updateImagePreview(this, 'imagePreview2', '/products/images/<%= products.images.image2 %>', 'removeButton2')">
+                      </label>
+                    </div>
+                    <button type="button" style="display: none;" class="remove-button" id="removeButton2"
+                      onclick="removeImagePreview('imagePreview2', '/products/images/<%= products.images.image2 %>', 'removeButton2','imageInput2')">Remove</button>
+                  </div>
+                  <!-- Repeat similar code for Image Upload 3 and 4 with unique IDs -->
+                  <div class="col-lg-3 col-md-6">
+                    <div class="rounded-image-preview">
+                      <label for="imageInput3" class="image-label">Image 3
+                        <div class="rounded-image-preview">
+                          <img id="imagePreview3" src="/products/images/<%= products.images.image3 %>" alt="Preview" />
+                        </div>
+                        <input name="image3" type="file" accept="image/*" id="imageInput3" class="imageInput"
+                          onchange="updateImagePreview(this, 'imagePreview3', '/products/images/<%= products.images.image3 %>', 'removeButton3')">
+                      </label>
+                    </div>
+                    <button type="button" style="display: none;" class="remove-button" id="removeButton3"
+                      onclick="removeImagePreview('imagePreview3', '/products/images/<%= products.images.image3 %>', 'removeButton3','imageInput3')">Remove</button>
+                  </div>
+
+                  <div class="col-lg-3 col-md-6">
+                    <div class="rounded-image-preview">
+                      <label for="imageInput4" class="image-label">Image 4
+                        <div class="rounded-image-preview">
+                          <img id="imagePreview4" src="/products/images/<%= products.images.image4 %>" alt="Preview" />
+                        </div>
+                        <input name="image4" type="file" accept="image/*" id="imageInput4" class="imageInput"
+                          onchange="updateImagePreview(this, 'imagePreview4', '/products/images/<%= products.images.image4 %>', 'removeButton4')">
+                      </label>
+                    </div>
+                    <button type="button" style="display: none;" class="remove-button" id="removeButton4"
+                      onclick="removeImagePreview('imagePreview4', '/products/images/<%= products.images.image4 %>', 'removeButton4','imageInput4')">Remove</button>
+                  </div>
+
+
+
+                  
+
+                </div>
+
+
+
+
+              </div>
+
+
+              <button type="submit" class="btn btn-lg btn-primary mr-2 mt-5">Update product</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+<%- include('../admin/layout/adminFooter.ejs') -%>

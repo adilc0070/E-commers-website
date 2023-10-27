@@ -7,10 +7,10 @@
     <title>Sign In Form by RusticLens</title>
 
     <!-- Font Icon -->
-    <link rel="stylesheet" href="/fonts/material-icon/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="/user/fonts/material-icon/css/material-design-iconic-font.min.css">
 
     <!-- Main css -->
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/user/css/style.css">
 </head>
 <body>
 
@@ -22,7 +22,7 @@
                 <div class="signin-content">
                     <div class="signin-image">
                         <form action="/signup" method="post">
-                            <figure><img src="/images/signin-image.jpg" alt="sing in image"></figure>
+                            <figure><img src="/user/images/signin-image.jpg" alt="sing in image"></figure>
                             <a href="/signUp" class="signup-image-link">Create an account</a>
                         </form>
                     </div>
@@ -36,7 +36,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                                <input type="password" name="password" id="your_pass" placeholder="Password"/>
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
@@ -45,8 +45,15 @@
                             <div class="form-group form-button">
                                 
                                 <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
+                                <% if(typeof message !== 'undefined'){ %>
+                                    <span
+                                      id="er2"
+                                      style="color: rgb(241, 7, 7); text-align: center"
+                                      ><%= message %></span>
+                                    <% } %>
                             </div>
                         </form>
+
                         <!-- <div class="social-login">
                             <span class="social-label">Or login with</span>
                             <ul class="socials">
@@ -63,7 +70,7 @@
     </div>
 
     <!-- JS -->
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="/user/vendor/jquery/jquery.min.js"></script>
+    <script src="/user/js/main.js"></script>
 </body>
 </html>

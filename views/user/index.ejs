@@ -12,10 +12,10 @@
     <title>RusticLens | Home</title>
 
     <!-- Favicon  -->
-    <link rel="icon" href="/img/core-img/favicon.ico">
+    <link rel="icon" href="/user/img/core-img/favicon.ico">
 
     <!-- Core Style CSS -->
-    <link rel="stylesheet" href="/css/core-style.css">
+    <link rel="stylesheet" href="/user/css/core-style.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>    
 
@@ -33,7 +33,7 @@
                     <div class="search-content">
                         <form action="#" method="get">
                             <input type="search" name="search" id="search" placeholder="Type your keyword...">
-                            <button type="submit"><img src="/img/core-img/search.png" alt=""></button>
+                            <button type="submit"><img src="/user/img/core-img/search.png" alt=""></button>
                         </form>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
         <div class="mobile-nav">
             <!-- Navbar Brand -->
             <div class="amado-navbar-brand">
-                <a action="/index"><img src="/img/logo.png" alt="logo"></a>
+                <a action="/index"><img src="/user/img/logo.png" alt="logo"></a>
             </div>
             <!-- Navbar Toggler -->
             <div class="amado-navbar-toggler">
@@ -65,7 +65,7 @@
             </div>
             <!-- Logo -->
             <div class="logo">
-                <a href="index.html"><img src="/img/logo.png" alt="RusticLens"></a>
+                <a href="index.html"><img src="/user/img/logo.png" alt="RusticLens"></a>
             </div>
             <!-- Amado Nav -->
             <nav class="amado-nav">
@@ -84,11 +84,17 @@
             </div>
             <!-- Cart Menu -->
             <div class="cart-fav-search mb-100">
-
-                <a href="cart.html" class="cart-nav"><i class="fa fa-user" aria-hidden="true"></i>Profile</a>
+                <% if(userDa !== undefined) {%>
+                    <a href="/signout" class="cart-nav"><i class="fa fa-user" aria-hidden="true"></i>logout</a>
+                <% }else{ %>
+                    <a href="/signin" class="cart-nav"><i class="fa fa-user" aria-hidden="true"></i>Login</a>
+                <% } %>
+                
+                
                 <a href="cart.html" class="cart-nav"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span>(0)</span></a>
                 <a href="#" class="fav-nav"><i class="fa fa-heart-o" aria-hidden="true"></i>Wishlist</a>
                 <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> Search</a>
+                <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> </a>
             </div>
             <!-- Social Button -->
             <div class="social-info d-flex justify-content-between">
@@ -113,15 +119,15 @@
                 </div>
                 <div class="carousel-inner">
                   <div class="carousel-item active" data-bs-interval="1000">
-                    <img src="/img/banner-img/main offr.png" class="d-block w-100" style="position: relative; height: 50%;" alt="">
+                    <img src="/user/img/banner-img/main offr.png" class="d-block w-100" style="position: relative; height: 50%;" alt="">
                     
                   </div>
                   <div class="carousel-item" data-bs-interval="2000">
-                    <img src="/img/banner-img/offr1.png" class="d-block w-100" alt="">
+                    <img src="/user/img/banner-img/offr1.png" class="d-block w-100" alt="">
                     
                   </div>
                   <div class="carousel-item" data-bs-interval="2000">
-                    <img src="/img/banner-img/offr2.png" style="background-size: cover; background-position: center;  width: 100%;" class="d-block w-100" alt="">
+                    <img src="/user/img/banner-img/offr2.png" style="background-size: cover; background-position: center;  width: 100%;" class="d-block w-100" alt="">
                     
                   </div>
                 </div>
@@ -139,206 +145,30 @@
             </div>
 
             <div class="container d-flex justify-content-center align-items-center" style="width:40%; height: 4%;">
-                <h3 >---Catogories---</h3>
+                <h3 >---Products---</h3>
             </div>
             <div class="amado-pro-catagory clearfix" >
 
                 
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/1.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/2.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Minimalistic Plant Pot</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/4.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Night Stand</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/5.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $18</p>
-                            <h4>Plant Pot</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/6.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $320</p>
-                            <h4>Small Table</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/7.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $318</p>
-                            <h4>Metallic Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/8.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $318</p>
-                            <h4>Modern Rocking Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/9.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $318</p>
-                            <h4>Home Deco</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
+                <% produ.forEach((item) => { %>
+                    <!-- Single Category -->
+                    <div class="single-products-catagory clearfix">
+                        <a href="/productDetail?id=<%- item._id %>">
+                            <!-- Image -->
+                            <img src="/products/images/<%- item.images.image1 %>" alt="">
+                            <!-- Hover Content -->
+                            <div class="hover-content">
+                                <div class="line"></div>
+                                <p>From ₹<%= item.price %></p>
+                                <h4><%= item.product_name %></h4>
+                            </div>
+                        </a>
+                    </div>
+                <% }) %>
                 
-                <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
 
                 <!-- Single Catagory -->
-                <div class="single-products-catagory clearfix">
-                    <a href="shop.html">
-                        <img src="/img/bg-img/3.jpg" alt="">
-                        <!-- Hover Content -->
-                        <div class="hover-content">
-                            <div class="line"></div>
-                            <p>From $180</p>
-                            <h4>Modern Chair</h4>
-                        </div>
-                    </a>
-                </div>
+                
             </div>
         </div>
         <!-- Product Catagories Area End -->
@@ -379,7 +209,7 @@
                     <div class="single_widget_area">
                         <!-- Logo -->
                         <div class="footer-logo mr-50">
-                            <a href="index.html"><img src="/img/footerlogo.png" alt=""></a>
+                            <a href="index.html"><img src="/user/img/footerlogo.png" alt=""></a>
                         </div>
                         
                     </div>
@@ -420,15 +250,15 @@
     <!-- ##### Footer Area End ##### -->
 
     <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
-    <script src="/js/jquery/jquery-2.2.4.min.js"></script>
+    <script src="/user/js/jquery/jquery-2.2.4.min.js"></script>
     <!-- Popper js -->
-    <script src="/js/popper.min.js"></script>
+    <script src="/user/js/popper.min.js"></script>
     <!-- Bootstrap js -->
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="/user/js/bootstrap.min.js"></script>
     <!-- Plugins js -->
-    <script src="/js/plugins.js"></script>
+    <script src="/user/js/plugins.js"></script>
     <!-- Active js -->
-    <script src="/js/active.js"></script>
+    <script src="/user/js/active.js"></script>
 
 </body>
 

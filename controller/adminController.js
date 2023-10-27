@@ -1,8 +1,17 @@
-let adminModel=require('../model/adminModel')
-let user=require('../model/userModel')
-let bcrypt=require('bcrypt')
-let env=require('dotenv')
+let adminModel = require('../models/adminModel')
+let user = require('../models/userModel')
+let ProductDB = require('../models/productModel')
+let category = require('../models/catogoryModel')
+let productController = require('../controller/productController')
+let multer = require('../middleware/multer')
+let bcrypt = require('bcrypt')
+let env = require('dotenv')
 env.config()
+let session = require('express-session')
+
+
+
+
 
 //--------------------email validation function---------------------
 function validateEmail(email) {
@@ -10,8 +19,9 @@ function validateEmail(email) {
     return regex.test(email);
 }
 
+//admin login page 
 
-let adminLogin=async(req,res)=>{
+let adminLogin = async (req, res) => {
     try {
         res.render('adminLogIn')
     } catch (error) {
@@ -19,40 +29,334 @@ let adminLogin=async(req,res)=>{
     }
 }
 
-
-let adminLogon=async(req,res)=>{
-    let {adminEmail,adminPassword}=req.body
+//admin logni page rendrering
+let adminLogon = async (req, res) => {
+    let { adminEmail, adminPassword } = req.body
 
     try {
-        if(!adminEmail || !adminPassword){
-            return res.render('adminLogIn',{msg:'Please Enter Email and Password'})
+        let admi = await adminModel.findOne({ email: adminEmail })
+        if (!adminEmail || !adminPassword) {
+            return res.render('adminLogIn', { message: 'Please Enter Email and Password' })
         }
-        if(!validateEmail(adminEmail)){
-            return res.render('adminLogIn',{msg:'Please Enter Valid Email'})
+        if (!validateEmail(adminEmail)) {
+            return res.render('adminLogIn', { message: 'Please Enter Valid Email' })
+        }
+        console.log(admi);
+        if (!admi) {
+            return res.render('adminLogIn', { message: 'Sorry Admin not Found' })
         }
 
-        let adminData=await adminEmail==process.env.email
-        if(!adminData){
-            return res.render('adminLogIn',{msg:'Sorry Admin not Found'})
-        }
+        let isMatch = await bcrypt.compare(adminPassword, admi.password)
+        console.log(isMatch);
+        if (isMatch) {
+            req.session.admin_id = admi._id;
+            res.redirect('/admin/dashboard')
+        } else {
 
-        let isMatch=await adminPassword==process.env.password
-        if(isMatch){
-            req.session.admin_id=adminData._id;
-            return res.redirect('/admin/dashboard')
-        }else{
-
-            return res.render('adminLogIn',{msg:'Wrong Password'})
+            return res.render('adminLogIn', { message: 'Wrong Password' })
         }
 
     } catch (error) {
-        res.render('adminLogIn',{msg:'Something went wrong'})
+        res.render('adminLogIn', { message: 'Something went wrong' })
+        console.log(error.message);
+    }
+}
+
+let adminRender = async (req, res) => {
+    try {
+        res.render('dashboard')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let userManagement = async (req, res) => {
+    try {
+        res.render('userManagement', {
+            users: await user.find()
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let blockuser = async (req, res) => {
+    try {
+        let id = req.query.id;
+        let User = await user.updateOne({ _id: id }, { $set: { is_block: 1 } });
+
+        res.redirect('/admin/userManagement')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let unblockuser = async (req, res) => {
+    try {
+        let id = req.query.id;
+        let User = await user.updateOne({ _id: id }, { $set: { is_block: 0 } });
+        res.redirect('/admin/userManagement')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+let logOut = async (req, res) => {
+    try {
+        req.session.destroy();
+        res.redirect('/admin/login')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let addCategory = async (req, res) => {
+    try {
+        let { categoryName } = req.body
+        console.log(categoryName);
+        let cat = new category({ name: categoryName })
+        await cat.save()
+        console.log(cat);
+        res.redirect('/admin/categoryManagement')
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let categoryManagement = async (req, res) => {
+    try {
+        let cats = await category.find()
+        // console.log(category);
+        res.render('categoryManagement', { categories: cats })
+    } catch (error) {
+        console.log(error.message);
     }
 }
 
 
-module.exports={
+
+let editCategory = async (req, res) => {
+    try {
+        let Id = req.query.id
+        let categories = await category.findOne({ _id: Id })
+        console.log(categories);
+        res.render('editCategory', { categories })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+let editedCategory = async (req, res) => {
+    try {
+        let Id = req.query.id
+        let { categoryName } = req.body
+        let cat = await category.updateOne({ _id: Id }, { $set: { name: categoryName } })
+        res.redirect('/admin/categoryManagement')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let addCatRender = async (req, res) => {
+    try {
+        res.render('addCategory')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+let blockCategory = async (req, res) => {
+    try {
+        let Id = req.query.id
+        let cat = await category.updateOne({ _id: Id }, { $set: { blocked: 1 } })
+        res.redirect('/admin/categoryManagement')
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+let unblockCategory = async (req, res) => {
+    try {
+        let Id = req.query.id
+        let cat = await category.updateOne({ _id: Id }, { $set: { blocked: 0 } })
+        res.redirect('/admin/categoryManagement')
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+//products management page 
+let productManagement = async (req, res) => {
+    try {
+
+        let products = await ProductDB.find()
+        // console.log(products);
+
+
+        res.render('productManagement', { products })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+//==========addprodect page rendring
+
+let productAdd = async (req, res) => {
+    try {
+        let categories = await category.find()
+        res.render('addProduct', { categories })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+//===========productadding 
+const addProduct = async (req, res) => {
+    try {
+        console.log(req.body);
+        let details = req.body;
+        const files = await req.files;
+        console.log(files);
+        console.log(
+            files.image1[0].filename,
+            files.image2[0].filename,
+            files.image3[0].filename,
+            files.image4[0].filename
+        );
+        let product = new ProductDB({
+            product_name: details.product_name,
+            price: details.price,
+            category: details.category,
+            description: details.description,
+            stock: details.stock,
+            "images.image1": files.image1[0].filename,
+            "images.image2": files.image2[0].filename,
+            "images.image3": files.image3[0].filename,
+            "images.image4": files.image4[0].filename,
+        });
+
+        let result = await product.save();
+        //   console.log(result);
+        res.redirect("/admin/productManagement");
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+// This Function used to Update Product , includuing Image Managment..
+// ---------------------------------------
+const updateProduct = async (req, res) => {
+    try {
+        let details = req.body;
+        let imagesFiles = req.files;
+        let currentData = await ProductDB.findOne({ _id: req.query.id })
+        // console.log(currentData.images);
+
+        let img1, img2, img3, img4;
+
+        img1 = imagesFiles.image1
+            ? imagesFiles.image1.filename
+            : currentData.images.image1;
+        img2 = imagesFiles.image2
+            ? imagesFiles.image2[0].filename
+            : currentData.images.image2;
+        img3 = imagesFiles.image3
+            ? imagesFiles.image3[0].filename
+            : currentData.images.image3;
+        img4 = imagesFiles.image4
+            ? imagesFiles.image4[0].filename
+            : currentData.images.image4;
+
+        let update = await ProductDB.updateOne(
+            { _id: req.query.id },
+            {
+                $set: {
+                    product_name: details.product_name,
+                    price: details.price,
+                    frame_shape: details.frame_shape,
+                    gender: details.gender,
+                    description: details.description,
+                    stock: details.stock,
+                    "images.image1": img1,
+                    "images.image2": img2,
+                    "images.image3": img3,
+                    "images.image4": img4,
+                },
+            }
+        );
+
+        //   console.log(update);
+
+        res.redirect("/admin/productManagement");
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//===============get the project editng page 
+let updateProductPage = async (req, res) => {
+    try {
+        let categories = await category.find()
+        let Id = req.query.id
+        let products = await ProductDB.findOne({ _id: Id })
+        res.render('editProduct', { categories, products })
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+// ==========product blocking and unblocking
+let blockProduct = async (req, res) => {
+    try {
+
+        let product = await ProductDB.findOne({ _id: req.query.id })
+        if (product.block == 0) {
+            let cat = await ProductDB.updateOne({ _id: req.query.id }, { $set: { block: 1 } })
+
+            res.redirect('/admin/productManagement')
+        } else {
+            await ProductDB.updateOne({ _id: req.query.id }, { $set: { block: 0 } })
+            res.redirect('/admin/productManagement')
+
+        }
+
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+module.exports = {
     adminLogin,
     adminLogon,
-    
+    adminRender,
+    userManagement,
+    blockuser,
+    unblockuser,
+    logOut,
+    categoryManagement,
+    addCatRender,
+    addCategory,
+    editCategory,
+    editedCategory,
+    blockCategory,
+    unblockCategory,
+    productManagement,
+    addProduct,
+    updateProduct,
+    productAdd,
+    updateProductPage,
+    blockProduct,
+
 }

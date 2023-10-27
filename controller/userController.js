@@ -4,15 +4,33 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const ejs = require("ejs");
 require("dotenv").config();
+const session=require('express-session')
+let Products=require('../models/productModel')
+let category=require('../models/catogoryModel')
+
 
 // Initialize the OTP variable
 let otp = 0;
+
+
 //home page
-
-
 let homePage = async (req, res) => {
     try {
-        res.render("index");
+        let produ=await Products.find()
+        // console.log(produ)
+        let cat=await category.find()
+        let userDa;
+        if(req.session.user_id){
+            userDa = await user.findById(req.session.user_id)
+            if(userDa){
+                res.render("index", { userDa,  cat, produ });
+            }else{
+                console.error();
+                res.render("index", { userDa, cat, produ });
+            }
+        }else{
+            res.render("index", { userDa, cat , produ});
+        }
     } catch (error) {
         res.status(500).send(error);
     }
@@ -79,7 +97,11 @@ async function signUpPage(req, res) {
 // Login page
 async function loginPage(req, res) {
     try {
-        res.render("signIn");
+        if(!req.session.user_id){
+            res.render("signIn");
+        }else{
+            res.redirect("/home")
+        }
     } catch (error) {
         res.status(500).send(error);
     }
@@ -88,15 +110,39 @@ async function loginPage(req, res) {
 // Login user
 async function loginUser(req, res) {
     try {
+        console.log("entered");
         const foundUser = await user.findOne({
-            email: req.body.email,
-            password: req.body.password,
+            email: req.body.email
         });
-        if (foundUser) {
-            res.render("otp");
-        } else {
-            res.redirect("/login");
+        console.log(foundUser);
+        if(foundUser){
+            if(!validateEmail(req.body.email)){
+                console.log("error");
+                res.redirect("/signin")
+            }else {
+            
+                console.log(req.session);
+                bcrypt.compare( req.body.password,foundUser.password, (err, result) => {
+                    console.log(result);
+                    if(err){
+                        res.render('signin',{message:'Something went wrong'})
+                        console.log("error on comparing the password"+err);
+                    }else if(result){
+                        console.log("asdfasrew");
+                        req.session.user_id = foundUser._id;
+                        res.redirect("/home");
+
+                    }
+                    else {
+                        console.log("error");
+                        res.redirect("/signin");
+                    }
+                })
+            }
         }
+        // if {
+        //     res.redirect("/login");
+        // }
     } catch (error) {
         res.status(500).send(error);
     }
@@ -169,6 +215,37 @@ async function otpVerify(req, res) {
     }
 }
 
+//==============logout===============
+let logOut = async (req, res) => {
+    if (req.session.user_id) {
+        req.session.destroy();
+        res.redirect("/signin");
+    } else {
+        res.redirect("/signin");
+    }
+}
+let forgotPassword = (req, res) => {
+
+}
+//======================show the product details==================
+let productDetail = async (req, res) => {
+    try {
+        let Id = req.query.id
+        let userDa;
+        let product = await Products.findOne({_id:Id})
+        if(req.session.user_id){
+            userDa = await user.findById(req.session.user_id)
+            res.render("productDetails",{product,userDa})
+        }else{
+            userDetails = await user.findById(req.session.user_id)
+            res.render("productDetails",{product,userDa})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
 // Export the functions
 module.exports = {
     insertUser,
@@ -177,5 +254,7 @@ module.exports = {
     loginUser,
     otpLoad,
     otpVerify,
-    homePage
+    homePage,
+    logOut,
+    productDetail,
 };

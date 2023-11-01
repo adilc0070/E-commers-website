@@ -44,4 +44,5 @@ adminRoute.post('/updateProduct',fileUpload.productImagesUpload,adminControll.up
 adminRoute.get('/blockProduct',adminControll.blockProduct)
 
 
+
 module.exports=adminRoute

@@ -45,7 +45,15 @@
           }
         });
       });
-  
+      
+        // JavaScript function to update the error message using the fetch API
+        function clearErrorMessage(fieldId) {
+            const errorMessage = document.getElementById(fieldId);
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }
+    
       
     </script>
 

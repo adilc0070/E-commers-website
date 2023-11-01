@@ -19,8 +19,15 @@ function validateEmail(email) {
     return regex.test(email);
 }
 
-//admin login page 
+//password validation
+function validatePassword(password) {
+    // Password should be at least 8 characters long and contain both letters and numbers
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+    return passwordRegex.test(password);
+}
 
+
+//admin login page 
 let adminLogin = async (req, res) => {
     try {
         res.render('adminLogIn')
@@ -31,33 +38,38 @@ let adminLogin = async (req, res) => {
 
 //admin logni page rendrering
 let adminLogon = async (req, res) => {
-    let { adminEmail, adminPassword } = req.body
-
     try {
-        let admi = await adminModel.findOne({ email: adminEmail })
-        if (!adminEmail || !adminPassword) {
-            return res.render('adminLogIn', { message: 'Please Enter Email and Password' })
-        }
-        if (!validateEmail(adminEmail)) {
-            return res.render('adminLogIn', { message: 'Please Enter Valid Email' })
-        }
+        let { adminEmail, adminPassword } = req.body;
+        console.log(adminEmail, adminPassword);
+        let admi = await adminModel.findOne({ email: adminEmail });
         console.log(admi);
-        if (!admi) {
-            return res.render('adminLogIn', { message: 'Sorry Admin not Found' })
-        }
+        let emailErrorMessage; // Initialize these variables
+        let passwordErrorMessage ;
 
-        let isMatch = await bcrypt.compare(adminPassword, admi.password)
-        console.log(isMatch);
-        if (isMatch) {
-            req.session.admin_id = admi._id;
-            res.redirect('/admin/dashboard')
+        if (!adminEmail || !adminPassword) {
+            emailErrorMessage = 'Please Enter Email and Password';
+            res.render('adminLogIn', { emailErrorMessage, passwordErrorMessage })
+        } else if (!validateEmail(adminEmail)) {
+            emailErrorMessage = 'Please Enter Valid Email';
+            res.render('adminLogIn', { emailErrorMessage, passwordErrorMessage })
+        } else if (admi==null) {
+            emailErrorMessage = 'Sorry Admin not Found';
+            res.render('adminLogIn', { emailErrorMessage, passwordErrorMessage })
         } else {
+            let isMatch = await bcrypt.compare(adminPassword, admi.password);
 
-            return res.render('adminLogIn', { message: 'Wrong Password' })
+            if (isMatch!=false) {
+                req.session.admin_id = admi._id;
+                res.redirect('/admin/dashboard');
+            } else {
+                passwordErrorMessage = 'Wrong Password';
+                res.render('adminLogIn', { emailErrorMessage, passwordErrorMessage })
+            }
         }
 
+        // Render the EJS template with the error messages
     } catch (error) {
-        res.render('adminLogIn', { message: 'Something went wrong' })
+        // res.render('adminLogIn', { message: 'Something went wrong' });
         console.log(error.message);
     }
 }
@@ -111,13 +123,20 @@ let logOut = async (req, res) => {
 
 let addCategory = async (req, res) => {
     try {
+        let categoryErrorMessage
         let { categoryName } = req.body
         console.log(categoryName);
-        let cat = new category({ name: categoryName })
-        await cat.save()
-        console.log(cat);
-        res.redirect('/admin/categoryManagement')
-
+        let catego = await category.findOne({ name: categoryName })
+        if(!catego){
+            let cat = new category({ name: categoryName })
+            await cat.save()
+            console.log(cat);
+            res.redirect('/admin/categoryManagement')
+        }else{
+            categoryErrorMessage = 'Category Already Exist'
+            res.render('addCategory', { categoryErrorMessage })
+        }
+        
     } catch (error) {
         console.log(error.message);
     }
@@ -139,7 +158,7 @@ let editCategory = async (req, res) => {
     try {
         let Id = req.query.id
         let categories = await category.findOne({ _id: Id })
-        console.log(categories);
+        // console.log(categories);
         res.render('editCategory', { categories })
     } catch (error) {
         console.log(error.message);
@@ -149,8 +168,19 @@ let editedCategory = async (req, res) => {
     try {
         let Id = req.query.id
         let { categoryName } = req.body
-        let cat = await category.updateOne({ _id: Id }, { $set: { name: categoryName } })
-        res.redirect('/admin/categoryManagement')
+        let editCatErrorMessage
+        let exxist = await category.findOne({ name: categoryName })
+        let categories=await category.findOne({_id:Id})
+        if(exxist){
+            editCatErrorMessage = 'Category Already Exist'
+            res.render('editCategory', { editCatErrorMessage ,categories})
+        }else if(categoryName==""){
+            editCatErrorMessage = 'Please Enter Category Name'
+            res.render('editCategory', { editCatErrorMessage ,categories})
+        }else{
+            let cat = await category.updateOne({ _id: Id }, { $set: { name: categoryName } })
+            res.redirect('/admin/categoryManagement')
+        }
     } catch (error) {
         console.log(error.message);
     }

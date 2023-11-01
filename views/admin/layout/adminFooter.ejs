@@ -25,6 +25,12 @@
 <!-- endinject -->
 <!-- Custom js for this page -->
 <script src="admin/js/dashboard.js"></script>
+<script>
+    const inputFields = document.querySelectorAll('input');
+        inputFields.forEach((input) => {
+            input.addEventListener('input', clearErrorMessage);
+        });
+</script>
 
 
 <!-- End custom js for this page -->

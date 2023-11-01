@@ -66,15 +66,15 @@ form button {
   font-size: 1rem;
   border: none;
   padding: 9px 0;
-  cursor: pointer;
+  
   border-radius: 6px;
-  pointer-events: none;
+  
   background: #6e93f7;
   transition: all 0.2s ease;
 }
 form button.active {
   background: #4070f4;
-  pointer-events: auto;
+  
 }
 form button:hover {
   background: #0e4bf1;

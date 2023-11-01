@@ -11,6 +11,15 @@
 
     <!-- Main css -->
     <link rel="stylesheet" href="/user/css/style.css">
+    <script>
+        function clearErrorMessage(fieldId) {
+            const errorMessage = document.getElementById(fieldId);
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }
+    </script>
+
 </head>
 <body>
 
@@ -25,24 +34,24 @@
                     </div>
 
                     <div class="signin-form">
+                        
                         <h2 class="form-title">Sign in</h2>
+
                         <form method="post" class="register-form" action="/admin/login" id="login-form">
+
                             <div class="form-group">
                                 <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input type="email" name="adminEmail" id="email" placeholder="Admin's Email"/>
+                                <input type="email" name="adminEmail" id="email" placeholder="Admin's Email" oninput="clearErrorMessage('emailErrorMessage')">
+                                <span id="emailErrorMessage" style="color: red;"><%= locals.emailErrorMessage %></span>
                             </div>
                             <div class="form-group">
                                 <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="adminPassword" id="your_pass" placeholder="Password"/>
+                                <input type="password" name="adminPassword" id="your_pass" placeholder="Password" oninput="clearErrorMessage('passwordErrorMessage')">
+                                <span id="passwordErrorMessage" style="color: red;"><%= locals.passwordErrorMessage %></span>
                             </div>
                             <div class="form-group form-button">
-                               <button type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>Sign in</button>
-                                <% if(typeof message !== 'undefined'){ %>
-                                    <span
-                                      id="er2"
-                                      style="color: rgb(241, 7, 7); text-align: center"
-                                      ><%= message %></span>
-                                    <% } %>
+                                <button type="submit" name="signin" id="signin" class="form-submit" value="Log in">Sign in</button>
+                                
                             </div>
                         </form>
                     </div>
@@ -53,6 +62,14 @@
     </div>
 
     <!-- JS -->
+    
+    <script>
+        // Call clearErrorMessage when any input field is changed
+        const inputFields = document.querySelectorAll('input');
+        inputFields.forEach((input) => {
+            input.addEventListener('input', clearErrorMessage);
+        });
+    </script>
     <script src="/user/vendor/jquery/jquery.min.js"></script>
     <script src="/user/js/main.js"></script>
 </body>

@@ -6,18 +6,13 @@
     <div class="card">
       <div class="card-body">
         <h4 class="card-title">Edit Category</h4>
-        <% if(typeof message !== 'undefined'){ %>
-          <span
-            id="er2"
-            style="color: rgb(241, 7, 7); text-align: center"
-            ><%= message %></span
-          >
-          <% } %>
+        
         <form class="forms-sample" action="/admin/editedCategory?id=<%= categories._id %>" method="post">
           <div class="form-group">
-            <!-- <input type="hidden" name="categoryId" value="<%= categories.name %>"> -->
+           
             <label for="exampleInputName1">Name of Category</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Category Name" value="<%= categories.name %>" name="categoryName">
+            <input type="text" class="form-control" id="exampleInputName1" placeholder="Category Name" value="<%= categories.name %>" name="categoryName" oninput="clearErrorMessage('editCatErrorMessage')">
+            <span id="editCatErrorMessage" style="color: red; display: block;"><%= locals.editCatErrorMessage %></span>
           </div>
 
 

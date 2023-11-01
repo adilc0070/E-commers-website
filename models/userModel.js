@@ -22,6 +22,10 @@ const userSchema = mongoose.Schema({
     is_block: {
         type: Number,
         default: 0
+    },
+    verified: {
+        type: Number,
+        default: 0
     }
 });
 

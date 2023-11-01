@@ -18,7 +18,10 @@ userRoute.post('/signup',userController.insertUser)
 
 userRoute.get('/otp',userController.otpLoad)
 userRoute.post('/otp',userController.otpVerify)
+userRoute.get('/resendOtp',userController.resendOtp)
 
+userRoute.get('/forgotPassword',userController.forgotPassword)
+userRoute.post('/resetPassword',userController.resetPassword)
 userRoute.get('/signin',userController.loginPage)
 userRoute.post('/signin',userController.loginUser)
 // userRoute.post('/signIn',)
@@ -28,5 +31,6 @@ userRoute.get('/home',userController.homePage)
 userRoute.get('/signout',userController.logOut)
 
 userRoute.get('/productDetail',userController.productDetail)
+userRoute.get()
 // userRoute.post('/productDetails',userController.productDetails)
 module.exports=userRoute

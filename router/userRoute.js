@@ -31,6 +31,8 @@ userRoute.get('/home',userController.homePage)
 userRoute.get('/signout',userController.logOut)
 
 userRoute.get('/productDetail',userController.productDetail)
-userRoute.get()
+userRoute.get('/products',userController.productPage)
+
+userRoute.get('/userProfile',userController.userProfile)
 // userRoute.post('/productDetails',userController.productDetails)
 module.exports=userRoute

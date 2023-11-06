@@ -515,6 +515,7 @@ label.valid {
   margin-right: 20px;
   margin-top: 10px; }
 
+
 @media screen and (max-width: 1200px) {
   .container {
     width: calc( 100% - 30px);
@@ -590,3 +591,5 @@ label.valid {
     margin-bottom: 10px; } }
 
 /*# sourceMappingURL=style.css.map */
+
+

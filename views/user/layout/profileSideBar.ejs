@@ -44,32 +44,33 @@
             <a href="index.html"><img src="/user/img/logo.png" alt="RusticLens"></a>
         </div>
         <!-- Amado Nav -->
-        <nav class="amado-nav">
+        <!-- <nav class="amado-nav">
             <ul>
-                <li class="active"><a href="index.html">Home</a></li>
+                <li class="active"><a href="/home">Home</a></li>
                 <li><a href="shop.html">Shop</a></li>
                 <li><a href="product-details.html">Product</a></li>
                 <li><a href="cart.html">Cart</a></li>
                 <li><a href="checkout.html">Checkout</a></li>
             </ul>
-        </nav>
+        </nav> -->
         <!-- Button Group -->
-        <div class="amado-btn-group mt-30 mb-100">
+        <!-- <div class="amado-btn-group mt-30 mb-100">
             <a href="#" class="btn amado-btn mb-15">%Discount%</a>
             <a href="#" class="btn amado-btn active">New this week</a>
-        </div>
+        </div> -->
         <!-- Cart Menu -->
         <div class="cart-fav-search mb-100">
-    
-            <a href="cart.html" class="cart-nav"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span>(0)</span></a>
-            <a href="#" class="fav-nav"><i class="fa fa-heart-o" aria-hidden="true"></i>Wishlist</a>
-            <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> Search</a>
-            <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> </a>
             
             
-            <% if(userDa !== undefined) {%>
+            
+            <a href="/home" class=""><i class="fa-duotone fa-house" aria-hidden="true"></i>Home</a>
+            <a href="/profile" class=""><i class="fa-duotone fa-user" aria-hidden="true"></i>Dashboard</a>
+            <a href="/orders" class=""><i class="fa-duotone fa-bag-shopping" aria-hidden="true"></i>Oreders</a>
+            <a href="/address" class=""><i class="fa-duotone fa-address-card" aria-hidden="true"></i>Address</a>
+            <a href="/accountDetails" class=""><i class="fa-duotone fa-circle-info" aria-hidden="true"></i>Account Deatails</a>
+            <a href="/wallet" class=""><i class="fa-duotone fa-wallet" aria-hidden="true"></i></i>Wallet</a>
 
-                <a href="/userProfile" class="cart-nav"><i class="fa fa-user-circle-o" aria-hidden="true"></i>profile</a>
+            <% if(userDa !== undefined) {%>
                 <a href="/signout" class="cart-nav"><i class="fa fa-sign-out" aria-hidden="true"></i>logout</a>
             <% }else{ %>
                 <a href="/signin" class="cart-nav"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a>

@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema({
     },
     verified: {
         type: Number,
-        default: 0
+        default: 1
     }
 });
 

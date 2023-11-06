@@ -13,6 +13,7 @@ let category=require('../models/catogoryModel')
 let otp = 0;
 let userEmail=""
 let username = "";
+let userVerificationEmail=''
 
 
 //home page
@@ -69,6 +70,7 @@ async function hashPassword(password) {
 
 async function insertUser(req, res) {
     try {
+
         let nameErrorMsg, emailErrorMsg, numberErrorMsg, passwordErrorMsg, confirm_password;
         let exxist = await user.findOne({ email: req.body.email });
         if(exxist){
@@ -99,14 +101,14 @@ async function insertUser(req, res) {
                 password: passSec,
                 phone: req.body.phone,
                 is_block: 0,
-                verified: 0,
+                verified: 1,
             });
 
             username = newUser.name;
             const userData = await user.insertMany([newUser]);
 
             if (userData) {
-                
+                userVerificationEmail=req.body.email
                 sendVerifyMail(req.body.email);
                 res.render("otp");
             } else {
@@ -143,6 +145,7 @@ async function loginPage(req, res) {
 // Login user
 async function loginUser(req, res) {
     try {
+        let msg=''
         let emailMessage=''
         let passwordMessage=''
         let blockMessage=''
@@ -156,7 +159,11 @@ async function loginUser(req, res) {
         });
         console.log(foundUser);
         if(foundUser){
-            if(!validateEmail(req.body.email)||req.body.email==""){
+            if(foundUser.verified!=0){
+                msg="Please Verify Your Email"
+                sendVerifyMail(req.body.email);
+                res.render('otp',{msg});
+            }else if(!validateEmail(req.body.email)||req.body.email==""){
                 emailMessage="Please Enter a Valid Email"
                 console.log("error");
                 res.render('signin',{emailMessage,passwordMessage,blockMessage});
@@ -186,6 +193,9 @@ async function loginUser(req, res) {
                     }
                 })
             }
+        }else if(!foundUser){
+            let emailErrorMsg="please create an account"
+            res.render('signUp',{emailErrorMsg});
         }
         // if {
         //     res.redirect("/login");
@@ -214,7 +224,7 @@ let otpExpaire = async (req, res) => {
 const sendVerifyMail = async (email) => {
     try {
         let GOTP = generateOtp();
-
+        otp=GOTP
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587, // Gmail SMTP port for SSL
@@ -243,6 +253,7 @@ const sendVerifyMail = async (email) => {
         const info = await transporter.sendMail(mailOptions);
         console.log("Email has been sent:", info.response);
         userEmail=email;
+        userVerificationEmail=email
         console.log("OTP:", GOTP, email);
         GOTP=otpExpaire();
     } catch (error) {
@@ -253,6 +264,7 @@ const sendVerifyMail = async (email) => {
 // Render OTP page
 async function otpLoad(req, res) {
     try {
+        
         res.render("otp");
     } catch (error) {
         res.status(500).send(error);
@@ -277,7 +289,8 @@ async function otpVerify(req, res) {
         console.log(req.body.otp, otp);
         if (otp == req.body.otp) {
 
-
+            let updateUser = await user.updateOne({ email: userVerificationEmail}, { $set: { verified: 0 } });
+            
             res.redirect("/signin");
         } else {
             msg = "Wrong OTP"
@@ -352,7 +365,27 @@ let productDetail = async (req, res) => {
     }
 }
 
+let productPage = async (req, res) => {
+    try {
+        let userDa=await user.findById(req.session.user_id)
+        let catagorys=await category.find({block:0})
+        let product = await Products.find({block:0})
+        res.render("products",{product,userDa,catagorys})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
+
+let userProfile=async(req,res)=>{
+    try {
+
+        let userDa=await user.findById(req.session.user_id)
+        res.render("userProfile",{userDa})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 
 // Export the functions
@@ -368,5 +401,7 @@ module.exports = {
     productDetail,
     resendOtp,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    productPage,
+    userProfile
 };

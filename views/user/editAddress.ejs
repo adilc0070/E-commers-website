@@ -1,61 +1,74 @@
 <%- include ('../user/layout/header.ejs')%>
 <%- include ('../user/layout/profileSideBar.ejs')%>
-<div class=" products-catagories-area clearfix">
-    
-    
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <h2 style="color: #fff;">Address Information</h2>
-                    <form action="#" method="post">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="first-name" style="color: #fff;">First Name</label>
-                                <input type="text" id="first-name" name="first-name" class="form-control" required>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="last-name" style="color: #fff;">Last Name</label>
-                                <input type="text" id="last-name" name "last-name" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="mobile" style="color: #fff;">Mobile</label>
-                            <input type="text" id="mobile" name="mobile" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email" style="color: #fff;">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="house-no" style="color: #fff;">House/Bulding Number</label>
-                            <input type="text" id="house-no" name="house-no" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="city" style="color: #fff;">City</label>
-                            <input type="text" id="city" name="city" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="state" style="color: #fff;">State</label>
-                            <input type="text" id="state" name="state" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="zip" style="color: #fff;">ZIP Code</label>
-                            <input type="text" id="zip" name="zip" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="additional-details" style="color: #fff;">Additional Details</label>
-                            <textarea id="additional-details" name="additional-details" class="form-control" rows="4"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-warning">Save Address</button>
-                    </form>
-                </div>
+
+<div class="products-catagories-area clearfix">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2 style="color: #fff;">Address Information</h2>
+
+        <% if (errors && errors.length > 0) { %>
+          <div class="alert alert-danger">
+            <ul>
+              <% errors.forEach(error => { %>
+                <li><%= error %></li>
+              <% }); %>
+            </ul>
+          </div>
+        <% } %>
+
+        <form action="/edit-address" method="post">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="first-name" style="color: #fff;">First Name</label>
+              <input type="text" id="first-name" name="first-name" class="form-control" value="<%= addresss.firstName || '' %>" required>
             </div>
-        </div>
+            <div class="form-group col-md-6">
+              <label for="last-name" style="color: #fff;">Last Name</label>
+              <input type="text" id="last-name" name="last-name" class="form-control" value="<%= addresss.lastName || '' %>" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="mobile" style="color: #fff;">Mobile</label>
+            <input type="text" id="mobile" name="mobile" class="form-control" value="<%= addresss.phone || '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email" style="color: #fff;">Email</label>
+            <input type="email" id="email" name="email" class="form-control" value="<%= addresss.email || '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="house-no" style="color: #fff;">House/Bulding Number</label>
+            <input type="text" id="house-no" name="house-no" class="form-control" value="<%= addresss.address || '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="city" style="color: #fff;">City</label>
+            <input type="text" id="city" name="city" class="form-control" value="<%= addresss.city || '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="state" style="color: #fff;">State</label>
+            <input type="text" id="state" name="state" class="form-control" value="<%= addresss.state || '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="zip" style="color: #fff;">ZIP Code</label>
+            <input type="text" id="zip" name="zip" class="form-control" value="<%= addresss.pin || '' %>" required>
+          </div>
+
+          <div class="form-group">
+            <label for="additional-details" style="color: #fff;">Additional Details</label>
+            <textarea id="additional-details" name="additional-details" class="form-control" rows="4"><%= addresss.additional || '' %></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-warning">Save Address</button>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
-
-    </div>
-
-
 
 <%- include ('../user/layout/footer.ejs')%>

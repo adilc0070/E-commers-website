@@ -57,7 +57,44 @@
 <script src="/user/js/plugins.js"></script>
 <!-- Active js -->
 <script src="/user/js/active.js"></script>
+<script>
+    // Function to show the Save Changes button
+    function showSaveChangesButton() {
+        document.getElementById('save-changes').style.display = 'block';
+    }
 
+    // Function to toggle visibility and read-only state
+    function toggleProfileFields() {
+        toggleVisibility('user-password');
+        toggleReadOnly('user-name');
+        toggleReadOnly('user-email');
+        toggleReadOnly('user-phone');
+    }
+
+    // Function to toggle visibility of an element
+    function toggleVisibility(elementId) {
+        const element = document.getElementById(elementId);
+        element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Function to toggle read-only state of an input element
+    function toggleReadOnly(elementId) {
+        const inputElement = document.getElementById(elementId).querySelector('input');
+        inputElement.readOnly = !inputElement.readOnly;
+    }
+
+    // Event listener for the Edit button
+    document.getElementById('edit-profile').addEventListener('click', function () {
+        showSaveChangesButton(); // Show Save Changes button
+        toggleProfileFields(); // Toggle visibility and read-only state
+    });
+
+    // Event listener for the Save Changes button
+    document.getElementById('save-changes').addEventListener('click', function () {
+        document.getElementById('save-changes').style.display = 'none'; // Hide Save Changes button
+        toggleProfileFields(); // Toggle visibility and read-only state
+    });
+</script>
 </body>
 
 </html>

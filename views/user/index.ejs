@@ -41,29 +41,34 @@
             <div class="container d-flex justify-content-center align-items-center" style="width:40%; height: 4%;">
                 <h3 >---Products---</h3>
             </div>
-            <div class="amado-pro-catagory clearfix" >
-
+            <div class="amado-pro-catagory clearfix">
                 
                 <% produ.forEach((item) => { %>
-                    <!-- Single Category -->
-                    <div class="single-products-catagory clearfix">
-                        <a href="/productDetail?id=<%- item._id %>">
-                            <!-- Image -->
-                            <img src="/products/images/<%- item.images.image1 %>" alt="">
-                            <!-- Hover Content -->
-                            <div class="hover-content">
-                                <div class="line"></div>
-                                <p>From ₹<%= item.price %></p>
-                                <h4><%= item.product_name %></h4>
-                            </div>
-                        </a>
-                    </div>
+                    <%if(item.block==0){%>
+                  <!-- Single Category -->
+                  <div style="width: 359px; height: 400px; overflow: hidden;" class="single-products-catagory clearfix m-2 border rounded">
+                    <a href="/productDetail?id=<%- item._id %>">
+                      <!-- Image -->
+                      <img
+                        src="/products/images/<%- item.images.image1 %>"
+                        alt="<%= item.product_name %>"
+                        style="object-fit: cover; width: 100%; height: 100%; object-position: center;"
+                      />
+                      <!-- Hover Content -->
+                      <div class="hover-content">
+                        <div class="line"></div>
+                        <p>From ₹<%= item.price %></p>
+                        <span><h4><%= item.product_name %></h4></span>
+                        
+                      </div>
+                    </a>
+                  </div>
+                  <% }%>
                 <% }) %>
-                
-
+              
                 <!-- Single Catagory -->
-                
-            </div>
+              </div>
+              
         </div>
         <!-- Product Catagories Area End -->
     </div>

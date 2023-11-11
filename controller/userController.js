@@ -7,6 +7,7 @@ require("dotenv").config();
 const session=require('express-session')
 let Products=require('../models/productModel')
 let category=require('../models/catogoryModel')
+let address=require('../models/address')
 
 
 // Initialize the OTP variable
@@ -28,7 +29,7 @@ let homePage = async (req, res) => {
             if(userDa){
                 res.render("index", { userDa,  cat, produ });
             }else{
-                console.error();
+                // console.error();
                 res.render("index", { userDa, cat, produ });
             }
         }else{
@@ -157,7 +158,7 @@ async function loginUser(req, res) {
         const foundUser = await user.findOne({
             email: req.body.email
         });
-        console.log(foundUser);
+        // console.log(foundUser);
         if(foundUser){
             if(foundUser.verified!=0){
                 msg="Please Verify Your Email"
@@ -165,10 +166,10 @@ async function loginUser(req, res) {
                 res.render('otp',{msg});
             }else if(!validateEmail(req.body.email)||req.body.email==""){
                 emailMessage="Please Enter a Valid Email"
-                console.log("error");
+                // console.log("error");
                 res.render('signin',{emailMessage,passwordMessage,blockMessage});
             }else if(foundUser.is_block==1){
-                console.log("error");
+                // console.log("error");
                 blockMessage="Your account is blocked"
                 res.render('signin',{emailMessage,passwordMessage,blockMessage});
 
@@ -182,7 +183,7 @@ async function loginUser(req, res) {
                         res.render('signin',{emailMessage,passwordMessage,blockMessage})
                         console.log("error on comparing the password"+err);
                     }else if(result){
-                        console.log("asdfasrew");
+                        console.log("user enter afeter comparing the password and email"  );
                         req.session.user_id = foundUser._id;
                         res.redirect("/home");
 
@@ -227,14 +228,12 @@ const sendVerifyMail = async (email) => {
         otp=GOTP
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 587, // Gmail SMTP port for SSL
-            secure: false,
-            requireTLS: true, // Use SSL
+            port: 465, // Use port 465 for secure connection
+            secure: true,
             auth: {
-                user: "adilc0070@gmail.com", // Your Gmail email address
-                pass: "pzgx grjb wprt ijav", // Your Gmail application-specific password
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD,
             },
-            
         });
 
         const mailOptions = {
@@ -337,6 +336,7 @@ let resetPassword=async(req,res)=>{
             if(resPass){
                 console.log("password updated");
                 sendVerifyMail(userEmail)
+                await user.updateOne({email:userEmail},{$set:{verified:1}})
                 res.render("otp")
             }else{
                 console.log("password not updated");
@@ -367,25 +367,228 @@ let productDetail = async (req, res) => {
 
 let productPage = async (req, res) => {
     try {
-        let userDa=await user.findById(req.session.user_id)
-        let catagorys=await category.find({block:0})
-        let product = await Products.find({block:0})
-        res.render("products",{product,userDa,catagorys})
+       let userDa = await user.findById(req.session.user_id);
+       let catago = await category.find({ blocked: 0 });
+       let product = await Products.find({ block: 0 });
+       res.render("products", { product, userDa, catago });
     } catch (error) {
-        console.log(error.message);
+       console.log(error.message);
+       // Handle the error appropriately, e.g., send an error response
+       res.status(500).send('Internal Server Error');
     }
-}
-
+ }
+ 
 
 let userProfile=async(req,res)=>{
     try {
 
         let userDa=await user.findById(req.session.user_id)
-        res.render("userProfile",{userDa})
+        res.render("profilePage",{userDa})
     } catch (error) {
         console.log(error.message);
     }
 }
+let editProfile=async(req,res)=>{
+    try {
+        let userDa=await user.findById(req.session.user_id)
+        res.render("dashChanges",{userDa})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+let cartPage=async(req,res)=>{
+    try {
+        let userDa=await user.findById(req.session.user_id)
+        res.render("cart",{userDa})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+let addressPage = async (req, res) => {
+    try {
+        let userDa = await user.findById(req.session.user_id);
+        let addresses = await address.find({ user: req.session.user_id });
+
+        res.render("address", { userDa, addresses });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+let addAddressPage = async (req, res) => {
+    try {
+        let userDa = await user.findById(req.session.user_id);
+        res.render("addAddress", { userDa });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+let insertAddress = async (req, res) => {
+    try {
+        let userDa = await user.findById(req.session.user_id);
+
+        // Assuming your form fields are named firstName, lastName, address, city, state, pin, country, phone, email, additionalDetails
+        let newAddress = new address({
+            user: req.session.user_id,
+            addresses: [{
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                address: req.body.address,
+                city: req.body.city,
+                state: req.body.state,
+                pin: req.body.pin,
+                country: req.body.country,
+                phone: req.body.phone,
+                email: req.body.email,
+                additional: req.body.additionalDetails,
+            }]
+        });
+
+        await newAddress.save();
+
+        res.redirect("/address");
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+};
+
+let editAddressPage = async (req, res) => {
+    try {
+      console.log('Reached editAddressPage route');
+      let addresses = await address.find({ user: req.session.user_id });
+      let userDa = await user.findById(req.session.user_id);
+      let id = req.query.id;
+      res.render("editAddress", { userDa, id });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+  
+
+
+let editAddress = async (req, res) => {
+  try {
+    let addresses = await address.find({ user: req.session.user_id });
+    let userDa = await user.findById(req.session.user_id);
+    let edit = req.query.id;
+
+    if (edit) {
+      let addresss = await address.findOne({ "addresses._id": edit });
+      let {
+        firstName,
+        lastName,
+        address,
+        city,
+        state,
+        pin,
+        country,
+        phone,
+        email,
+        additional,
+      } = addresss;
+
+      // Validation checks
+      let errors = [];
+
+      if (!firstName) {
+        errors.push("First name is required.");
+      }
+
+      if (!lastName) {
+        errors.push("Last name is required.");
+      }
+
+      if (!address) {
+        errors.push("Address is required.");
+      }
+
+      if (!city) {
+        errors.push("City is required.");
+      }
+
+      if (!state) {
+        errors.push("State is required.");
+      }
+
+      if (!pin) {
+        errors.push("Zip code is required.");
+      } else if (!/^\d{5}$/.test(pin)) {
+        errors.push("Invalid zip code format. It should be 5 digits.");
+      }
+
+      if (!country) {
+        errors.push("Country is required.");
+      }
+
+      if (!phone) {
+        errors.push("Phone number is required.");
+      } else if (!/^\d{10}$/.test(phone)) {
+        errors.push("Invalid phone number format. It should be 10 digits.");
+      }
+
+      if (!email) {
+        errors.push("Email is required.");
+      } else if (!/\S+@\S+\.\S+/.test(email)) {
+        errors.push("Invalid email format.");
+      }
+
+      if (errors.length > 0) {
+        // If there are validation errors, render the view with the errors
+        res.render("editAddress", { userDa, addresss, errors });
+      } else {
+        // All validations passed, proceed with updating the address
+        await address.updateOne(
+          { "addresses._id": edit },
+          {
+            $set: {
+              "addresses.$.firstName": req.body.firstName,
+              "addresses.$.lastName": req.body.lastName,
+              "addresses.$.address": req.body.address,
+              "addresses.$.city": req.body.city,
+              "addresses.$.state": req.body.state,
+              "addresses.$.pin": req.body.pin,
+              "addresses.$.country": req.body.country,
+              "addresses.$.phone": req.body.phone,
+              "addresses.$.email": req.body.email,
+              "addresses.$.additional": req.body.additional,
+            },
+          }
+        );
+
+        // Redirect to the address page after successful update
+        res.redirect("/edit-address?id=" + edit);
+      }
+    } else {
+      // Handle the case where edit query parameter is not provided
+      res.render("editAddress", { userDa, error: "Invalid request." });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+
+
+
+let deleteAddress = async (req, res) => {
+    try {
+        let addressId = req.query.id;
+        let deletedAddress = await address.findOneAndDelete({ "addresses._id": addressId });
+        res.redirect("/address");
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+
+
 
 
 // Export the functions
@@ -403,5 +606,13 @@ module.exports = {
     forgotPassword,
     resetPassword,
     productPage,
-    userProfile
+    userProfile,
+    editProfile,
+    cartPage,
+    addressPage,
+    addAddressPage,
+    insertAddress,
+    deleteAddress,
+    editAddress,
+    editAddressPage
 };

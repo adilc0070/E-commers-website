@@ -1,0 +1,76 @@
+<!-- Assuming your cart.ejs is similar to this -->
+
+<%- include ('../user/layout/header.ejs')%>
+<%- include ('../user/layout/profileSideBar.ejs')%>
+
+
+<div class="cart-table-area section-padding-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <!-- ... (existing code) ... -->
+                <div class="cart-table clearfix">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (cartData && cartData.products && cartData.products.length > 0) { %>
+                                <% cartData.products.forEach(product => { %>
+                                    <tr>
+                                        <td class="cart_product_img">
+                                            <a href="#"><img src="<%= product.productId.imagePath %>" alt="Product"></a>
+                                        </td>
+                                        <td class="cart_product_desc">
+                                            <h5><%= product.productId.name %></h5>
+                                        </td>
+                                        <td class="price">
+                                            <span>$<%= product.productId.price %></span>
+                                        </td>
+                                        <td class="qty">
+                                            <div class="qty-btn d-flex">
+                                                <div class="quantity">
+                                                    <span class="qty-minus" onclick="updateQuantity('<%= product.productId %>', -1)"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                                    <input type="number" class="qty-text" id="<%= product.productId %>-qty" step="1" min="1" max="300" name="quantity" value="<%= product.count %>">
+                                                    <span class="qty-plus" onclick="updateQuantity('<%= product.productId %>', 1)"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4">Your cart is empty.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="cart-summary">
+                    <h5>Cart Total</h5>
+                    <ul class="summary-table">
+                        <% if (datatotal && datatotal.length > 0) { %>
+                            <li><span>Subtotal:</span> <span>$<%= totalamount.toFixed(2) %></span></li>
+                        <% } else { %>
+                            <li><span>Subtotal:</span> <span>$0.00</span></li>
+                        <% } %>
+                        <li><span>Delivery:</span> <span>Free</span></li>
+                        <li><span>Total:</span> <span>$<%= totalamount.toFixed(2) %></span></li>
+                    </ul>
+                    <div class="cart-btn mt-100">
+                        <a href="/checkout" class="btn amado-btn w-100">Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<%- include ('../user/layout/footer.ejs')%>

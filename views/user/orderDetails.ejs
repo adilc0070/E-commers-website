@@ -1,0 +1,56 @@
+<%- include ('../user/layout/header.ejs')%>
+<%- include ('../user/layout/profileSideBar.ejs')%>
+
+<div class="cart-table-area section-padding-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <div class="cart-title mt-50">
+                    <h2>My Orders</h2>
+                </div>
+
+                <div class="cart-table clearfix">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Products</th>
+                                <th>Total Amount</th>
+                                <th>Order Status</th>
+                                <th>Action</th> <!-- Add a new column for action -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop through user's orders -->
+                            <% orders.forEach(function(order) { %>
+                                <tr>
+                                    <td><%= order.orderID %></td>
+                                    <td>
+                                        <!-- Loop through products in the order -->
+                                        <% order.products.forEach(function(product) { %>
+                                            <div>
+                                                <h5><%= product.name %></h5>
+                                                <span>Quantity: <%= product.quantity %></span>
+                                            </div>
+                                        <% }); %>
+                                    </td>
+                                    <td class="price">
+                                        <span>$<%= order.totalAmount %></span>
+                                    </td>
+                                    <td>
+                                        <span><%= order.status %></span>
+                                    </td>
+                                    <td>
+                                        <a href="/cancel-order/<%= order.orderID %>" class="btn btn-danger">Cancel Order</a>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include ('../user/layout/footer.ejs')%>

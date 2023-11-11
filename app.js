@@ -9,7 +9,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/project')
     console.error('Failed to connect to MongoDB:', error);
   });
 
-
+  require("dotenv").config();
 // modules 
 let path=require('path')
 let express=require('express')
@@ -17,9 +17,9 @@ let app=express()
 let userRoute=require('./router/userRoute');
 let adminRoute=require('./router/adminRoute');
 let session=require('express-session')
-let env=require('dotenv')
+
 let config=require('./config/config')
-env.config()
+
 let crypto=require('crypto')
 let nocache=require('nocache')
 

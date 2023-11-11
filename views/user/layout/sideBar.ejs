@@ -41,16 +41,16 @@
         </div>
         <!-- Logo -->
         <div class="logo">
-            <a href="index.html"><img src="/user/img/logo.png" alt="RusticLens"></a>
+            <a href="/"><img src="/user/img/logo.png" alt="RusticLens"></a>
         </div>
         <!-- Amado Nav -->
         <nav class="amado-nav">
             <ul>
-                <li class="active"><a href="index.html">Home</a></li>
-                <li><a href="shop.html">Shop</a></li>
-                <li><a href="product-details.html">Product</a></li>
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="checkout.html">Checkout</a></li>
+                <li class="active"><a href="/">Home</a></li>
+                <li><a href="/products">Shop</a></li>
+                <li><a href="/products">Product</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/checkout">Checkout</a></li>
             </ul>
         </nav>
         <!-- Button Group -->
@@ -61,7 +61,7 @@
         <!-- Cart Menu -->
         <div class="cart-fav-search mb-100">
     
-            <a href="cart.html" class="cart-nav"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span>(0)</span></a>
+            <a href="/cart" class="cart-nav"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span>(0)</span></a>
             <a href="#" class="fav-nav"><i class="fa fa-heart-o" aria-hidden="true"></i>Wishlist</a>
             <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> Search</a>
             <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> </a>
@@ -69,7 +69,7 @@
             
             <% if(userDa !== undefined) {%>
 
-                <a href="/userProfile" class="cart-nav"><i class="fa fa-user-circle-o" aria-hidden="true"></i>profile</a>
+                <a href="/profile" class="cart-nav"><i class="fa fa-user-circle-o" aria-hidden="true"></i>profile</a>
                 <a href="/signout" class="cart-nav"><i class="fa fa-sign-out" aria-hidden="true"></i>logout</a>
             <% }else{ %>
                 <a href="/signin" class="cart-nav"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a>

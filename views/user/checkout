@@ -1,0 +1,58 @@
+<%- include ('../user/layout/header.ejs')%>
+<%- include ('../user/layout/profileSideBar.ejs')%>
+
+<div class="products-catagories-area clearfix mt-5">
+    <div class="container">
+        <div class="row">
+            <% if (addresses && addresses.length > 0) { %>
+                <% for(let i = 0; i < addresses.length; i++) { %>
+                <% addresses[i].addresses.forEach((addr) => { %>
+                    <!-- Card for each address -->
+
+                    <!-- <input type="radio" name="address" value="<%= addr._id %>"> -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Billing Address
+                                    </label>
+                                <h5 class="card-title"><%= addr.firstName %> <%= addr.lastName %></h5>
+                                <p class="card-text">Mobile: <%= addr.phone %></p>
+                                <p class="card-text">Email: <%= addr.email %></p>
+                                <p class="card-text">Address: <%= addr.address %>, <%= addr.city %>, <%= addr.state %>, <%= addr.pin %></p>
+                                <p class="card-text">Additional Details: <%= addr.additional %></p>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+                <%}%>
+                
+            <% } else { %>
+                <div class="col-12 mb-4">
+                    <!-- Display a message when no addresses are found -->
+                    <span>No Address found</span>
+                </div>
+            <% } %>
+
+            <!-- Card for adding a new address -->
+            <div class="col-6 mb-4">
+                <div class="card">
+                    <a href="/addAddress" style="text-decoration: none;">
+                        <div class="card-body text-center">
+                            <!-- Icon for adding a new address with orange color -->
+                                <i class="fa fa-plus fa-3x mb-3" style="color: #FFA500;" aria-hidden="true"></i>
+                                <h5 class="card-title">Add New Address</h5>
+                            
+                            <!-- Add a link to navigate to the page where users can add a new address -->
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+</div>
+
+<%- include ('../user/layout/footer.ejs')%>

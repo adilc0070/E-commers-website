@@ -1,0 +1,36 @@
+<%- include ('../user/layout/header.ejs')%>
+<%- include ('../user/layout/profileSideBar.ejs')%>
+
+<div class="products-catagories-area clearfix">
+    <div class="user-profile section-padding-100" style=" position: relative;">
+        <!-- Change Profile Photo Button (Top Right Corner) -->
+        <!-- <button type="button" class="btn btn-warning change-photo-button" style="position: absolute;  top: 10px; right: 10px;">Change Photo</button> -->
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 style="color: #fff; font-size: 100%;">User Dashboard</h2>
+                    <!-- Display User Name and Profile Photo -->
+                    <div class="user-info">
+                        <span class="image-container">
+                            
+                            <img src="/profiles/<%= userDa.profile %>" alt="User Photo" class="profile-photo">
+                            <p class="user-name" style="font-size: x-large;"><%= userDa.name %></p>
+                            
+                        </span>
+                        <a href="/editProfile" class="btn btn-warning change-photo-button" id="edit-profile">
+                            <i class="fa fa-pencil-square custom-icon" aria-hidden="true"></i> Edit
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Update Form -->
+    
+    
+</div>
+</div>
+<%- include ('../user/layout/footer.ejs')%>

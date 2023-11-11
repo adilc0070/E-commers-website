@@ -5,6 +5,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    profile: {
+        type: String,
+        default: 'profile.png'
+    },
     email: {
         type: String,
         required: true,
@@ -17,7 +21,6 @@ const userSchema = mongoose.Schema({
     phone: {
         type: String,
         required: true,
-        
     },
     is_block: {
         type: Number,

@@ -49,8 +49,8 @@
                 <li class="active"><a href="/">Home</a></li>
                 <li><a href="/products">Shop</a></li>
                 <li><a href="/products">Product</a></li>
-                <li><a href="/cart">Cart</a></li>
-                <li><a href="/checkout">Checkout</a></li>
+                
+                
             </ul>
         </nav>
         <!-- Button Group -->
@@ -60,19 +60,28 @@
         </div>
         <!-- Cart Menu -->
         <div class="cart-fav-search mb-100">
-    
-            <a href="/cart" class="cart-nav"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart <span>(0)</span></a>
-            <a href="#" class="fav-nav"><i class="fa fa-heart-o" aria-hidden="true"></i>Wishlist</a>
             <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> Search</a>
-            <a href="#" class="search-nav"><i class="fa fa-search" aria-hidden="true"></i> </a>
             
-            
-            <% if(userDa !== undefined) {%>
-
+            <% if(userDa !== undefined ) {%>
+                <% if (cartData && cartData.products && cartData.products.length > 0) { %>
+                    <a href="/cart" class="cart-nav">
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart
+                        <span><%= cartData.products.length %></span>
+                    </a>
+                <% } else { %>
+                    <a href="/cart" class="cart-nav">
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart
+                        <span>0</span>
+                    </a>
+                <% } %>
+                <a href="#" class="fav-nav"><i class="fa fa-heart-o" aria-hidden="true"></i>Wishlist</a>
                 <a href="/profile" class="cart-nav"><i class="fa fa-user-circle-o" aria-hidden="true"></i>profile</a>
                 <a href="/signout" class="cart-nav"><i class="fa fa-sign-out" aria-hidden="true"></i>logout</a>
+            
             <% }else{ %>
+            
                 <a href="/signin" class="cart-nav"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a>
+            
             <% } %>
         </div>
         <!-- Social Button -->

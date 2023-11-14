@@ -34,6 +34,7 @@ userRoute.get('/signout',userController.logOut)
 
 userRoute.get('/productDetail',userController.productDetail)
 userRoute.get('/products',userController.productPage)
+userRoute.post('/searchProduct',userController.searchitems)
 
 userRoute.get('/profile',userController.userProfile)
 userRoute.get('/editProfile',userController.editProfile)
@@ -46,9 +47,12 @@ userRoute.get('/editAddressPage',userController.editAddressPage)
 userRoute.post('/editAddress',userController.editAddress)
 
 userRoute.get('/cart',cartController.renderCart)
-userRoute.post('/buy-now/:id',cartController.buyNow)
-userRoute.post('/updateCartQuantity',cartController.updateCartQuantity)
-userRoute.post('/deleteCartProduct',cartController.deleteCartProduct)
+userRoute.post('/add-to-cart',cartController.add)
+userRoute.patch('/update-cart',cartController.updateQuantity)
+userRoute.get('/delete-cart',cartController.deleteCart)
+
+
+userRoute.get('/checkout', userController.checkoutPage);
 
 // userRoute.post('/productDetails',userController.productDetails)
 module.exports=userRoute

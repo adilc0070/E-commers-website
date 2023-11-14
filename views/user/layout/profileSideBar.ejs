@@ -60,17 +60,14 @@
         </div> -->
         <!-- Cart Menu -->
         <div class="cart-fav-search mb-100">
-            
-            
-            
             <a href="/home" class=""><i class="fa-duotone fa-house" aria-hidden="true"></i>Home</a>
-            <a href="/profile" class=""><i class="fa-duotone fa-user" aria-hidden="true"></i>Dashboard</a>
-            <a href="/orders" class=""><i class="fa-duotone fa-bag-shopping" aria-hidden="true"></i>Oreders</a>
-            <a href="/address" class=""><i class="fa-duotone fa-address-card" aria-hidden="true"></i>Address</a>
-            <a href="/editProfile" class=""><i class="fa-duotone fa-circle-info" aria-hidden="true"></i>Account Deatails</a>
-            <a href="/wallet" class=""><i class="fa-duotone fa-wallet" aria-hidden="true"></i></i>Wallet</a>
-
+            
             <% if(userDa !== undefined) {%>
+                <a href="/profile" class=""><i class="fa-duotone fa-user" aria-hidden="true"></i>Dashboard</a>
+                <a href="/orders" class=""><i class="fa-duotone fa-bag-shopping" aria-hidden="true"></i>Oreders</a>
+                <a href="/address" class=""><i class="fa-duotone fa-address-card" aria-hidden="true"></i>Address</a>
+                <a href="/editProfile" class=""><i class="fa-duotone fa-circle-info" aria-hidden="true"></i>Account Deatails</a>
+                <a href="/wallet" class=""><i class="fa-duotone fa-wallet" aria-hidden="true"></i></i>Wallet</a>
                 <a href="/signout" class="cart-nav"><i class="fa fa-sign-out" aria-hidden="true"></i>logout</a>
             <% }else{ %>
                 <a href="/signin" class="cart-nav"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a>

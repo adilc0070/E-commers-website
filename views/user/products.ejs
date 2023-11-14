@@ -103,12 +103,14 @@
                         <div class="single-product-wrapper">
                             <!-- Product Image -->
                             <div class="product-img">
+                                <a href="/productDetail?id=<%= product._id %>">
                                 <img src="/products/images/<%= product.images.image2 %>"
                                      style="width: 100%; height: 400px; object-fit: cover;"
                                      alt="Product Image">
                                 <!-- Hover Thumb -->
                                 <img class="hover-img" src="/products/images/<%= product.images.image3 %>" style="width: 100%; height: 400px; object-fit: cover;"
                                 alt="Product Image">
+                                </a>
                             </div>
                 
                             <!-- Product Description -->
@@ -117,7 +119,7 @@
                                 <div class="product-meta-data">
                                     <div class="line"></div>
                                     <p class="product-price"><%= product.price %></p>
-                                    <a href="product-details.html">
+                                    <a href="/productDetail?id=<%= product._id %>">
                                         <h6><%= product.product_name %></h6>
                                     </a>
                                 </div>

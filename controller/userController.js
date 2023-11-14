@@ -7,7 +7,8 @@ require("dotenv").config();
 const session=require('express-session')
 let Products=require('../models/productModel')
 let category=require('../models/catogoryModel')
-let address=require('../models/address')
+let address=require('../models/address');
+const cart = require("../models/cart");
 
 
 // Initialize the OTP variable
@@ -22,18 +23,20 @@ let homePage = async (req, res) => {
     try {
         let produ=await Products.find()
         // console.log(produ)
+        let cartData
         let cat=await category.find()
         let userDa;
         if(req.session.user_id){
             userDa = await user.findById(req.session.user_id)
+            cartData = await cart.findOne({ userid: req.session.user_id })
             if(userDa){
-                res.render("index", { userDa,  cat, produ });
+                res.render("index", { userDa,  cat, produ ,cartData});
             }else{
                 // console.error();
-                res.render("index", { userDa, cat, produ });
+                res.render("index", { userDa, cat, produ ,cartData});
             }
         }else{
-            res.render("index", { userDa, cat , produ});
+            res.render("index", { userDa, cat , produ,cartData});
         }
     } catch (error) {
         res.status(500).send(error);
@@ -351,14 +354,16 @@ let resetPassword=async(req,res)=>{
 let productDetail = async (req, res) => {
     try {
         let Id = req.query.id
-        let userDa;
+        let userDa;        
+        let cartData
         let product = await Products.findOne({_id:Id})
-        if(req.session.user_id){
+        if(req.session.user_id){            
+            cartData = await cart.findOne({ userid: req.session.user_id })
             userDa = await user.findById(req.session.user_id)
-            res.render("productDetails",{product,userDa})
+            res.render("productDetails",{product,userDa,cartData})
         }else{
-            userDetails = await user.findById(req.session.user_id)
-            res.render("productDetails",{product,userDa})
+            
+            res.render("productDetails",{product,userDa,cartData})
         }
     } catch (error) {
         console.log(error.message);
@@ -367,10 +372,11 @@ let productDetail = async (req, res) => {
 
 let productPage = async (req, res) => {
     try {
-       let userDa = await user.findById(req.session.user_id);
-       let catago = await category.find({ blocked: 0 });
-       let product = await Products.find({ block: 0 });
-       res.render("products", { product, userDa, catago });
+        let userDa = await user.findById(req.session.user_id);
+        let catago = await category.find({ blocked: 0 });
+        let cartData = await cart.findOne({ userid: req.session.user_id })
+        let product = await Products.find({ block: 0 });
+        res.render("products", { product, userDa, catago, cartData });
     } catch (error) {
        console.log(error.message);
        // Handle the error appropriately, e.g., send an error response
@@ -409,10 +415,13 @@ let cartPage=async(req,res)=>{
 
 let addressPage = async (req, res) => {
     try {
+
         let userDa = await user.findById(req.session.user_id);
+        let cartData = await cart.findOne({ userid: req.session.user_id })
+
         let addresses = await address.find({ user: req.session.user_id });
 
-        res.render("address", { userDa, addresses });
+        res.render("address", { userDa, addresses, cartData });
     } catch (error) {
         console.log(error.message);
     }
@@ -420,8 +429,9 @@ let addressPage = async (req, res) => {
 
 let addAddressPage = async (req, res) => {
     try {
+        let cartData = await cart.findOne({ userid: req.session.user_id });
         let userDa = await user.findById(req.session.user_id);
-        res.render("addAddress", { userDa });
+        res.render("addAddress", { userDa, cartData });
     } catch (error) {
         console.log(error.message);
     }
@@ -431,6 +441,8 @@ let addAddressPage = async (req, res) => {
 let insertAddress = async (req, res) => {
     try {
         let userDa = await user.findById(req.session.user_id);
+        let cartData = await cart.findOne({ userid: req.session.user_id })
+
 
         // Assuming your form fields are named firstName, lastName, address, city, state, pin, country, phone, email, additionalDetails
         let newAddress = new address({
@@ -463,8 +475,10 @@ let editAddressPage = async (req, res) => {
       console.log('Reached editAddressPage route');
       let addresses = await address.find({ user: req.session.user_id });
       let userDa = await user.findById(req.session.user_id);
+      let cartData= await cart.findOne({ userid: req.session.user_id })
+
       let id = req.query.id;
-      res.render("editAddress", { userDa, id });
+      res.render("editAddress", { userDa, id ,cartData});
     } catch (error) {
       console.error(error.message);
       res.status(500).send('Internal Server Error');
@@ -477,6 +491,7 @@ let editAddress = async (req, res) => {
   try {
     let addresses = await address.find({ user: req.session.user_id });
     let userDa = await user.findById(req.session.user_id);
+    let cartData= await cart.findOne({ userid: req.session.user_id })
     let edit = req.query.id;
 
     if (edit) {
@@ -541,7 +556,7 @@ let editAddress = async (req, res) => {
 
       if (errors.length > 0) {
         // If there are validation errors, render the view with the errors
-        res.render("editAddress", { userDa, addresss, errors });
+        res.render("editAddress", { userDa, addresss, errors, cartData });
       } else {
         // All validations passed, proceed with updating the address
         await address.updateOne(
@@ -567,7 +582,7 @@ let editAddress = async (req, res) => {
       }
     } else {
       // Handle the case where edit query parameter is not provided
-      res.render("editAddress", { userDa, error: "Invalid request." });
+      res.render("editAddress", { userDa, error: "Invalid request." ,cartData});
     }
   } catch (error) {
     console.log(error.message);
@@ -588,6 +603,33 @@ let deleteAddress = async (req, res) => {
 };
 
 
+let checkoutPage = async (req, res) => {
+    try {
+        let cartData = await cart.findOne({ userid: req.session.user_id });
+        let userDa = await user.findById(req.session.user_id);
+        let addresses = await address.find({ user: req.session.user_id });
+
+        res.render("checkout", { userDa, addresses, cartData });
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+// product and catogory search
+let searchitems = async (req, res) => {
+    try {
+        let search = req.body.search;
+        let userDa = await user.findById(req.session.user_id);
+        let cartData = await cart.findOne({ userid: req.session.user_id });
+        let product = await Products.find({ name: { $regex: search, $options: "i" } });
+        let catago = await category.find({ name: { $regex: search, $options: "i" } });
+        res.render("products", { product, userDa, catago, cartData });
+    } catch (error) {
+        console.log(error.message);
+        // Handle the error appropriately, e.g., send an error response
+        res.status(500).send('Internal Server Error');
+    }
+}
 
 
 
@@ -614,5 +656,7 @@ module.exports = {
     insertAddress,
     deleteAddress,
     editAddress,
-    editAddressPage
+    editAddressPage,
+    checkoutPage,
+    searchitems
 };

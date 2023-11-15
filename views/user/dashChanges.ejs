@@ -2,51 +2,39 @@
 <%- include ('../user/layout/profileSideBar.ejs')%>
 
 <script>
-    // Function to show the Save Changes button
-    function showSaveChangesButton() {
-        document.getElementById('save-changes').style.display = 'block';
-    }
-
-    // Function to toggle visibility and read-only state
-    function toggleProfileFields() {
-        toggleVisibility('user-password');
-        toggleReadOnly('user-name');
-        toggleReadOnly('user-email');
-        toggleReadOnly('user-phone');
-    }
-
-    // Function to toggle visibility of an element
-    function toggleVisibility(elementId) {
-        const element = document.getElementById(elementId);
-        element.style.display = element.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // Function to toggle read-only state of an input element
-    function toggleReadOnly(elementId) {
-        const inputElement = document.getElementById(elementId).querySelector('input');
-        inputElement.readOnly = !inputElement.readOnly;
-    }
-
-    // Event listener for the Edit button
-    document.getElementById('edit-profile').addEventListener('click', function () {
-        showSaveChangesButton(); // Show Save Changes button
-        toggleProfileFields(); // Toggle visibility and read-only state
-    });
-
-    // Event listener for the Save Changes button
-    document.getElementById('save-changes').addEventListener('click', function () {
-        document.getElementById('save-changes').style.display = 'none'; // Hide Save Changes button
-        toggleProfileFields(); // Toggle visibility and read-only state
-    });
-
-    // Function to handle profile editing
     function editProfile() {
-        showSaveChangesButton(); // Show Save Changes button
-        toggleProfileFields(); // Toggle visibility and read-only state
-        // Add any additional logic needed for editing the profile
-        console.log('Editing profile...');
+        var inputFields = document.querySelectorAll('.form-control');
+
+        inputFields.forEach(function (field) {
+            field.readOnly = false;
+        });
+
+        // Show the Save Changes and Cancel buttons
+        document.getElementById('save-changes').style.display = 'block';
+        document.getElementById('cancel-edit').style.display = 'block';
+        document.getElementById('user-password').style.display = 'block';
+
+        // Hide the Edit button
+        document.getElementById('edit-profile').style.display = 'none';
+    }
+
+    function cancelEdit() {
+        var inputFields = document.querySelectorAll('.form-control');
+
+        inputFields.forEach(function (field) {
+            field.readOnly = true;
+        });
+
+        // Hide the Save Changes and Cancel buttons
+        document.getElementById('save-changes').style.display = 'none';
+        document.getElementById('cancel-edit').style.display = 'none';
+
+        // Show the Edit button
+        document.getElementById('edit-profile').style.display = 'block';
     }
 </script>
+
+
 <div class="products-catagories-area clearfix">    
     <!-- User Profile Update Form -->
     <div class="container">
@@ -81,24 +69,25 @@
                     <!-- User Password Update -->
                     <div class="form-group">
                         <label for="user-password" style="color: #FFA500;">User Password</label>
-                        <input type="password" id="user-password" name="user-password" class="form-control" readOnly>
+                        <input type="password" id="user-password" name="user-password" style="display: none;" class="form-control" readOnly>
                     </div>
                     <!-- User Phone Update -->
                     <div class="form-group">
                         <label for="user-phone" style="color: #FFA500;">User Phone</label>
                         <input type="text" id="user-phone" name="user-number" class="form-control" value="<%= userDa.phone %>" readOnly>
-                    </div>    
+                    </div>
 
-                    <!-- Other Profile Details (Add more fields as needed) -->
-                    <!-- ... -->
+                    
+                    <!-- Save Changes, Edit, and Cancel Buttons -->
                     <a href="/saveProfile" class="btn btn-warning change-photo-button" id="save-changes" style="display: none;">
                         <i class="fa fa-floppy-o custom-icon" aria-hidden="true"></i> Save Changes
                     </a>
                     <a onclick="editProfile()" class="btn btn-warning change-photo-button" id="edit-profile">
                         <i class="fa fa-pencil-square custom-icon" aria-hidden="true"></i> Edit
                     </a>
-                        
-                
+                    <a onclick="cancelEdit()" class="btn btn-danger change-photo-button" id="cancel-edit" style="display: none;">
+                        <i class="fa fa-times custom-icon" aria-hidden="true"></i> Cancel
+                    </a>
                 </form>
             </div>
         </div>

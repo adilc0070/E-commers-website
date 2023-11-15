@@ -369,21 +369,79 @@ let productDetail = async (req, res) => {
         console.log(error.message);
     }
 }
-
 let productPage = async (req, res) => {
     try {
         let userDa = await user.findById(req.session.user_id);
         let catago = await category.find({ blocked: 0 });
-        let cartData = await cart.findOne({ userid: req.session.user_id })
-        let product = await Products.find({ block: 0 });
-        res.render("products", { product, userDa, catago, cartData });
+        let cartData = await cart.findOne({ userid: req.session.user_id });
+
+        // Pagination Logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8; // Number of products per page
+        const skip = (page - 1) * limit;
+
+        const productCount = await Products.countDocuments({ block: 0 });
+        const totalPages = Math.ceil(productCount / limit);
+
+        const product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+
+        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
     } catch (error) {
-       console.log(error.message);
-       // Handle the error appropriately, e.g., send an error response
-       res.status(500).send('Internal Server Error');
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
     }
- }
- 
+}
+
+let filterProducts = async (req, res) => {
+    try {
+        const categoryId = req.query.categoryId; 
+        let userDa = await user.findById(req.session.user_id);
+        let catago = await category.find({ blocked: 0 });
+        let cartData = await cart.findOne({ userid: req.session.user_id });
+
+        // Pagination Logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8; // Number of products per page
+        const skip = (page - 1) * limit;
+
+        // Filter products by category
+        const productCount = await Products.countDocuments({ category: categoryId, block: 0 });
+        const totalPages = Math.ceil(productCount / limit);
+
+        const product = await Products.find({ category: categoryId, block: 0 }).skip(skip).limit(limit);
+
+        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+let displayFilteredProducts = async (req, res) => {
+    try {
+        
+        const categoryId = req.query.categoryId;
+        let userDa = await user.findById(req.session.user_id);
+        let catago = await category.find({ blocked: 0 });
+        let cartData = await cart.findOne({ userid: req.session.user_id });
+
+        // Pagination Logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8; // Number of products per page
+        const skip = (page - 1) * limit;
+
+        // Filter products by category
+        const productCount = await Products.countDocuments({ category: categoryId, block: 0 });
+        const totalPages = Math.ceil(productCount / limit);
+
+        const product = await Products.find({ category: categoryId, block: 0 }).skip(skip).limit(limit);
+
+        res.render("filteredProducts", { product, userDa, catago, cartData, totalPages, currentPage: page });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 let userProfile=async(req,res)=>{
     try {
@@ -658,5 +716,7 @@ module.exports = {
     editAddress,
     editAddressPage,
     checkoutPage,
-    searchitems
+    searchitems,
+    filterProducts,
+    displayFilteredProducts
 };

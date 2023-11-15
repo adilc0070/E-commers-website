@@ -1,0 +1,48 @@
+<!-- Assuming your orders.ejs is similar to this -->
+
+<%- include ('../user/layout/header.ejs')%>
+<%- include ('../user/layout/profileSideBar.ejs')%>
+
+<div class="order-history-area section-padding-100">
+    <div class="container-fluid">
+        <div class="row" id="orders">
+            <div class="col-12 col-lg-8">
+                <!-- ... (existing code) ... -->
+                <div class="order-history-table clearfix">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                                    <tr>
+                                        <td> order.orderId %></td>
+                                        <td> order.date %></td>
+                                        <td><span>₹ order.totalAmount %></span></td>
+                                        <td> order.status %></td>
+                                        <td><a href="/order-details?id= order.orderId %>">View Details</a></td>
+                                    </tr>
+                            
+                                <tr>
+                                    <td colspan="5">No orders found.</td>
+                                </tr>
+                           
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <!-- You can display summary or any other information related to orders here -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<%- include ('../user/layout/footer.ejs')%>

@@ -1,165 +1,143 @@
-let user = require('../models/userModel')
-let ProductDB = require('../models/productModel')
-let category = require('../models/catogoryModel')
-const Cart = require('../models/cart')
+// Import necessary modules
+let user = require('../models/userModel');
+let ProductDB = require('../models/productModel');
+let Cart = require('../models/cart');
 
-// +++++++++++++++++++++++++++++RENDER CART+++++++++++++++++++++++++++++++++
+// Render Cart
 let renderCart = async (req, res) => {
-  try {
-      let userDa = await user.findById(req.session.user_id);
-      
-      let cartData = await Cart.findOne({ userid: req.session.user_id }).populate("products.productId");
-      
-      let totalamount = 0;
+    try {
+        // Fetch user data and cart data
+        let userDa = await user.findById(req.session.user_id);
+        let cartData = await Cart.findOne({ userid: req.session.user_id }).populate("products.productId");
 
-      if (!cartData || !cartData.products || cartData.products.length === 0) {
-          console.log("Your cart is empty.");
-          return res.render('cart', { userName: req.session.name, cartData: null, totalamount, userDa,datatotal });
-      } else if (cartData) {
-          var datatotal = cartData.products.map((products) => {
-              return products.totalPrice * products.count;
-          });
+        let totalamount = 0;
 
-          // Calculate total amount
-          if (datatotal.length > 0) {
-              totalamount = datatotal.reduce((x, y) => {
-                  return x + y;
-              });
-          }
-      }
+        // Check if the cart is empty
+        if (!cartData || !cartData.products || cartData.products.length === 0) {
+            console.log("Your cart is empty.");
+            return res.render('cart', { userName: req.session.name, cartData: null, totalamount, userDa, datatotal: null });
+        } else {
+            // Calculate total amount
+            var datatotal = cartData.products.map((products) => {
+                return products.totalPrice * products.count;
+            });
 
-      res.render('cart', { user: req.session.name, cartData, totalamount, userDa, datatotal });
-  } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal Server Error");
-  }
-};
+            if (datatotal.length > 0) {
+                totalamount = datatotal.reduce((x, y) => {
+                    return x + y;
+                });
+            }
+        }
 
-// +++++++++++++++++++++++++++++ADD TO CART+++++++++++++++++++++++++++++++++
-// const addToCart = async (req, res) => {
-//   try {
-//     const userId = req.session.user_id;
-//     const productId = req.body.productId;
-
-//     if (userId && productId) {
-//       const productData = await ProductDB.findOne({ _id: productId });
-
-//       if (productData.quantity > 0) {
-//         // Define cartItem here
-//         const cartItem = {
-//           productId: productId,
-//           count: 1,
-//           sum: productData.price,
-//           totalPrice: productData.price,
-//         };
-
-//         const cartData = await Cart.findOne({ userName: userId, "products.productId": productId });
-
-//         if (cartData) {
-//           // Product is already in the cart, increase quantity
-//           const newCart = await Cart.findOneAndUpdate(
-//             { userid: userId },
-//             { $set: { userid: userId, userName: req.session.name }, $push: { products: cartItem } },
-//             { upsert: true, new: true }
-//           );
-
-//           console.log("Product added to the cart");
-//           res.json({ result: true });
-//         } else {
-//           // Product not in the cart, add to cart
-//           const newCart = await Cart.findOneAndUpdate(
-//             { userid: userId },
-//             { $set: { userid: userId, userName: req.session.name }, $push: { products: cartItem } },
-//             { upsert: true, new: true }
-//           );
-
-//           console.log("Product added to the cart");
-//           res.json({ result: true });
-//         }
-//       } else {
-//         // Handle the case when the product is out of stock
-//         res.json({ result: "out_of_stock" });
-//       }
-//     } else {
-//       console.log("Invalid request parameters");
-//       res.status(400).send("Bad Request");
-//     }
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).send("Internal Server Error");
-//   }
-// };
-
-
-let add=async(req,res)=>{
-  try{
-    const userId = req.session.user_id;
-    const productId = req.query.id;
-    // console.log(productId);
-    const productData = await ProductDB.findOne({ _id: productId });
-    if(productData){
-      const cartItem = {
-        productId: productId,
-        count: 1,
-        sum: productData.price,
-        totalPrice: productData.price,
-      };
-       
-        const newCart = await Cart.findOneAndUpdate(
-          { userid: userId },
-          { $set: { userid: userId }, $push: { products: cartItem } },
-          { upsert: true, new: true }
-        );
-        
-        console.log("Product added to the cart");
-        
-          
-        // const newCart = await Cart.findOneAndUpdate(
-        //   { userid: userId },
-        //   { $set: { userid: userId }, $push: { products: cartItem } },
-        //   { upsert: true, new: true });
-    
-    }
-  }catch(error){
-    console.log(error.message);
-    res.status(500).send("Internal Server Error");
-  
-  }
-}
-
-
-let updateQuantity=async(req,res)=>{
-    try{
-        const userId = req.session.user_id;
-        const productId = req.query.id;
-        const newCart = await Cart.findOneAndUpdate(
-          { userid: userId, "products.productId": productId },
-          { $set: { "products.$.count": req.body.count } },
-          
-        )
-        res.redirect('/cart');
-    }catch(error){
+        res.render('cart', { user: req.session.name, cartData, totalamount, userDa, datatotal });
+    } catch (error) {
         console.log(error.message);
         res.status(500).send("Internal Server Error");
     }
-}
+};
 
+// Add to Cart
+const add = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const productId = req.query.id;
+        console.log(userId, productId);
+        // Fetch product data from the database
+        const productData = await ProductDB.findOne({ _id: productId });
+
+        if (productData && userId) {
+            const cartItem = {
+                productId: productId,
+                count: 1,
+                sum: productData.price,
+                totalPrice: productData.price,
+            };
+
+            // Check if the product is already in the user's cart
+            let cartData = await Cart.findOne({ userid: userId, "products.productId": productId });
+
+            if (cartData) {
+                // If the product is already in the cart, update the quantity
+                const updatedCart = await Cart.findOneAndUpdate(
+                    { userid: userId, "products.productId": productId },
+                    {
+                        $inc: { "products.$.count": 1, "products.$.totalPrice": productData.price },
+                    },
+                    { new: true }
+                );
+            } else {
+                // If the product is not in the cart, add it to the cart
+                const newCart = await Cart.findOneAndUpdate(
+                    { userid: userId },
+                    { $set: { userid: userId }, $push: { products: cartItem } },
+                    { upsert: true, new: true }
+                );
+            }
+
+            console.log("Product added to the cart");
+            res.status(200).send("Product added to the cart");
+        } else {
+            // Handle the case where the product is not found
+            console.log("Product not found");
+            res.status(404).send("Product not found");
+        }
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+// Update Quantity
+let updateQuantity = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        // const productId = req.query.id;
+        const productId = req.body.id;
+        const newCount = req.body.quantity;
+        console.log(userId, productId, newCount);
+        // Update the cart item count
+        // const updatedCart = await Cart.findOneAndUpdate(
+        //     { userid: userId, "products.productId": productId },
+        //     { $set: { "products.$.count": newCount } },
+        //     { new: true }
+        // );
+
+        await Cart.updateOne(
+            { userid: userId, "products.productId": productId },
+            { $inc: { "products.$.count": newCount } }
+          );
+          console.log("count increased");
+ 
+          res.json({ success: true });
+
+        // if (!updatedCart) {
+        //     return res.status(404).json({ result: false, message: 'Cart item not found' });
+        // }
+
+        // res.json({ result: true, message: 'Cart item updated successfully' });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+// Delete Cart Item
 let deleteCart = async (req, res) => {
     try {
         console.log('Reached deleteCart route');
         const userId = req.session.user_id;
         const productId = req.query.id;
-        
-        //find the product in the cart
+
+        // Find the product in the cart
         const product = await Cart.findOne({ userid: userId, "products.productId": productId });
-        if(product){
-            //delet the product and return the updated cart
+        if (product) {
+            // Delete the product and return the updated cart
             const updatedCart = await Cart.updateOne(
                 { userid: userId },
-                {$pull: { products: { productId: productId } }}
-            )
-            
+                { $pull: { products: { productId: productId } } }
+            );
         }
+
         res.redirect('/cart');
     } catch (error) {
         console.log(error.message);
@@ -167,58 +145,64 @@ let deleteCart = async (req, res) => {
     }
 };
 
+// Buy Now
 const buyNow = async (req, res) => {
-  try {
-      const userId = req.session.user_id;
-      const productId = req.params.id;
+    try {
+        const userId = req.session.user_id;
+        const productId = req.params.id;
 
-      const productData = await ProductDB.findOne({ _id: productId });
-      const cartData = await Cart.findOne({ userid: userId, "products.productId": productId });
+        const productData = await ProductDB.findOne({ _id: productId });
+        const cartData = await Cart.findOne({ userid: userId, "products.productId": productId });
 
-      if (userId && productData) {
-          if (cartData) {
-              // Product is already in the cart
-              return res.json({ alreadyAdded: true });
-          } else {
-              const cartItem = {
-                  productId: productId,
-                  count: 1,
-                  totalPrice: productData.price,
-              };
+        if (userId && productData) {
+            if (cartData) {
+                // Product is already in the cart
+                return res.json({ alreadyAdded: true });
+            } else {
+                const cartItem = {
+                    productId: productId,
+                    count: 1,
+                    totalPrice: productData.price,
+                };
 
-              await Cart.findOneAndUpdate(
-                  { userid: userId },
-                  { $set: { userid: userId }, $push: { products: cartItem } },
-                  { upsert: true }
-              );
+                await Cart.findOneAndUpdate(
+                    { userid: userId },
+                    { $set: { userid: userId }, $push: { products: cartItem } },
+                    { upsert: true }
+                );
 
-              // Redirect to the cart page for the "Buy Now" functionality
-              return res.redirect('/cart');
-          }
-      } else {
-          // Handle invalid request parameters
-          console.log("Invalid request parameters");
-          return res.status(400).send("Bad Request");
-      }
-  } catch (error) {
-      console.log(error.message);
-      return res.status(500).send("Internal Server Error");
-  }
+                // Redirect to the cart page for the "Buy Now" functionality
+                return res.redirect('/cart');
+            }
+        } else {
+            // Handle invalid request parameters
+            console.log("Invalid request parameters");
+            return res.status(400).send("Bad Request");
+        }
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send("Internal Server Error");
+    }
 };
 
+// Order Page
+let orderPage = async (req, res) => {
+    try {
+        let userDa = await user.findById(req.session.user_id);
+        let cartData = await Cart.findOne({ userid: req.session.user_id }).populate("products.productId");
+        res.render('orderDetails', { user: req.session.name, cartData, userDa });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
 
-// +++++++++++++++++++++++++++++ADD QUANTITY TO CART+++++++++++++++++++++++++++++++++
-
-
-
-// +++++++++++++++++++++++++++++DELETE PRODUCT FROM CART+++++++++++++++++++++++++++++++++
-
-  
+// Export the functions
 module.exports = {
-  
-    add, 
+    add,
     renderCart,
     buyNow,
     deleteCart,
-    updateQuantity
-}
+    updateQuantity,
+    orderPage
+};

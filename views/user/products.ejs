@@ -8,14 +8,17 @@
                 <h6 class="widget-title mb-30">Catagories</h6>
                 
                 <!--  Catagories  -->
-                <div class="catagories-menu">
-                    <ul>
-                        <li class="active"><a href="/products">All</a></li>
-                        <% catago.forEach((catagory) => { %>
-                        <li><a href="/productDetail?id=<%=catagory._id%>"><%=catagory.name%></a></li>
-                        <% }) %>
-                    </ul>
-
+                <div class="filter-form">
+                    <form action="/filterProducts?page=<%= currentPage %>" method="get">
+                        <label for="categoryId">Filter by Category:</label>
+                        <select name="categoryId" id="categoryId">
+                            <option value="" selected>All Categories</option>
+                            <% catago.forEach((cat) => { %>
+                                <option value="<%= cat._id %>"><%= cat.name %></option>
+                            <% }) %>
+                        </select>
+                        <button type="submit">Apply Filter</button>
+                    </form>
                 </div>
             </div>
 
@@ -148,10 +151,11 @@
                         <!-- Pagination -->
                         <nav aria-label="navigation">
                             <ul class="pagination justify-content-end mt-50">
-                                <li class="page-item active"><a class="page-link" href="#">01.</a></li>
-                                <li class="page-item"><a class="page-link" href="#">02.</a></li>
-                                <li class="page-item"><a class="page-link" href="#">03.</a></li>
-                                <li class="page-item"><a class="page-link" href="#">04.</a></li>
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="/products?page=<%= i %>"><%= i %></a>
+                                    </li>
+                                <% } %>
                             </ul>
                         </nav>
                     </div>

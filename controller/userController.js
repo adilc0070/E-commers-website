@@ -149,63 +149,49 @@ async function loginPage(req, res) {
 // Login user
 async function loginUser(req, res) {
     try {
-        let msg=''
-        let emailMessage=''
-        let passwordMessage=''
-        let blockMessage=''
+        let emailMessage = '';
+        let passwordMessage = '';
+        let blockMessage = '';
+
         if (req.body.email === "" || req.body.password === "") {
-            emailMessage = "Please Enter Your Email"
-            passwordMessage = "Please Enter Your Password"
-            res.render('signin',{emailMessage,passwordMessage,blockMessage});
+            emailMessage = "Please Enter Your Email";
+            passwordMessage = "Please Enter Your Password";
+            res.render('signin', { emailMessage, passwordMessage, blockMessage });
+            return;
         }
-        const foundUser = await user.findOne({
-            email: req.body.email
-        });
-        // console.log(foundUser);
-        if(foundUser){
-            if(foundUser.verified!=0){
-                msg="Please Verify Your Email"
+
+        const foundUser = await user.findOne({ email: req.body.email });
+
+        if (foundUser) {
+            if (foundUser.verified !== 0) {
+                const msg = "Please Verify Your Email";
                 sendVerifyMail(req.body.email);
-                res.render('otp',{msg});
-            }else if(!validateEmail(req.body.email)||req.body.email==""){
-                emailMessage="Please Enter a Valid Email"
-                // console.log("error");
-                res.render('signin',{emailMessage,passwordMessage,blockMessage});
-            }else if(foundUser.is_block==1){
-                // console.log("error");
-                blockMessage="Your account is blocked"
-                res.render('signin',{emailMessage,passwordMessage,blockMessage});
+                res.render('otp', { msg });
+            } else if (!validateEmail(req.body.email) || req.body.email === "") {
+                emailMessage = "Please Enter a Valid Email";
+                res.render('signin', { emailMessage, passwordMessage, blockMessage });
+            } else if (foundUser.is_block === 1) {
+                blockMessage = "Your account is blocked";
+                res.render('signin', { emailMessage, passwordMessage, blockMessage });
+            } else {
+                const passwordMatch = await bcrypt.compare(req.body.password, foundUser.password);
 
-            }else {
-            
-                // console.log(req.session);
-                bcrypt.compare( req.body.password,foundUser.password, (err, result) => {
-                    // console.log(result);
-                    if(err){
-                        passwordMessage = "Something went wrong"
-                        res.render('signin',{emailMessage,passwordMessage,blockMessage})
-                        console.log("error on comparing the password"+err);
-                    }else if(result){
-                        console.log("user enter afeter comparing the password and email"  );
-                        req.session.user_id = foundUser._id;
-                        res.redirect("/home");
-
-                    }
-                    else {
-                        console.log("error");
-                        res.redirect("/signin");
-                    }
-                })
+                if (passwordMatch) {
+                    console.log("User entered after comparing the password and email");
+                    req.session.user_id = foundUser._id;
+                    res.redirect("/home");
+                } else {
+                    passwordMessage = "Incorrect Password";
+                    res.render('signin', { emailMessage, passwordMessage, blockMessage });
+                }
             }
-        }else if(!foundUser){
-            let emailErrorMsg="please create an account"
-            res.render('signUp',{emailErrorMsg});
+        } else {
+            const emailErrorMsg = "Please create an account";
+            res.render('signUp', { emailErrorMsg });
         }
-        // if {
-        //     res.redirect("/login");
-        // }
     } catch (error) {
-        res.status(500).send(error);
+        console.error("Error in loginUser:", error);
+        res.status(500).send(error.message);
     }
 }
 
@@ -652,18 +638,6 @@ let deleteAddress = async (req, res) => {
 };
 
 
-let checkoutPage = async (req, res) => {
-    try {
-        let cartData = await cart.findOne({ userid: req.session.user_id });
-        let userDa = await user.findById(req.session.user_id);
-        let addresses = await address.find({ user: req.session.user_id });
-
-        res.render("checkout", { userDa, addresses, cartData });
-    } catch (error) {
-        console.log(error.message);
-    }
-};
-
 // product and catogory search
 let searchitems = async (req, res) => {
     try {
@@ -705,7 +679,6 @@ module.exports = {
     deleteAddress,
     editAddress,
     editAddressPage,
-    checkoutPage,
     searchitems,
     filterProducts,
     displayFilteredProducts

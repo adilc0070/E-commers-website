@@ -27,10 +27,24 @@ let renderCart = async (req, res) => {
                     return x + y;
                 });
             }
-                    
+
+        }
+        // Calculate the cart total
+        let cartTotal = 0;
+        if (cartData && cartData.products && cartData.products.length > 0) {
+            cartData.products.forEach(product => {
+                cartTotal += product.productId.price * product.count;
+            });
         }
 
-        res.render('cart', { user: req.session.name, cartData, totalamount, userDa, datatotal });
+        // Calculate the delivery charge based on the cart total
+        let deliveryCharge = (cartTotal < 1000) ? 67 : 0;
+
+        // Calculate the total amount including the delivery charge
+        let totalAmount = cartTotal + deliveryCharge;
+        console.log("Total Amount:", totalAmount, cartTotal, deliveryCharge);
+
+        res.render('cart', { user: req.session.name, cartData, totalamount, userDa, datatotal, deliveryCharge, totalAmount, cartTotal });
     } catch (error) {
         console.log(error.message);
         res.status(500).send("Internal Server Error");
@@ -92,35 +106,58 @@ const add = async (req, res) => {
 let updateQuantity = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        // const productId = req.query.id;
         const productId = req.body.id;
         const newCount = req.body.quantity;
-        console.log(userId, productId, newCount);
-        // Update the cart item count
-        // const updatedCart = await Cart.findOneAndUpdate(
-        //     { userid: userId, "products.productId": productId },
-        //     { $set: { "products.$.count": newCount } },
-        //     { new: true }
-        // );
 
+        // Fetch the product data
+        const productData = await ProductDB.findOne({ _id: productId });
+
+        // Check if the product data is available
+        if (!productData) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        // Check if the new quantity is valid (non-negative and within stock limits)
+        if (newCount < 0 || newCount > productData.stock) {
+            return res.status(400).json({ success: false, message: 'Invalid quantity or stock exceeded' });
+        }
+
+        // Update the cart
         await Cart.updateOne(
             { userid: userId, "products.productId": productId },
             { $inc: { "products.$.count": newCount } }
-          );
-          console.log("count increased");
- 
-          res.json({ success: true });
+        );
 
-        // if (!updatedCart) {
-        //     return res.status(404).json({ result: false, message: 'Cart item not found' });
-        // }
+        // Fetch the updated cart data
+        const updatedCart = await Cart.findOne({ userid: userId }).populate("products.productId");
 
-        // res.json({ result: true, message: 'Cart item updated successfully' });
+        // Calculate the new cart total
+        let cartTotal = updatedCart.products.reduce((total, product) => {
+            return total + product.productId.price * product.count;
+        }, 0);
+
+        // Calculate the new delivery charge based on the updated cart total
+        let deliveryCharge = (cartTotal < 1000) ? 67 : 0;
+
+        // Calculate the new total amount including the delivery charge
+        let totalAmount = cartTotal + deliveryCharge;
+
+        // Send a success response with the updated cart data
+        return res.json({
+            success: true,
+            message: 'Quantity updated successfully',
+            updatedCart,
+            totalAmount
+        });
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send("Internal Server Error");
+        console.error(error.message);
+        // Send an error response with a message
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
+
+
 
 // Delete Cart Item
 let deleteCart = async (req, res) => {
@@ -205,5 +242,5 @@ module.exports = {
     buyNow,
     deleteCart,
     updateQuantity,
-    orderPage
+    
 };

@@ -123,24 +123,24 @@ let logOut = async (req, res) => {
 
 let addCategory = async (req, res) => {
     try {
-        let categoryErrorMessage
-        let { categoryName } = req.body
+        let categoryErrorMessage;
+        let { categoryName } = req.body;
         console.log(categoryName);
-        let catego = await category.findOne({ name: categoryName })
-        if(!catego){
-            let cat = new category({ name: categoryName })
-            await cat.save()
-            console.log(cat);
-            res.redirect('/admin/categoryManagement')
-        }else{
-            categoryErrorMessage = 'Category Already Exist'
-            res.render('addCategory', { categoryErrorMessage })
+        // Use a case-insensitive regular expression for the query
+        let existingCategory = await category.findOne({ name: { $regex: new RegExp(categoryName, 'i') } });
+        if (!existingCategory) {
+            let newCategory = new category({ name: categoryName });
+            await newCategory.save();
+            console.log(newCategory);
+            res.redirect('/admin/categoryManagement');
+        } else {
+            categoryErrorMessage = 'Category Already Exists';
+            res.render('addCategory', { categoryErrorMessage });
         }
-        
     } catch (error) {
         console.log(error.message);
     }
-}
+};
 
 let categoryManagement = async (req, res) => {
     try {

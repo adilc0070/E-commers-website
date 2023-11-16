@@ -3,7 +3,7 @@
 
 <div class="cart-table-area section-padding-100">
     <div class="container-fluid">
-        <div class="row" id="cart">
+        <div class="row">
             <div class="col-12 col-lg-8">
                 <div class="cart-table clearfix" id="Cart">
                     <table class="table">
@@ -18,7 +18,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% if (cartData && cartData.products && cartData.products.length > 0) { %>
+                            <% if (cartData && cartData.products && cartData.products.length > 0 ) { %>
                                 <% cartData.products.forEach(product => { %>
                                     <tr>
                                         <td class="cart_product_img">
@@ -32,13 +32,13 @@
                                         </td>
                                         <td class="qty">
                                             <div class="qty-btn d-flex">
-                                                <div class="quantity" >
+                                                <div class="quantity">
                                                     <span class="qty-minus" onclick="productQuantity('<%=product.productId._id %>', -1)">
-                                                       <i class="fa fa-minus"></i> 
+                                                        <i class="fa fa-minus"></i>
                                                     </span>
-                                                    <input type="text" class="qty-text "id="qty-<%= product.productId._id %>" step="1" min="1" name="quantity" value="<%= product.count %>" />
+                                                    <input type="text" class="qty-text " id="qty-<%= product.productId._id %>" step="1" min="1" name="quantity" value="<%= product.count %>" />
                                                     <span class="qty-plus textalign-center" style="width: 3%;" onclick="productQuantity('<%=product.productId._id %>',1)">
-                                                    <i class="fa fa-plus"></i>
+                                                        <i class="fa fa-plus"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -46,8 +46,8 @@
                                         <td class="price">
                                             <span>₹<%= product.productId.price * product.count %></span>
                                         </td>
-                                        <td class="cart_delete">
-                                            <a href="/delete-cart?id=<%=product.productId._id %>"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                        <td class="cart_delete btn btn-danger">
+                                            <a href="/delete-cart?id=<%=product.productId._id %>"><i class="fa fa-times" aria-hidden="true"></i>remove</a>
                                         </td>
                                     </tr>
                                 <% }); %>
@@ -61,29 +61,10 @@
                 </div>
             </div>
 
-
-
-
-
             <div class="col-12 col-lg-4">
                 <div class="cart-summary">
                     <h5>Cart Total</h5>
                     <ul class="summary-table">
-                        <% 
-                            // Calculate the cart total
-                            let cartTotal = 0;
-                            if (cartData && cartData.products && cartData.products.length > 0) {
-                                cartData.products.forEach(product => {
-                                    cartTotal += product.productId.price * product.count;
-                                });
-                            }
-
-                            // Calculate the delivery charge based on the cart total
-                            let deliveryCharge = (cartTotal < 1000) ? 67 : 0;
-
-                            // Calculate the total amount including the delivery charge
-                            let totalAmount = cartTotal + deliveryCharge;
-                        %>
                         <li><span>Subtotal:</span> <span>₹<%= cartTotal.toFixed(2) %></span></li>
                         <li><span>Delivery:</span> <span>₹<%= deliveryCharge.toFixed(2) %></span></li>
                         <li><span>Total:</span> <span>₹<%= totalAmount.toFixed(2) %></span></li>
@@ -99,30 +80,42 @@
 
 </div>
 <script>
-    function productQuantity(id , newval) {
-     
-        
-    $.ajax({
-    url: "/update-cart", // Replace with the actual endpoint
-    method: "POST",
-    data: {
-      id: id,
-      quantity: newval,
-    },
-    success: function (response) {
-      $("#Cart").load("/cart #Cart");
+    function productQuantity(id, newval) {
+        $.ajax({
+            url: "/update-cart",
+            method: "POST",
+            data: {
+                id: id,
+                quantity: newval,
+            },
+            success: function (response) {
+                // Check if the response contains a success message
+                if (response.success) {
+                    // Reload the cart section
+                    $("#Cart").load("/cart #Cart");
 
-      // Handle the response if needed
-    },
-    error: function (error) {
-      console.error("Error updating product quantity:", error);
-    },
-  });
-
-}
-
+                    // Update the total amount on the page
+                    $("#totalAmount").text("₹" + response.totalAmount.toFixed(2));
+                } else {
+                    // Show a SweetAlert with an error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message, // You can customize the error message
+                    });
+                }
+            },
+            error: function (error) {
+                // Show a SweetAlert with an error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error updating product quantity', // You can customize the error message
+                });
+                console.error("Error updating product quantity:", error);
+            },
+        });
+    }
 </script>
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <%- include ('../user/layout/footer.ejs')%>

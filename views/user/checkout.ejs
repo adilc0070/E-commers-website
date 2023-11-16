@@ -2,32 +2,29 @@
 <%- include ('../user/layout/profileSideBar.ejs')%>
 
 <div class="products-catagories-area clearfix mt-5">
-    <div class="container d-flex">
+    <div class="container " >
         <div class="row">
             <% if (addresses && addresses.length > 0) { %>
                 <% for(let i = 0; i < addresses.length; i++) { %>
-                <% addresses[i].addresses.forEach((addr) => { %>
-                    <!-- Card for each address -->
-
-                    <!-- <input type="radio" name="address" value="<%= addr._id %>"> -->
-                    <div class="col-lg-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <% addresses[i].addresses.forEach((addr) => { %>
+                        <!-- Card for each address -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="<%= addr._id %>">
                                     <label class="form-check-label" for="flexRadioDefault1">
                                         Billing Address
                                     </label>
-                                <h5 class="card-title"><%= addr.firstName %> <%= addr.lastName %></h5>
-                                <p class="card-text">Mobile: <%= addr.phone %></p>
-                                <p class="card-text">Email: <%= addr.email %></p>
-                                <p class="card-text">Address: <%= addr.address %>, <%= addr.city %>, <%= addr.state %>, <%= addr.pin %></p>
-                                <p class="card-text">Additional Details: <%= addr.additional %></p>
+                                    <h5 class="card-title"><%= addr.firstName %> <%= addr.lastName %></h5>
+                                    <p class="card-text">Mobile: <%= addr.phone %></p>
+                                    <p class="card-text">Email: <%= addr.email %></p>
+                                    <p class="card-text">Address: <%= addr.address %>, <%= addr.city %>, <%= addr.state %>, <%= addr.pin %></p>
+                                    <p class="card-text">Additional Details: <%= addr.additional %></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <% }); %>
+                    <% }); %>
                 <%}%>
-                
             <% } else { %>
                 <div class="col-12 mb-4">
                     <!-- Display a message when no addresses are found -->
@@ -36,50 +33,91 @@
             <% } %>
 
             <!-- Card for adding a new address -->
-            <div class="col-6 mb-4">
+            <div class="col-lg-6 mb-4">
                 <div class="card">
                     <a href="/addAddress" style="text-decoration: none;">
                         <div class="card-body text-center">
                             <!-- Icon for adding a new address with orange color -->
-                                <i class="fa fa-plus fa-3x mb-3" style="color: #FFA500;" aria-hidden="true"></i>
-                                <h5 class="card-title">Add New Address</h5>
-                            
-                            <!-- Add a link to navigate to the page where users can add a new address -->
+                            <i class="fa fa-plus fa-3x mb-3" style="color: #FFA500;" aria-hidden="true"></i>
+                            <h5 class="card-title">Add New Address</h5>
                         </div>
                     </a>
                 </div>
             </div>
-            
         </div>
-        <div class="col-12 col-lg-4" style="height: 100px;">
-            <div class="cart-summary">
-                <h5>Cart Total</h5>
-                <ul class="summary-table">
-                    <li><span>subtotal:</span> <span>$140.00</span></li>
-                    <li><span>delivery:</span> <span>Free</span></li>
-                    <li><span>total:</span> <span>$140.00</span></li>
-                </ul>
 
-                <div class="payment-method">
-                    <!-- Cash on delivery -->
-                    <div class="custom-control custom-checkbox mr-sm-2">
-                        <input type="checkbox" class="custom-control-input" id="cod" checked>
-                        <label class="custom-control-label" for="cod">Cash on Delivery</label>
+        <!-- Cart Summary -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="cart-summary" style="margin: 3%; background-color: beige; padding: 20px; border-radius: 20px;">
+                    <h5>Cart Total</h5>
+                    <ul class="summary-table">
+                        <li id=" subtotal"><span>Subtotal:</span> <span>₹<%= cartTotal.toFixed(2) %></span></li>
+                        <li id="deliveryCharge"><span>Delivery:</span> <span>₹<%= deliveryCharge.toFixed(2) %></span></li>
+                        <li ><span>Total:</span> <span id="totalPrice">₹<%= totalAmount.toFixed(2) %></span></li>
+                    </ul>
+                    <div class="payment-method">
+                        <!-- Cash on delivery -->
+                        <div class="custom-control custom-radio mr-sm-2">
+                            <input type="radio" class="custom-control-input" id="cod" name="paymentMethod" checked>
+                            <label class="custom-control-label" for="cod">Cash on Delivery</label>
+                        </div>
+                        <!-- Paypal -->
+                        <div class="custom-control custom-radio mr-sm-2">
+                            <input type="radio" class="custom-control-input" id="paypal" name="paymentMethod">
+                            <label class="custom-control-label" for="paypal">Paypal <img class="ml-15" src="/user/img/core-img/paypal.png" alt=""></label>
+                        </div>
                     </div>
-                    <!-- Paypal -->
-                    <div class="custom-control custom-checkbox mr-sm-2">
-                        <input type="checkbox" class="custom-control-input" id="paypal">
-                        <label class="custom-control-label" for="paypal">Paypal <img class="ml-15" src="img/core-img/paypal.png" alt=""></label>
+                    <div class="cart-btn mt-100">
+                        <button type="button" class="btn amado-btn w-100" onclick="checkout()">Place Order</button>
                     </div>
-                </div>
-
-                <div class="cart-btn mt-100">
-                    <a href="#" class="btn amado-btn w-100">Checkout</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 </div>
+<script>
+    function checkout() {
+        let address = document.getElementById("flexRadioDefault1").value;
+        let totalPriceElement = document.getElementById('totalPrice');
+        const numericValue = parseInt(totalPriceElement.innerText.replace('₹', '').trim());
+        let method = document.getElementsByName('paymentMethod');
+        let payment = '';
+
+        if (method[0].checked) {
+            payment = "cod";
+            console.log(payment);
+        } else {
+            payment = "paypal";
+            console.log(payment);
+        }
+
+        $.ajax({
+            method: "post",
+            url: "/placeOrder",
+            data: JSON.stringify({
+                addressId: address,
+                totalPrice: numericValue,
+                paymentMethod: payment,
+                amount: numericValue, // Add this line to provide the amount
+            }),
+            contentType: "application/json",
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = "/";
+                } else {
+                    alert(data.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                alert('An error occurred while placing the order.');
+            }
+        });
+    }
+</script>
+
 
 <%- include ('../user/layout/footer.ejs')%>
+

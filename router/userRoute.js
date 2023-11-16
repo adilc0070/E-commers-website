@@ -6,6 +6,7 @@ let path=require('path')
 const fileUpload = require('../middleware/multer');
 let is_auth=require('../middleware/isAuth')
 let cartController = require('../controller/cartController')
+let orderController = require('../controller/orderController')
 
 userRoute.use(bodyParser.json())
 userRoute.use(bodyParser.urlencoded({extended:true}))
@@ -53,10 +54,12 @@ userRoute.post('/add-to-cart',cartController.add)
 userRoute.post('/update-cart',cartController.updateQuantity)
 userRoute.get('/delete-cart',cartController.deleteCart)
 
-userRoute.get('/order',cartController.orderPage)
 
 
-userRoute.get('/checkout', userController.checkoutPage);
+userRoute.get('/checkout', orderController.checkoutPage);
+userRoute.get('/order', orderController.orderPage);
+userRoute.post('/placeOrder', orderController.placeOrder);
+
 
 // userRoute.post('/productDetails',userController.productDetails)
 module.exports=userRoute

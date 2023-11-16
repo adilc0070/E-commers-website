@@ -27,6 +27,7 @@ let renderCart = async (req, res) => {
                     return x + y;
                 });
             }
+                    
         }
 
         res.render('cart', { user: req.session.name, cartData, totalamount, userDa, datatotal });

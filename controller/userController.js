@@ -461,15 +461,6 @@ let editProfile=async(req,res)=>{
     }
 }
 
-let cartPage=async(req,res)=>{
-    try {
-        let userDa=await user.findById(req.session.user_id)
-        res.render("cart",{userDa})
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
 
 let addressPage = async (req, res) => {
     try {
@@ -708,7 +699,6 @@ module.exports = {
     productPage,
     userProfile,
     editProfile,
-    cartPage,
     addressPage,
     addAddressPage,
     insertAddress,

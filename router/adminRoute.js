@@ -1,6 +1,7 @@
 let express=require('express')
 let adminRoute=express()
 let adminControll=require('../controller/adminController')
+let orderController = require('../controller/orderController')
 
 let bodyParser=require('body-parser');
 let path=require('path')
@@ -42,6 +43,7 @@ adminRoute.post('/addProduct',fileUpload.productImagesUpload,adminControll.addPr
 adminRoute.get('/updateProductPage',adminControll.updateProductPage)
 adminRoute.post('/updateProduct',fileUpload.productImagesUpload,adminControll.updateProduct)
 adminRoute.get('/blockProduct',adminControll.blockProduct)
+adminRoute.post('/update-order-status', orderController.updateOrderStatus);
 
 
 

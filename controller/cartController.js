@@ -9,32 +9,23 @@ let renderCart = async (req, res) => {
         // Fetch user data and cart data
         let userDa = await user.findById(req.session.user_id);
         let cartData = await Cart.findOne({ userid: req.session.user_id }).populate("products.productId");
-
+        let cartTotal = 0;
         let totalamount = 0;
 
         // Check if the cart is empty
         if (!cartData || !cartData.products || cartData.products.length === 0) {
             console.log("Your cart is empty.");
-            return res.render('cart', { userName: req.session.name, cartData: null, totalamount, userDa, datatotal: null });
+            return res.render('cart', { userName: req.session.name, cartData: null, totalamount, userDa, datatotal: null, cartTotal: 0 });
         } else {
+            // Calculate the cart total
+            cartTotal = cartData.products.reduce((total, product) => {
+                return total + (product.productId.price * product.count);
+            }, 0);
+
             // Calculate total amount
-            var datatotal = cartData.products.map((products) => {
-                return products.totalPrice * products.count;
-            });
-
-            if (datatotal.length > 0) {
-                totalamount = datatotal.reduce((x, y) => {
-                    return x + y;
-                });
-            }
-
-        }
-        // Calculate the cart total
-        let cartTotal = 0;
-        if (cartData && cartData.products && cartData.products.length > 0) {
-            cartData.products.forEach(product => {
-                cartTotal += product.productId.price * product.count;
-            });
+            totalamount = cartData.products.reduce((total, product) => {
+                return total + (product.totalPrice * product.count);
+            }, 0);
         }
 
         // Calculate the delivery charge based on the cart total
@@ -44,7 +35,7 @@ let renderCart = async (req, res) => {
         let totalAmount = cartTotal + deliveryCharge;
         console.log("Total Amount:", totalAmount, cartTotal, deliveryCharge);
 
-        res.render('cart', { user: req.session.name, cartData, totalamount, userDa, datatotal, deliveryCharge, totalAmount, cartTotal });
+        res.render('cart', { user: req.session.name, cartData, totalamount, userDa, deliveryCharge, totalAmount, cartTotal });
     } catch (error) {
         console.log(error.message);
         res.status(500).send("Internal Server Error");

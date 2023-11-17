@@ -8,7 +8,7 @@ let bcrypt = require('bcrypt')
 let env = require('dotenv')
 env.config()
 let session = require('express-session')
-
+const Order = require('../models/orederModel');
 
 
 
@@ -73,14 +73,17 @@ let adminLogon = async (req, res) => {
         console.log(error.message);
     }
 }
-
 let adminRender = async (req, res) => {
     try {
-        res.render('dashboard')
+        let orders = await Order.find().populate({ path: 'userId', options: { strictPopulate: false } });
+        console.log(orders); // Add this line
+        res.render('dashboard', { orders });
     } catch (error) {
         console.log(error.message);
+        res.status(500).send(error.message);
     }
 }
+
 
 let userManagement = async (req, res) => {
     try {

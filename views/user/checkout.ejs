@@ -46,7 +46,6 @@
             </div>
         </div>
 
-        <!-- Cart Summary -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="cart-summary" style="margin: 3%; background-color: beige; padding: 20px; border-radius: 20px;">
@@ -80,6 +79,7 @@
 <script>
     function checkout() {
         let address = document.getElementById("flexRadioDefault1").value;
+        console.log(address);
         let totalPriceElement = document.getElementById('totalPrice');
         const numericValue = parseInt(totalPriceElement.innerText.replace('₹', '').trim());
         let method = document.getElementsByName('paymentMethod');

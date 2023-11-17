@@ -50,36 +50,41 @@
                                             <a href="/delete-cart?id=<%=product.productId._id %>"><i class="fa fa-times" aria-hidden="true"></i>remove</a>
                                         </td>
                                     </tr>
-                                <% }); %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="4">Your cart is empty.</td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="col-12 col-lg-4">
-                <div class="cart-summary">
-                    <h5>Cart Total</h5>
-                    <ul class="summary-table">
-                        <li><span>Subtotal:</span> <span>₹<%= cartTotal.toFixed(2) %></span></li>
-                        <li><span>Delivery:</span> <span>₹<%= deliveryCharge.toFixed(2) %></span></li>
-                        <li><span>Total:</span> <span>₹<%= totalAmount.toFixed(2) %></span></li>
-                    </ul>
-                    <div class="cart-btn mt-100">
-                        <a href="/checkout" class="btn amado-btn w-100">Checkout</a>
+                                    <% }); %>
+                                    <% var cartTotal = 0; %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6">Your cart is empty.</td>
+                                    </tr>
+                                    <% var cartTotal = 0; %>
+                                <% } %>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+    
+                <% if (cartData && cartData.products && cartData.products.length > 0) { %>
+                    <div class="col-12 col-lg-4">
+                        <div class="cart-summary">
+                            <h5>Cart Total</h5>
+                            <ul class="summary-table">
+                                <li><span>Subtotal:</span> <span>₹<%= cartTotal.toFixed(2) %></span></li>
+                                <li><span>Delivery:</span> <span>₹<%= deliveryCharge.toFixed(2) %></span></li>
+                                <li><span>Total:</span> <span>₹<%= totalAmount.toFixed(2) %></span></li>
+                            </ul>
+                            <div class="cart-btn mt-100">
+                                <a href="/checkout" class="btn amado-btn w-100">Checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
-</div>
 
 </div>
 <script>
+    var cartTotal = <%= cartTotal %>;
     function productQuantity(id, newval) {
         $.ajax({
             url: "/update-cart",

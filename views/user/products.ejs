@@ -136,7 +136,7 @@
                                         <i class="fa fa-star" aria-hidden="false"></i>
                                     </div>
                                     <div class="cart">
-                                        <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="/user/img/core-img/cart.png" alt=""></a>
+                                        <a data-toggle="tooltip" onclick="showSwal('<%= product._id %>')" data-placement="left" title="Add to Cart"><img src="/user/img/core-img/cart.png" alt=""></a>
                                     </div>
                                 </div>
                             </div>
@@ -165,5 +165,34 @@
     </div>
     <!-- ##### Main Content Wrapper End ##### -->
 
+
+    <script>
+        function showSwal(id) {
+            $.ajax({
+              url: '/add-to-cart',
+              method: 'post',
+              data: {
+                id: id
+              },
+              success: function(response) {
+                  if(response.success==true){
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Product added to cart',
+                        text:"Your product has been added to your cart",
+                    })
+                  }else{
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Stock exceeded',
+                        text:"Please reduce the quantity",
+                    })
+                  }
+              }
+            })
+        }
+    </script>
 
 <%-include ('../user/layout/footer.ejs') %>

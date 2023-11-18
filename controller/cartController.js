@@ -46,7 +46,7 @@ let renderCart = async (req, res) => {
 const add = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const productId = req.query.id;
+        const productId = req.body.id;
         console.log(userId, productId);
         // Fetch product data from the database
         const productData = await ProductDB.findOne({ _id: productId });
@@ -80,11 +80,11 @@ const add = async (req, res) => {
                 );
             }
 
-            console.log("Product added to the cart");
-            res.status(200).send("Product added to the cart");
+            
+            res.json({ success: true, message: "Product added to cart successfully" });
         } else {
             // Handle the case where the product is not found
-            console.log("Product not found");
+            
             res.status(404).send("Product not found");
         }
     } catch (error) {

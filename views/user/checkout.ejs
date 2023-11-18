@@ -103,16 +103,36 @@
                 amount: numericValue, // Add this line to provide the amount
             }),
             contentType: "application/json",
-            success: function (data) {
-                if (data.success) {
-                    window.location.href = "/";
+            success: function (response) {
+                if (response.success==true) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'order placed successfully',
+                        text:"Your order has been placed successfully",
+                        
+                    })
+                    setTimeout(function () {
+                        window.location.href = "/";
+                    },3000)
                 } else {
-                    alert(data.message);
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+
+                    })
                 }
             },
             error: function (xhr, status, error) {
-                console.error(error);
-                alert('An error occurred while placing the order.');
+                Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred while placing the order.',
+                    })
+
             }
         });
     }

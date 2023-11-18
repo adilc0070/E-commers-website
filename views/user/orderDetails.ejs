@@ -1,7 +1,7 @@
 <%- include ('../user/layout/header.ejs')%>
 <%- include ('../user/layout/profileSideBar.ejs')%>
 
-<div class="container mt-5">
+<div class="container mt-5" id="orderDetails">
     <h2 class="mb-4">User's Ordered Products</h2>
 
     <% if (orders.length > 0) { %>
@@ -18,27 +18,35 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><%= order.orderId %></td>
+                        <td><%= order._id %></td>
                         <td><%= order.date %></td>
-                        <td><span>₹ <%= order.totalAmount %></span></td>
+                        <td><span>₹ <%= order.amount %></span></td>
                         <td><%= order.status %></td>
-                        <td><a href="/order-details?id=<%= order.orderId %>">View Details</a></td>
+                        <%if(order.status == "cancelled"){%>
+                            <td><span class="cancelOrder btn btn-warning" id="Shop Again"><a href="/products">Shop Again</a></span></td>
+                        <%}else if(order.status == "delivered"){%>
+                            <td><span class="cancelOrder btn btn-warning" id="Cancel" onclick="cancelOrder('<%= order._id %>')">Return Order</span></td>
+                        <%}else{%>
+                            <td><span class="cancelOrder btn btn-warning" id="Cancel" onclick="cancelOrder('<%= order._id %>')">Cancel Order</span></td>
+                        <%}%>
                     </tr>
                 </tbody>
             </table>
 
-            <table class="table table-striped">
+            <table class="table table-striped " border="1">
                 <thead>
                     <tr>
                         <th colspan="2">Product</th>
+                        <th colspan="2">Quantity</th>
                         <th colspan="3">Product Details</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% order.products.forEach(product => { %>
-                        <tr>
-                            <td colspan="2"><%= product.name %></td>
-                            <td colspan="3">Product Image: <img src="<%= product.imageURL %>" alt="<%= product.name %>"></td>
+                        <tr class="">
+                            <td colspan="2"><%= product.product_name %></td>
+                            <td colspan="2"><%= product.quantity %></td>
+                            <td colspan="3">Product Image asd<img src="/products/ product.image %>" alt="<%= product.name %>"></td>
                         </tr>
                     <% }) %>
                 </tbody>
@@ -52,7 +60,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="5"><%= order.deliveryAddress %></td>
+                        <td colspan="5"><%= order.address %></td>
                     </tr>
                 </tbody>
             </table>
@@ -61,5 +69,35 @@
         <p>No orders found.</p>
     <% } %>
 </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function cancelOrder(orderId) {
+        $.ajax({
+            method: "post",
+            url: "/cancelOrder",
+            data: {
+                orderId: orderId
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#orderDetails").load("/order #orderDetails");
+                    Swal.fire({
+                        title: 'Order Canceled',
+                        text: 'Your order has been canceled.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                }
+            }
+
+        })
+    }
+</script>
 
 <%- include ('../user/layout/footer.ejs')%>

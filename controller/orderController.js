@@ -35,7 +35,7 @@ let checkoutPage = async (req, res) => {
 let placeOrder = async (req, res) => {
     try {
         let { addressId, amount, paymentMethod } = req.body;
-        console.log('Address:', addressId, 'Amount:', amount, 'Payment Method:', paymentMethod);
+        // console.log('Address:', addressId, 'Amount:', amount, 'Payment Method:', paymentMethod);
     
         // Check if the required fields are provided
         if (!addressId || !amount || !paymentMethod) {
@@ -83,7 +83,7 @@ let placeOrder = async (req, res) => {
             address: deliveryAddress.addresses[0], // Use the first (and only) address in the array
             products: orderProducts,
             amount: amount,
-            paymentMethod: paymentMethod,
+            paymentType: paymentMethod,
         });
 
         await order.save();
@@ -102,9 +102,8 @@ let orderPage = async (req, res) => {
     try {
         // Fetch user data and orders
         let userDa = await user.findById(req.session.user_id); // Corrected: 'user' to 'User'
-        let orders = await Order.find({ userId: req.session.user_id })
-            .populate('products.productId');
-
+        let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId');
+        // console.log(orders);
         res.render('orderDetails', { userDa, orders });
     } catch (error) {
         console.log(error.message);
@@ -115,31 +114,52 @@ let orderPage = async (req, res) => {
 // Update order status
 const updateOrderStatus = async (req, res) => {
     try {
-        const { orderId, newStatus } = req.body;
-
-        if (!orderId || !newStatus) {
-            return res.status(400).json({ success: false, message: 'orderId and newStatus are required fields.' });
-        }
-
-        const order = await Order.findById(orderId);
-
-        if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found.' });
-        }
-
-        order.status = newStatus;
-        await order.save();
-
-        return res.json({ success: true, message: 'Order status updated successfully.' });
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
-    }
+        console.log('change order status')
+            const id = req.params.id
+            // console.log(id)
+            const status = req.body.newStatus;
+            // console.log(status)
+        
+            const change = await Order.updateOne(
+              { _id: id },
+              { $set: { status: status } }
+            );
+        
+            // console.log(change)
+            if(change){
+               res.json({
+                 success: true,
+                 message: "Order status updated successfully",
+                 order: updatedOrder,
+               });
+            }
+            
+          }catch (error){
+        res
+          .status(500)
+          .json({ success: false, message: "Error updating order status" });
+          }
 };
+let cancelOrder = async (req, res) => {
+    try {
+        const id= req.body.orderId;
+        let order = await Order.findById(id);
+        if(order){
+            await Order.updateOne({ _id: id }, { $set: { status: "cancelled" } });
+            res.json({success: true, message: 'Order cancelled successfully.'});
+            console.log("Reached cancelOrder")
+        }
+
+    }catch(error){
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+}
 
 module.exports = {
     checkoutPage,
     orderPage,
     placeOrder,
-    updateOrderStatus
+    updateOrderStatus,
+    cancelOrder
 }

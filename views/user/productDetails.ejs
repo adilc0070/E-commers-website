@@ -94,7 +94,7 @@
                             </div>
 
                             <!-- Add to Cart Form -->
-                            <form class="cart clearfix" method="post" action="/add-to-cart?id=<%= product._id %>">
+                            <div class="cart clearfix">
                                 <div class="cart-btn d-flex mb-50">
                                     <p>Qty</p>
                                     <div class="quantity">
@@ -103,8 +103,8 @@
                                         <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-caret-up" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
-                                <button type="submit" name="addtocart" class="btn amado-btn">Add to cart</button>
-                            </form>
+                                <button name="addtocart" class="btn amado-btn" onclick="showSwal('<%= product._id %>')">Add to cart</button>
+                            </div>
                             <!-- buynow -->
                             <form class="cart clearfix" method="post" action="/buy-now/id=<%= product._id %>"">
                                 <div class="cart-btn d-flex mb-50">
@@ -122,4 +122,32 @@
     </div>
     <!-- ##### Main Content Wrapper End ##### -->
 
+<script>
+    function showSwal(id) {
+        $.ajax({
+          url: '/add-to-cart',
+          method: 'post',
+          data: {
+            id: id
+          },
+          success: function(response) {
+              if(response.success==true){
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Product added to cart',
+                    text:"Your product has been added to your cart",
+                })
+              }else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Stock exceeded',
+                    text:"Please reduce the quantity",
+                })
+              }
+          }
+        })
+    }
+</script>
     <%-include ('../user/layout/footer.ejs') %>

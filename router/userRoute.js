@@ -59,6 +59,7 @@ userRoute.get('/delete-cart',cartController.deleteCart)
 userRoute.get('/checkout', orderController.checkoutPage);
 userRoute.get('/order', orderController.orderPage);
 userRoute.post('/placeOrder', orderController.placeOrder);
+userRoute.post('/cancelOrder', orderController.cancelOrder);
 
 
 // userRoute.post('/productDetails',userController.productDetails)

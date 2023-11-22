@@ -75,9 +75,11 @@ let adminLogon = async (req, res) => {
 }
 let adminRender = async (req, res) => {
     try {
-        let orders = await Order.find().populate({ path: 'userId', options: { strictPopulate: false } });
-        // console.log(orders); // Add this line
-        res.render('dashboard', { orders });
+        let orders = await Order.find().populate('products.productId').populate({path: 'userId', select: 'name'});
+        
+        
+        // console.log("user:",userName.name); // Add this line
+        res.render('dashboard', { orders,  });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);

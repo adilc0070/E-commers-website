@@ -4,6 +4,8 @@ let ProductDB = require('../models/productModel');
 let Cart = require('../models/cart');
 let Order = require('../models/orederModel');
 let address = require('../models/address');
+let Razorpay = require('razorpay');
+
 
 
 let checkoutPage = async (req, res) => {
@@ -34,6 +36,7 @@ let checkoutPage = async (req, res) => {
 
 let placeOrder = async (req, res) => {
     try {
+        console.log("Place Order");
         let { addressId, amount, paymentMethod } = req.body;
         // console.log('Address:', addressId, 'Amount:', amount, 'Payment Method:', paymentMethod);
     
@@ -71,27 +74,47 @@ let placeOrder = async (req, res) => {
     
         // Find the delivery address
         let deliveryAddress = await address.findOne({ 'addresses._id': addressId, 'user': req.session.user_id });
+        // console.log('Address:', deliveryAddress.addresses[0]);
     
         // Check if the address is found
         if (!deliveryAddress) {
             return res.status(404).json({ success: false, message: 'Delivery address not found' });
+        }else{
+            // Example: Create an order document in the database
+            let order = new Order({
+                userId: req.session.user_id,
+                address: {
+                    firstName: deliveryAddress.addresses[0].firstName,
+                    lastName: deliveryAddress.addresses[0].lastName,
+                    address: deliveryAddress.addresses[0].address,
+                    city: deliveryAddress.addresses[0].city,
+                    state: deliveryAddress.addresses[0].state,
+                    pin: deliveryAddress.addresses[0].pin,
+                    phone: deliveryAddress.addresses[0].phone,
+                    email: deliveryAddress.addresses[0].email,
+                    additional: deliveryAddress.addresses[0].additional,
+                }, // Use the first (and only) address in the array
+                products: orderProducts,
+                amount: amount,
+                paymentType: paymentMethod,
+            });
+
+            await order.save();
+        
+            // Clear the user's cart after placing the order
+            await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
+
+            if(paymentMethod === 'COD'){
+
+                res.json({ success: true, message: 'Order placed successfully' });
+            }else{
+
+            }
+        
+            res.json({ success: true, message: 'Order placed successfully' });                                      
         }
     
-        // Example: Create an order document in the database
-        let order = new Order({
-            userId: req.session.user_id,
-            address: deliveryAddress.addresses[0], // Use the first (and only) address in the array
-            products: orderProducts,
-            amount: amount,
-            paymentType: paymentMethod,
-        });
-
-        await order.save();
-    
-        // Clear the user's cart after placing the order
-        await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
-    
-        res.json({ success: true, message: 'Order placed successfully' });
+        
     }  catch (error) {
         console.log(error.message);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -103,6 +126,7 @@ let orderPage = async (req, res) => {
         // Fetch user data and orders
         let userDa = await user.findById(req.session.user_id); // Corrected: 'user' to 'User'
         let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId');
+        
         // console.log(orders);
         res.render('orderDetails', { userDa, orders });
     } catch (error) {
@@ -114,7 +138,7 @@ let orderPage = async (req, res) => {
 // Update order status
 const updateOrderStatus = async (req, res) => {
     try {
-        console.log('change order status')
+        // console.log('change order status')
             const id = req.params.id
             // console.log(id)
             const status = req.body.newStatus;
@@ -124,6 +148,28 @@ const updateOrderStatus = async (req, res) => {
               { _id: id },
               { $set: { status: status } }
             );
+            if(change.status=="delivered"){
+                let paymentStatus=await Order.updateOne(
+                    { _id: id },
+                    { $set: { paymentStatus: "paid" } }
+                )
+            }else if(change.status=="cancelled"){
+                let paymentStatus=await Order.updateOne(
+                    { _id: id },
+                    { $set: { paymentStatus: "cancelled" } }
+                )
+            }else if(change.status=="shipped"){
+                let paymentStatus=await Order.updateOne(
+                    { _id: id },
+                    { $set: { paymentStatus: "pending" } }
+                )
+            }else if(change.status=="pending"){
+                let paymentStatus=await Order.updateOne(
+                    { _id: id },
+                    { $set: { paymentStatus: "pending" } }
+                )
+            }
+
         
             // console.log(change)
             if(change){
@@ -147,7 +193,7 @@ let cancelOrder = async (req, res) => {
         if(order){
             await Order.updateOne({ _id: id }, { $set: { status: "cancelled" } });
             res.json({success: true, message: 'Order cancelled successfully.'});
-            console.log("Reached cancelOrder")
+            // console.log("Reached cancelOrder")
         }
 
     }catch(error){

@@ -349,6 +349,7 @@
                         { %>
                         <p>Product: <%=
                           product.product_name %>,
+                             
                           Quantity: <%=
                           product.quantity %>
                         </p>
@@ -358,23 +359,36 @@
                         <%= order.paymentType %>
                       </td>
                       <td>
-                        <%= order.date %>
+                        <%= order.date.toLocaleDateString('en-US', { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g, '-') %>
                       </td>
                       <td>
-                        <%= order.address %>
+                        Name:<%= order.address.firstName %> <%= order.address.lastName %>
+                        <br>
+                        Address: <%= order.address.address %>, <%= order.address.city %>,
+                        <br>
+                         <%= order.address.state %>,
+                        <br>
+                         Pin: <%= order.address.pin %>
+                        <br>
+                        Phone: <%= order.address.phone %>
+                        <br>
+                        Email: <%= order.address.email %>
+                        <br>
+                        Additional Info: <%= order.address.additional %>
+
                       </td>
                       <td>
-                        <div
-                          class="badge <%= order.status === 'delivered' ? 'badge-outline-success' : (order.status === 'pending' ? 'badge-outline-warning' : 'badge-outline-danger') %>">
-                          <span class="order-status"
-                            data-order-id="<%= order._id %>">
-                            <%=
-                            order.status.charAt(0).toUpperCase()
-                            + order.status.slice(1)
-                            %>
-                          </span>
+                        <div class="badge 
+                            <%= order.status === 'delivered' ? 'badge-outline-success' : 
+                              (order.status === 'pending' ? 'badge-outline-warning' : 
+                              (order.status === 'rejected' ? 'badge-outline-danger' : 
+                              (order.status === 'shipped' ? 'badge-outline-info' : ''))) %>">
+                            <span class="order-status" data-order-id="<%= order._id %>">
+                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                            </span>
                         </div>
-                      </td>
+                      </td>   
+                                       
                       <td>
                         <!-- Select box for changing order status -->
                         <select class="form-select"
@@ -392,6 +406,10 @@
                             <%=order.status==='rejected'
                             ? 'selected' : '' %>
                             >Rejected</option>
+                          <option value="shipped"
+                            <%=order.status==='shipped'
+                            ? 'selected' : '' %>
+                            >Shipped</option>
                         </select>
                       </td>
                     </tr>

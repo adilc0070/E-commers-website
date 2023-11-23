@@ -44,7 +44,7 @@ let adminLogon = async (req, res) => {
         let admi = await adminModel.findOne({ email: adminEmail });
         console.log(admi);
         let emailErrorMessage; // Initialize these variables
-        let passwordErrorMessage ;
+        let passwordErrorMessage;
 
         if (!adminEmail || !adminPassword) {
             emailErrorMessage = 'Please Enter Email and Password';
@@ -52,13 +52,13 @@ let adminLogon = async (req, res) => {
         } else if (!validateEmail(adminEmail)) {
             emailErrorMessage = 'Please Enter Valid Email';
             res.render('adminLogIn', { emailErrorMessage, passwordErrorMessage })
-        } else if (admi==null) {
+        } else if (admi == null) {
             emailErrorMessage = 'Sorry Admin not Found';
             res.render('adminLogIn', { emailErrorMessage, passwordErrorMessage })
         } else {
             let isMatch = await bcrypt.compare(adminPassword, admi.password);
 
-            if (isMatch!=false) {
+            if (isMatch != false) {
                 req.session.admin_id = admi._id;
                 res.redirect('/admin/dashboard');
             } else {
@@ -75,11 +75,111 @@ let adminLogon = async (req, res) => {
 }
 let adminRender = async (req, res) => {
     try {
-        let orders = await Order.find().populate('products.productId').populate({path: 'userId', select: 'name'});
+        // Fetch all orders, pending orders, and delivered orders
+        let orders = await Order.find().populate('products.productId').populate({ path: 'userId', select: 'name' });
+        let pendingOrders = await Order.find({ status: { $ne: 'delivered'} }).populate('products.productId').populate({ path: 'userId', select: 'name' });
+        let deliveredOrders = await Order.find({ status: 'delivered'}).populate('products.productId').populate({ path: 'userId', select: 'name' });
         
+        //fetch user count
+        let usersCount = await user.count();
+        let purchasersCount = await Order.distinct('userId');
+    
+
+        // Initialize variables
+        let revenue = 0;
+        let sales = 0;
+        let purchases = 0;
+        let pendingRevenue = 0;
+        let pendingSales = 0;
+        // Calculate revenue
+        deliveredOrders.forEach(order => {
+            order.products.forEach(product => {
+                revenue += product.productId.price * product.quantity;
+                purchases += product.quantity;
+            });
+            sales += 1; // Increment sales for each delivered order
+        });
+        // calculate pending revenue
+        pendingOrders.forEach(order => {
+            order.products.forEach(product => {
+                pendingRevenue += product.productId.price * product.quantity;
+                purchases += product.quantity;
+            });
+            pendingSales += 1; // Increment sales for each delivered order
+        });
         
+        //average pending revenue
+        // Calculate average pending revenue
+        let averagePendingRevenue = pendingRevenue / pendingSales || 0;
+        // console.log("Average Pending Revenue:", averagePendingRevenue);
+
+        // console.log("revenue:",revenue,"pendingRevenue:",pendingRevenue);
+        // console.log("sales:",sales,"pendingSales:",pendingSales);
+        // console.log("purchases:",purchases,"usersCount:",usersCount,"purchasersCount:",purchasersCount.length);
+        // console.log("deliveredOrders:",deliveredOrders);
+        let letestSales = await Order.find({status: 'delivered'}).sort({ date:-1 }).populate('products.productId').populate({ path: 'userId', select: 'name' });
+        // console.log(letestSales);
+        letestSales.forEach(order => {
+            order.products.forEach(product => {
+                
+            })
+        })
         // console.log("user:",userName.name); // Add this line
-        res.render('dashboard', { orders,  });
+        res.render('dashboard', { orders, revenue, sales, usersCount, purchasersCount: purchasersCount.length, deliveredOrders, pendingOrders,averagePendingRevenue, pendingRevenue, pendingSales, letestSales });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+}
+
+let ordersDashboard = async (req, res) => {
+    try {
+        // Fetch all orders, pending orders, and delivered orders
+        let orders = await Order.find().populate('products.productId').populate({ path: 'userId', select: 'name' });
+        let pendingOrders = await Order.find({ status: { $ne: 'delivered'} }).populate('products.productId').populate({ path: 'userId', select: 'name' });
+        let deliveredOrders = await Order.find({ status: 'delivered'}).populate('products.productId').populate({ path: 'userId', select: 'name' });
+        
+        //fetch user count
+        let usersCount = await user.count();
+        let purchasersCount = await Order.distinct('userId');
+    
+
+        // Initialize variables
+        let revenue = 0;
+        let sales = 0;
+        let purchases = 0;
+        let pendingRevenue = 0;
+        let pendingSales = 0;
+        // Calculate revenue
+        deliveredOrders.forEach(order => {
+            order.products.forEach(product => {
+                revenue += product.productId.price * product.quantity;
+                purchases += product.quantity;
+            });
+            sales += 1; // Increment sales for each delivered order
+        });
+        // calculate pending revenue
+        pendingOrders.forEach(order => {
+            order.products.forEach(product => {
+                pendingRevenue += product.productId.price * product.quantity;
+                purchases += product.quantity;
+            });
+            pendingSales += 1; // Increment sales for each delivered order
+        });
+        
+        //average pending revenue
+        // Calculate average pending revenue
+        let averagePendingRevenue = pendingRevenue / pendingSales || 0;
+        console.log("Average Pending Revenue:", averagePendingRevenue);
+
+        console.log("revenue:",revenue,"pendingRevenue:",pendingRevenue);
+        console.log("sales:",sales,"pendingSales:",pendingSales);
+        console.log("purchases:",purchases,"usersCount:",usersCount,"purchasersCount:",purchasersCount.length);
+        // console.log("deliveredOrders:",deliveredOrders);
+
+
+        // console.log("user:",userName.name); // Add this line
+        res.render('orders', { orders, revenue, sales, usersCount, purchasersCount: purchasersCount.length, deliveredOrders, pendingOrders,averagePendingRevenue, pendingRevenue, pendingSales });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
@@ -175,14 +275,14 @@ let editedCategory = async (req, res) => {
         let { categoryName } = req.body
         let editCatErrorMessage
         let exxist = await category.findOne({ name: categoryName })
-        let categories=await category.findOne({_id:Id})
-        if(exxist){
+        let categories = await category.findOne({ _id: Id })
+        if (exxist) {
             editCatErrorMessage = 'Category Already Exist'
-            res.render('editCategory', { editCatErrorMessage ,categories})
-        }else if(categoryName==""){
+            res.render('editCategory', { editCatErrorMessage, categories })
+        } else if (categoryName == "") {
             editCatErrorMessage = 'Please Enter Category Name'
-            res.render('editCategory', { editCatErrorMessage ,categories})
-        }else{
+            res.render('editCategory', { editCatErrorMessage, categories })
+        } else {
             let cat = await category.updateOne({ _id: Id }, { $set: { name: categoryName } })
             res.redirect('/admin/categoryManagement')
         }
@@ -376,6 +476,7 @@ module.exports = {
     adminLogin,
     adminLogon,
     adminRender,
+    ordersDashboard,
     userManagement,
     blockuser,
     unblockuser,

@@ -24,6 +24,7 @@ adminRoute.get('/login',adminControll.adminLogin)
 adminRoute.post('/login',adminControll.adminLogon)
 
 adminRoute.get('/dashboard',adminControll.adminRender)
+adminRoute.get('/orderManagement',adminControll.ordersDashboard)
 adminRoute.get('/userManagement',adminControll.userManagement)
 adminRoute.get('/blockUser', adminControll.blockuser)
 adminRoute.get('/unblockUser', adminControll.unblockuser)

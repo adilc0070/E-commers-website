@@ -68,7 +68,8 @@ let placeOrder = async (req, res) => {
             orderProducts.push({
                 productId: products[i]._id,
                 quantity: cartData.products[i].count,
-                product_name: products[i].product_name, // Add this line
+                product_name: products[i].product_name,
+                image: products[i].images.image1
             });
         }
     
@@ -125,10 +126,10 @@ let orderPage = async (req, res) => {
     try {
         // Fetch user data and orders
         let userDa = await user.findById(req.session.user_id); // Corrected: 'user' to 'User'
-        let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId');
+        let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId').sort({ createdAt: -1 });
         
-        // console.log(orders);
-        res.render('orderDetails', { userDa, orders });
+        console.log(orders);
+        res.render('tailes', { userDa, orders });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);

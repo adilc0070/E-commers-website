@@ -1,6 +1,19 @@
 <%- include('../admin/layout/adminSidebar.ejs') -%>
 <%- include('../admin/layout/adminHeader.ejs') -%>
 
+<style>
+  #chart-container {
+      width: 300px;
+      height: 300px;
+      position: relative;
+  }
+
+  .chart {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+  }
+</style>
 <!-- partial -->
 <div class="container-fluid page-body-wrapper">
   <!-- partial:partials/_navbar.html -->
@@ -233,9 +246,11 @@
                 <div class="col-8 col-sm-12 col-xl-8 my-auto">
                   <div class="d-flex d-sm-block d-md-flex align-items-center">
                     <h2 class="mb-0">₹<%= revenue %></h2>
-                    <p class="text-success ml-2 mb-0 font-weight-medium">+<%= averagePendingRevenue%> Pending</p>
+                    <p class="text-success ml-2 mb-0 font-weight-medium">+<%=
+                      averagePendingRevenue%> Pending</p>
                   </div>
-                  <h6 class="text-muted font-weight-normal"><%= pendingRevenue%> Pending Revenue from last month</h6>
+                  <h6 class="text-muted font-weight-normal"><%= pendingRevenue%>
+                    Pending Revenue from last month</h6>
                 </div>
                 <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
                   <i class="icon-lg mdi mdi-codepen text-primary ml-auto"></i>
@@ -252,7 +267,8 @@
                 <div class="col-8 col-sm-12 col-xl-8 my-auto">
                   <div class="d-flex d-sm-block d-md-flex align-items-center">
                     <h2 class="mb-0"><%= sales %></h2>
-                    <p class="text-success ml-2 mb-0 font-weight-medium">+<%= pendingSales %> Pending to Delivery</p>
+                    <p class="text-success ml-2 mb-0 font-weight-medium">+<%=
+                      pendingSales %> Pending to Delivery</p>
                   </div>
                   <h6 class="text-muted font-weight-normal"><%= %></h6>
                 </div>
@@ -272,13 +288,16 @@
                   <div class="d-flex d-sm-block d-md-flex align-items-center">
                     <h2 class="mb-0"><%= usersCount %></h2>
                     <%if(usersCount > purchasersCount ){%>
-                      <p class="text-danger ml-2 mb-0 font-weight-medium "><%= purchasersCount%> Users Only Purchased</p>
+                    <p class="text-danger ml-2 mb-0 font-weight-medium "><%=
+                      purchasersCount%> Users Only Purchased</p>
                     <%}else{%>
-                      <p class="text-success ml-2 mb-0 font-weight-medium"><%=purchaseCount%> Users Purchased</p>
+                    <p class="text-success ml-2 mb-0 font-weight-medium"><%=purchaseCount%>
+                      Users Purchased</p>
                     <%}%>
 
                   </div>
-                  <h6 class="text-muted font-weight-normal">2.27% Since lastmonth</h6>
+                  <h6 class="text-muted font-weight-normal">2.27% Since
+                    lastmonth</h6>
                 </div>
                 <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
                   <i class="icon-lg mdi mdi-monitor text-success ml-auto"></i>
@@ -290,6 +309,91 @@
       </div>
 
       <div class="row">
+        <div class="col-md-3 col-xl-3 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex flex-row justify-content-between">
+                <h4 class="card-title">Revenue Overview</h4>
+                <p class="text-muted mb-1 small"></p>
+              </div>
+
+              <div id="chart-container">
+                <canvas id="myChart" class="chart"></canvas>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-xl-3 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex flex-row justify-content-between">
+                <h4 class="card-title">Orders</h4>
+                <p class="text-muted mb-1 small"></p>
+              </div>
+
+              <div id="chart-container" class="d-flex justify-content-center">
+                <canvas id="productStatusChart" class="chart"></canvas>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex flex-row justify-content-between">
+                <h4 class="card-title">Letest Sales</h4>
+                <p class="text-muted mb-1 small">View all</p>
+              </div>
+
+              <div class="preview-list">
+                <%if (letestSales.length > 0) {%>
+                <% letestSales.forEach((order, i) => { %>
+                <div class="preview-item border-bottom">
+                  <%order.products.forEach(product=>{ %>
+                  <div class="preview-thumbnail">
+                    <div class="preview-icon bg-primary">
+                      <img src="/products/images/<%= product.image %>"
+                        alt="image">
+                    </div>
+                  </div>
+                  <div class="preview-item-content d-sm-flex flex-grow">
+                    <div class="flex-grow">
+                      <h6 class="preview-subject">Product Name: <%=
+                        product.product_name %></h6>
+                      <p class="text-muted mb-0">Ordered Quantity:<%=
+                        product.quantity %></p>
+                    </div>
+                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
+                      <p class="text-muted"><%= order.date.toLocaleDateString('en-US',
+                        { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g,
+                        '-')%></p>
+                    </div>
+                  </div>
+                  <%})%>
+                </div>
+                <% }) %>
+                <% }else{%>
+                <div class="preview-item-content d-sm-flex flex-grow">
+                  <div class="flex-grow">
+                    <h6 class="preview-subject">No sales</h6>
+                    <p class="text-muted mb-0"></p>
+                  </div>
+                  <div class="mr-auto text-sm-right pt-2 pt-sm-0">
+                    <p class="text-muted"></p>
+                  </div>
+                </div>
+                <%} %>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="row">
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
@@ -317,7 +421,7 @@
                       <th>Delivery Address</th>
                       <th>Order Status</th>
                       <th>Action</th>
-                      <!-- Added Action column for changing order status -->
+                      
                     </tr>
                   </thead>
                   <tbody>
@@ -344,10 +448,10 @@
                       <td>$<%= order.amount %>
                       </td>
                       <td>
-                        <!-- Assuming order.products is an array of products in the order -->
                         <%
                         order.products.forEach(product=>
                         { %>
+                        <img src="/products/images/<%=product.image%>" alt="<%=product.product_name%>" width="50">
                         <p>Product: <%=
                           product.product_name %>,
                              
@@ -391,7 +495,6 @@
                       </td>   
                                        
                       <td>
-                        <!-- Select box for changing order status -->
                         <select class="form-select"
                           id="orderStatus<%= order._id %>"
                           onchange="changeOrderStatus('<%= order._id %>') ">
@@ -421,217 +524,193 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="row">
-        <div class="col-md-6 col-xl-6 grid-margin stretch-card">
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-xl-4 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-row justify-content-between">
-                <h4 class="card-title">Letest Sales</h4>
+                <h4 class="card-title">Messages</h4>
                 <p class="text-muted mb-1 small">View all</p>
               </div>
-              
               <div class="preview-list">
-                <%if (letestSales.length > 0) {%>
-                  <% letestSales.forEach((order, i) => { %>
-                    <div class="preview-item border-bottom">
-                      <div class="preview-thumbnail">
-                        <div class="preview-icon bg-primary">
-                          <img src="/products/images/" alt="image">
-                        </div>
-                      </div>
-                      <div class="preview-item-content d-sm-flex flex-grow">
-                        <div class="flex-grow">
-                          <%order.products.forEach(product=>{ %>
-                          <h6 class="preview-subject"><%= product.product_name %></h6>
-                          <p class="text-muted mb-0"><%= product.quantity %></p>
-                          <%})%>
-                        </div>
-                        <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                          <p class="text-muted"><%= order.date.toLocaleDateString('en-US', { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g, '-')%></p>
-                        </div>
-                      </div>
-                    </div>
-                  <% }) %>
-                <% }else{%>
-                  <div class="preview-item-content d-sm-flex flex-grow">
+                <div class="preview-item border-bottom">
+                  <div class="preview-thumbnail">
+                    <img src="/admin/images/faces/face6.jpg" alt="image"
+                      class="rounded-circle" />
+                  </div>
+                  <div class="preview-item-content d-flex flex-grow">
                     <div class="flex-grow">
-                      <h6 class="preview-subject">No sales</h6>
-                      <p class="text-muted mb-0"></p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted"></p>
+                      <div
+                        class="d-flex d-md-block d-xl-flex justify-content-between">
+                        <h6 class="preview-subject">Leonard</h6>
+                        <p class="text-muted text-small">5 minutes ago</p>
+                      </div>
+                      <p class="text-muted">Well, it seems to be working now.</p>
                     </div>
                   </div>
-                <%} %>
-
+                </div>
+                <div class="preview-item border-bottom">
+                  <div class="preview-thumbnail">
+                    <img src="/admin/images/faces/face8.jpg" alt="image"
+                      class="rounded-circle" />
+                  </div>
+                  <div class="preview-item-content d-flex flex-grow">
+                    <div class="flex-grow">
+                      <div
+                        class="d-flex d-md-block d-xl-flex justify-content-between">
+                        <h6 class="preview-subject">Luella Mills</h6>
+                        <p class="text-muted text-small">10 Minutes Ago</p>
+                      </div>
+                      <p class="text-muted">Well, it seems to be working now.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="preview-item border-bottom">
+                  <div class="preview-thumbnail">
+                    <img src="/admin/images/faces/face9.jpg" alt="image"
+                      class="rounded-circle" />
+                  </div>
+                  <div class="preview-item-content d-flex flex-grow">
+                    <div class="flex-grow">
+                      <div
+                        class="d-flex d-md-block d-xl-flex justify-content-between">
+                        <h6 class="preview-subject">Ethel Kelly</h6>
+                        <p class="text-muted text-small">2 Hours Ago</p>
+                      </div>
+                      <p class="text-muted">Please review the tickets</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="preview-item border-bottom">
+                  <div class="preview-thumbnail">
+                    <img src="/admin/images/faces/face11.jpg" alt="image"
+                      class="rounded-circle" />
+                  </div>
+                  <div class="preview-item-content d-flex flex-grow">
+                    <div class="flex-grow">
+                      <div
+                        class="d-flex d-md-block d-xl-flex justify-content-between">
+                        <h6 class="preview-subject">Herman May</h6>
+                        <p class="text-muted text-small">4 Hours Ago</p>
+                      </div>
+                      <p class="text-muted">Thanks a lot. It was easy to fix it
+                        .</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-      </div>
-
-      <div class="row">
-              <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="d-flex flex-row justify-content-between">
-                      <h4 class="card-title">Messages</h4>
-                      <p class="text-muted mb-1 small">View all</p>
+        <div class="col-md-6 col-xl-4 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Portfolio Slide</h4>
+              <div
+                class="owl-carousel owl-theme full-width owl-carousel-dash portfolio-carousel"
+                id="owl-carousel-basic">
+                <div class="item">
+                  <img src="/admin/images/dashboard/Rectangle.jpg" alt>
+                </div>
+                <div class="item">
+                  <img src="/admin/images/dashboard/Img_5.jpg" alt>
+                </div>
+                <div class="item">
+                  <img src="/admin/images/dashboard/img_6.jpg" alt>
+                </div>
+              </div>
+              <div class="d-flex py-4">
+                <div class="preview-list w-100">
+                  <div class="preview-item p-0">
+                    <div class="preview-thumbnail">
+                      <img src="/admin/images/faces/face12.jpg"
+                        class="rounded-circle" alt>
                     </div>
-                    <div class="preview-list">
-                      <div class="preview-item border-bottom">
-                        <div class="preview-thumbnail">
-                          <img src="/admin/images/faces/face6.jpg" alt="image" class="rounded-circle" />
+                    <div class="preview-item-content d-flex flex-grow">
+                      <div class="flex-grow">
+                        <div
+                          class="d-flex d-md-block d-xl-flex justify-content-between">
+                          <h6 class="preview-subject">CeeCee Bass</h6>
+                          <p class="text-muted text-small">4 Hours Ago</p>
                         </div>
-                        <div class="preview-item-content d-flex flex-grow">
-                          <div class="flex-grow">
-                            <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                              <h6 class="preview-subject">Leonard</h6>
-                              <p class="text-muted text-small">5 minutes ago</p>
-                            </div>
-                            <p class="text-muted">Well, it seems to be working now.</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="preview-item border-bottom">
-                        <div class="preview-thumbnail">
-                          <img src="/admin/images/faces/face8.jpg" alt="image" class="rounded-circle" />
-                        </div>
-                        <div class="preview-item-content d-flex flex-grow">
-                          <div class="flex-grow">
-                            <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                              <h6 class="preview-subject">Luella Mills</h6>
-                              <p class="text-muted text-small">10 Minutes Ago</p>
-                            </div>
-                            <p class="text-muted">Well, it seems to be working now.</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="preview-item border-bottom">
-                        <div class="preview-thumbnail">
-                          <img src="/admin/images/faces/face9.jpg" alt="image" class="rounded-circle" />
-                        </div>
-                        <div class="preview-item-content d-flex flex-grow">
-                          <div class="flex-grow">
-                            <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                              <h6 class="preview-subject">Ethel Kelly</h6>
-                              <p class="text-muted text-small">2 Hours Ago</p>
-                            </div>
-                            <p class="text-muted">Please review the tickets</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="preview-item border-bottom">
-                        <div class="preview-thumbnail">
-                          <img src="/admin/images/faces/face11.jpg" alt="image" class="rounded-circle" />
-                        </div>
-                        <div class="preview-item-content d-flex flex-grow">
-                          <div class="flex-grow">
-                            <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                              <h6 class="preview-subject">Herman May</h6>
-                              <p class="text-muted text-small">4 Hours Ago</p>
-                            </div>
-                            <p class="text-muted">Thanks a lot. It was easy to fix it .</p>
-                          </div>
-                        </div>
+                        <p class="text-muted">Well, it seems to be working now.</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Portfolio Slide</h4>
-                    <div class="owl-carousel owl-theme full-width owl-carousel-dash portfolio-carousel" id="owl-carousel-basic">
-                      <div class="item">
-                        <img src="/admin/images/dashboard/Rectangle.jpg" alt="">
-                      </div>
-                      <div class="item">
-                        <img src="/admin/images/dashboard/Img_5.jpg" alt="">
-                      </div>
-                      <div class="item">
-                        <img src="/admin/images/dashboard/img_6.jpg" alt="">
-                      </div>
-                    </div>
-                    <div class="d-flex py-4">
-                      <div class="preview-list w-100">
-                        <div class="preview-item p-0">
-                          <div class="preview-thumbnail">
-                            <img src="/admin/images/faces/face12.jpg" class="rounded-circle" alt="">
-                          </div>
-                          <div class="preview-item-content d-flex flex-grow">
-                            <div class="flex-grow">
-                              <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                                <h6 class="preview-subject">CeeCee Bass</h6>
-                                <p class="text-muted text-small">4 Hours Ago</p>
-                              </div>
-                              <p class="text-muted">Well, it seems to be working now.</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <p class="text-muted">Well, it seems to be working now. </p>
-                    <div class="progress progress-md portfolio-progress">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12 col-xl-4 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">To do list</h4>
-                    <div class="add-items d-flex">
-                      <input type="text" class="form-control todo-list-input" placeholder="enter task..">
-                      <button class="add btn btn-primary todo-list-add-btn">Add</button>
-                    </div>
-                    <div class="list-wrapper">
-                      <ul class="d-flex flex-column-reverse text-white todo-list todo-list-custom">
-                        <li>
-                          <div class="form-check form-check-primary">
-                            <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Create invoice </label>
-                          </div>
-                          <i class="remove mdi mdi-close-box"></i>
-                        </li>
-                        <li>
-                          <div class="form-check form-check-primary">
-                            <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Meeting with Alita </label>
-                          </div>
-                          <i class="remove mdi mdi-close-box"></i>
-                        </li>
-                        <li class="completed">
-                          <div class="form-check form-check-primary">
-                            <label class="form-check-label">
-                              <input class="checkbox" type="checkbox" checked> Prepare for presentation </label>
-                          </div>
-                          <i class="remove mdi mdi-close-box"></i>
-                        </li>
-                        <li>
-                          <div class="form-check form-check-primary">
-                            <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Plan weekend outing </label>
-                          </div>
-                          <i class="remove mdi mdi-close-box"></i>
-                        </li>
-                        <li>
-                          <div class="form-check form-check-primary">
-                            <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Pick up kids from school </label>
-                          </div>
-                          <i class="remove mdi mdi-close-box"></i>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+              <p class="text-muted">Well, it seems to be working now. </p>
+              <div class="progress progress-md portfolio-progress">
+                <div class="progress-bar bg-success" role="progressbar"
+                  style="width: 50%" aria-valuenow="25" aria-valuemin="0"
+                  aria-valuemax="100"></div>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="col-md-12 col-xl-4 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">To do list</h4>
+              <div class="add-items d-flex">
+                <input type="text" class="form-control todo-list-input"
+                  placeholder="enter task..">
+                <button class="add btn btn-primary todo-list-add-btn">Add</button>
+              </div>
+              <div class="list-wrapper">
+                <ul
+                  class="d-flex flex-column-reverse text-white todo-list todo-list-custom">
+                  <li>
+                    <div class="form-check form-check-primary">
+                      <label class="form-check-label">
+                        <input class="checkbox" type="checkbox"> Create invoice
+                      </label>
+                    </div>
+                    <i class="remove mdi mdi-close-box"></i>
+                  </li>
+                  <li>
+                    <div class="form-check form-check-primary">
+                      <label class="form-check-label">
+                        <input class="checkbox" type="checkbox"> Meeting with
+                        Alita </label>
+                    </div>
+                    <i class="remove mdi mdi-close-box"></i>
+                  </li>
+                  <li class="completed">
+                    <div class="form-check form-check-primary">
+                      <label class="form-check-label">
+                        <input class="checkbox" type="checkbox" checked> Prepare
+                        for presentation </label>
+                    </div>
+                    <i class="remove mdi mdi-close-box"></i>
+                  </li>
+                  <li>
+                    <div class="form-check form-check-primary">
+                      <label class="form-check-label">
+                        <input class="checkbox" type="checkbox"> Plan weekend
+                        outing </label>
+                    </div>
+                    <i class="remove mdi mdi-close-box"></i>
+                  </li>
+                  <li>
+                    <div class="form-check form-check-primary">
+                      <label class="form-check-label">
+                        <input class="checkbox" type="checkbox"> Pick up kids
+                        from school </label>
+                    </div>
+                    <i class="remove mdi mdi-close-box"></i>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
     <!-- content-wrapper ends -->
@@ -714,5 +793,67 @@
             // Your implementation of changeOrderStatus
           }
         </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      let COD=<%= cod %>, Online=<%= online %>
+        // Sample data
+        var data = {
+            labels: ['COD', 'Online', 'Wallet'],
+            datasets: [{
+                data: [COD, Online, 0],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+            }]
+        };
+
+        // Get the context of the canvas element
+        var ctx = document.getElementById('myChart').getContext('2d');
+
+        // Create a pie chart
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: data
+        });
+    </script>
+    <script>
+      // let delivered=<%= dele %>, pending=<%= pend %>, returned=<%= ret %>
+      // Updated data for delivered products, pending, and returned
+      var productStatusData = {
+        labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+        datasets: [{
+          label: "Delivered",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+          data: [ 1, 1, 1, 0, 0 ],
+        }, {
+          label: "Pending",
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 1,
+          data: [1, 1,0, 0, 0],
+        }, {
+          label: "Returned",
+          backgroundColor: "rgba(255, 205, 86, 0.2)",
+          borderColor: "rgba(255, 205, 86, 1)",
+          borderWidth: 1,
+          data: [1, 1, 1, 1, 1],
+        }],
+      };
+  
+      // Get the canvas element and render the bar chart
+      var ctx = document.getElementById('productStatusChart').getContext('2d');
+      var productStatusChart = new Chart(ctx, {
+        type: 'bar',
+        data: productStatusData,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
 
     <%- include('../admin/layout/adminFooter.ejs') -%>

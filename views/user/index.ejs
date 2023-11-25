@@ -1,76 +1,171 @@
 <%- include('../user/layout/header.ejs') -%>
-<%- include('../user/layout/sideBar.ejs') -%>
-   
+  <%- include('../user/layout/sideBar.ejs') -%>
+
     <!-- ##### Main Content Wrapper Start ##### -->
-    
-        <!-- Product Catagories Area Start -->
-        <div class="products-catagories-area clearfix">
-            <div id="carouselExampleDark" class="carousel carousel-dark slide">
-                <div class="carousel-indicators">
-                  <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                  <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                  <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                </div>
-                <div class="carousel-inner">
-                  <div class="carousel-item active" data-bs-interval="1000">
-                    <img src="/user/img/banner-img/main offr.png" class="d-block w-100" style="position: relative; height: 50%;" alt="">
-                    
-                  </div>
-                  <div class="carousel-item" data-bs-interval="2000">
-                    <img src="/user/img/banner-img/offr1.png" class="d-block w-100" alt="">
-                    
-                  </div>
-                  <div class="carousel-item" data-bs-interval="2000">
-                    <img src="/user/img/banner-img/offr2.png" style="background-size: cover; background-position: center;  width: 100%;" class="d-block w-100" alt="">
-                    
-                  </div>
-                </div>
-                <button class="carousel-control-prev" type="button" style="border: 0; width: 6%; background-color: rgba(240, 248, 255, 0);"" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden"></span>
-                </button>
-                <button class="carousel-control-next" type="button" style="border: 0; width: 6%; background-color: rgba(240, 248, 255, 0);" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden"></span>
-                </button>
-                <!-- <div class="d-flex justify-content-center align-items-center" style="width: max-content; height: 10%;">
+
+    <!-- Product Catagories Area Start -->
+    <div class="products-catagories-area clearfix">
+      <div id="carouselExampleDark"
+        class="carousel carousel-dark slide">
+        <div class="carousel-indicators">
+          <button type="button"
+            data-bs-target="#carouselExampleDark"
+            data-bs-slide-to="0" class="active"
+            aria-current="true"
+            aria-label="Slide 1"></button>
+          <button type="button"
+            data-bs-target="#carouselExampleDark"
+            data-bs-slide-to="1"
+            aria-label="Slide 2"></button>
+          <button type="button"
+            data-bs-target="#carouselExampleDark"
+            data-bs-slide-to="2"
+            aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active"
+            data-bs-interval="1000">
+            <img src="/user/img/banner-img/main offr.png"
+              class="d-block w-100"
+              style="position: relative; height: 50%;"
+              alt="">
+
+          </div>
+          <div class="carousel-item"
+            data-bs-interval="2000">
+            <img src="/user/img/banner-img/offr1.png"
+              class="d-block w-100" alt="">
+
+          </div>
+          <div class="carousel-item"
+            data-bs-interval="2000">
+            <img src="/user/img/banner-img/offr2.png"
+              style="background-size: cover; background-position: center;  width: 100%;"
+              class="d-block w-100" alt="">
+
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button"
+          style="border: 0; width: 6%; background-color: rgba(240, 248, 255, 0);"" data-bs-target="
+          #carouselExampleDark" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"
+            aria-hidden="true"></span>
+          <span class="visually-hidden"></span>
+        </button>
+        <button class="carousel-control-next" type="button"
+          style="border: 0; width: 6%; background-color: rgba(240, 248, 255, 0);"
+          data-bs-target="#carouselExampleDark"
+          data-bs-slide="next">
+          <span class="carousel-control-next-icon"
+            aria-hidden="true"></span>
+          <span class="visually-hidden"></span>
+        </button>
+        <!-- <div class="d-flex justify-content-center align-items-center" style="width: max-content; height: 10%;">
                     <h3 style="font-size: 6rem;">-----Catogories-----</h3>
                 </div> -->
-            </div>
-
-            <div class="container d-flex justify-content-center align-items-center" style="width:40%; height: 4%;">
-                <h3 >---Products---</h3>
-            </div>
-            <div class="amado-pro-catagory clearfix">
-                
-                <% produ.forEach((item) => { %>
-                    <%if(item.block==0){%>
-                  <!-- Single Category -->
-                  <div style="width: 359px; height: 400px; overflow: hidden;" class="single-products-catagory clearfix m-2 border rounded">
-                    <a href="/productDetail?id=<%- item._id %>">
-                      <!-- Image -->
-                      <img
-                        src="/products/images/<%- item.images.image1 %>"
-                        alt="<%= item.product_name %>"
-                        style="object-fit: cover; width: 100%; height: 100%; object-position: center;"
-                      />
-                      <!-- Hover Content -->
-                      <div class="hover-content">
-                        <div class="line"></div>
-                        <p>From ₹<%= item.price %></p>
-                        <span><h4><%= item.product_name %></h4></span>
-                        
+      </div>
+      
+      <section class="py-5">
+        <div class="container px-4 px-lg-5 ">
+          <h2 class="text-center mb-4">Products</h2>
+          <div
+            class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <% produ.forEach((item)=> { %>
+              <div class="col mb-5">
+                <div class="card h-100">
+                  <!-- Product image-->
+                  <img class="card-img-top"
+                    style="object-fit: cover; width: 100%; height: 200px; object-position: center;"
+                    src="/products/images/<%- item.images.image1 %>"
+                    alt="<%= item.product_name %>" />
+                  <!-- Product details-->
+                  <div class="card-body p-4">
+                    <div class="text-center">
+                      <!-- Product name-->
+                      <h5 class="fw-bolder">
+                        <%= item.product_name.substring(0, 20) %>
+                      </h5>
+                      <!-- Product reviews-->
+                      <div
+                        class="d-flex justify-content-center small text-warning mb-2">
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
                       </div>
-                    </a>
+                      <!-- Product price-->
+                      ₹<%= item.price %>
+                    </div>
                   </div>
-                  <% }%>
-                <% }) %>
-              
-                <!-- Single Catagory -->
+                  <!-- Product actions-->
+                  <div
+                    class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center"><a
+                        class="btn btn-outline-dark mt-auto"
+                        href="/productDetail?id=<%- item._id %>">View
+                        Details</a></div>
+                  </div>
+                </div>
               </div>
-              
+              <% }) %>
+
+          </div>
         </div>
-        <!-- Product Catagories Area End -->
+
+      </section>
+      
+      <section class="py-3">
+        <div class="container px-4 px-lg-5 mt-5">
+          <h2 class="text-center mb-4">Products in Desired Category</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <% 
+                    // Assuming 'desiredCategory' is the category you want to display
+                    const filteredProducts = produ.filter(item => item.category === 'Camera');
+                    const numberOfProductsToShow = 3// Change this number to limit the displayed products
+
+                    filteredProducts.slice(0, numberOfProductsToShow).forEach((item) => {
+                %>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" style="object-fit: cover; width: 100%; height: 200px; object-position: center;"
+                                src="/products/images/<%- item.images.image1 %>" alt="<%= item.product_name %>" />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">
+                                        <%= item.product_name.substring(0, 20) %>
+                                    </h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <!-- Product price-->
+                                    ₹<%= item.price %>
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                        href="/productDetail?id=<%- item._id %>">View Details</a></div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    
+    
+
+    </div>
+    <!-- Product Catagories Area End -->
     </div>
     <!-- ##### Main Content Wrapper End ##### -->
 
@@ -78,15 +173,15 @@
     <!-- <section class="newsletter-area section-padding-100-0">
         <div class="container">
             <div class="row align-items-center"> -->
-                <!-- Newsletter Text -->
-                <!-- <div class="col-12 col-lg-6 col-xl-7">
+    <!-- Newsletter Text -->
+    <!-- <div class="col-12 col-lg-6 col-xl-7">
                     <div class="newsletter-text mb-100">
                         <h2>Subscribe for a <span>25% Discount</span></h2>
                         <p>Nulla ac convallis lorem, eget euismod nisl. Donec in libero sit amet mi vulputate consectetur. Donec auctor interdum purus, ac finibus massa bibendum nec.</p>
                     </div>
                 </div> -->
-                <!-- Newsletter Form -->
-                <!-- <div class="col-12 col-lg-6 col-xl-5">
+    <!-- Newsletter Form -->
+    <!-- <div class="col-12 col-lg-6 col-xl-5">
                     <div class="newsletter-form mb-100">
                         <form action="#" method="post">
                             <input type="email" name="email" class="nl-email" placeholder="Your E-mail">

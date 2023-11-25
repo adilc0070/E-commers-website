@@ -155,11 +155,13 @@
           <article class="card">
             <div class="card-body row">
               <div class="col">
-                <strong> Ordered Date:</strong> <br /><%=order.date%>
+                <strong> Ordered Date:</strong> <br /><%= order.date.toLocaleDateString('en-US',
+                { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g,
+                '-')%>
               </div>
               <div class="col">
-                <strong>Shipping BY:</strong> <br />
-                <i class="fa fa-phone"></i> <%=order.address.phone%>
+                <strong> Total Amount:</strong> <br />
+                <i class="fa fa-inr"></i>₹ <%=order.amount%>
               </div>
               <div class="col">
                 <strong>Status:</strong> <br />
@@ -251,10 +253,14 @@
           <%}else if(order.status ==='delivered'){%>
             <a href="#" class="btn btn-warning" data-abc="true">
               <i class="fa fa-chevron-left"></i> Return order</a>
+            <a href="/downloadInvoice?id=<%=order._id%>" class="btn btn-success">
+              <i class="fa fa-download"></i> View invoice </a>
+            <a href="" class="btn btn-success"><i class="fa fa-star-o"></i>Review</a>
           <%}else if(order.status ==='pending'||order.status ==='shipped'){%>
             <a href="#" class="btn btn-warning" data-abc="true">
               <i class="fa fa-chevron-left"></i> Cancel order</a>
           <%}%>
+
         </div>
       </article>
       <%})%>

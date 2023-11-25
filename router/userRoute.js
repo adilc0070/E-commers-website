@@ -62,5 +62,7 @@ userRoute.post('/placeOrder', orderController.placeOrder);
 userRoute.post('/cancelOrder', orderController.cancelOrder);
 
 userRoute.get('/ordersss',orderController.orderPage)
+userRoute.get('/orderDetails',orderController.order)
+userRoute.get('/downloadInvoice',orderController.downloadInvoice)
 // userRoute.post('/productDetails',userController.productDetails)
 module.exports=userRoute

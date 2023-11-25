@@ -9,6 +9,9 @@ let env = require("dotenv");
 env.config();
 let session = require("express-session");
 const Order = require("../models/orederModel");
+let pdf=require('html-pdf')
+let ejs=require('ejs')
+let path=require('path')
 
 //--------------------email validation function---------------------
 function validateEmail(email) {
@@ -660,6 +663,46 @@ let blockProduct = async (req, res) => {
         console.log(error.message);
     }
 };
+
+
+const SalesReport = async (req, res) => {
+    try {
+    const orderdata = await Order.find({})
+    ejs.renderFile(
+      path.join(__dirname, "../views/admin/", "report-template.ejs"),
+      {
+        orderdata,
+      },
+      (err, data) => {
+        if (err) {
+          res.send(err);
+        } else {
+          let options = {
+            height: "11.25in",
+            width: "8.5in",
+            header: {
+              height: "20mm",
+            },
+            footer: {
+              height: "20mm",
+            },
+          };
+          pdf.create(data, options).toFile("report.pdf", function (err, data) {
+            if (err) {
+              res.send(err);
+            } else {
+              const pdfpath = path.join(__dirname, "../report.pdf");
+              res.sendFile(pdfpath);
+            }
+          });
+        }
+      }
+    );
+  
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
 module.exports = {
     adminLogin,

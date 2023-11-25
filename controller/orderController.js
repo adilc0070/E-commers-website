@@ -5,6 +5,10 @@ let Cart = require('../models/cart');
 let Order = require('../models/orederModel');
 let address = require('../models/address');
 let Razorpay = require('razorpay');
+let fs = require('fs');
+let pdf=require('html-pdf')
+let path=require('path')
+let ejs=require('ejs')
 
 
 
@@ -128,13 +132,72 @@ let orderPage = async (req, res) => {
         let userDa = await user.findById(req.session.user_id); // Corrected: 'user' to 'User'
         let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId').sort({ createdAt: -1 });
         
-        console.log(orders);
+        // console.log(orders);
         res.render('tailes', { userDa, orders });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
+let order = async (req, res) => {
+    try {
+        // Fetch user data and orders
+        let userDa = await user.findById(req.session.user_id); // Corrected: 'user' to 'User'
+        let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId').sort({ createdAt: -1 });
+        
+        // console.log(orders);
+        res.render('orders', { userDa, orders });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+};
+
+let downloadInvoice = async (req, res) => {
+    try {
+        const id = req.query.id;
+        let userDa=await user.findById(req.session.user_id);
+        const orders = await Order.findById(id).populate('products.productId').populate( { path: 'userId', select: 'name' });
+        
+        if (!orders) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }else{
+            ejs.renderFile(
+                path.join(__dirname, "../views/user/", "invoice.ejs"),
+                {
+                    orders,
+                },(err, data) => {
+                    if (err) {
+                        res.send(err);
+                    } else {
+                        let options = {
+                            height: "11.693in",
+                            width: "8.268in",
+                            header: {
+                                height: "0mm",
+                            },
+                            footer: {
+                                height: "0mm",
+                            },
+                        };
+                        pdf.create(data, options).toFile("invoice.pdf", function (err, data) {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                const file = path.join(__dirname, "../invoice.pdf");
+                                res.download(file);
+                            }
+                        });
+                    }
+                }
+            )
+            res.render('invoice', { orders, userDa });
+            
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 // Update order status
 const updateOrderStatus = async (req, res) => {
@@ -152,7 +215,8 @@ const updateOrderStatus = async (req, res) => {
             if(change.status=="delivered"){
                 let paymentStatus=await Order.updateOne(
                     { _id: id },
-                    { $set: { paymentStatus: "paid" } }
+                    { $set: { paymentStatus: "paid" ,
+                    paymentDate:new Date()} }
                 )
             }else if(change.status=="cancelled"){
                 let paymentStatus=await Order.updateOne(
@@ -208,5 +272,7 @@ module.exports = {
     orderPage,
     placeOrder,
     updateOrderStatus,
-    cancelOrder
+    cancelOrder,
+    order,
+    downloadInvoice
 }

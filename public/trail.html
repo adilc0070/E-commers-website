@@ -1,217 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body{margin-top:20px;
-background:#87CEFA;
-}
-
-.card-footer-btn {
-    display: flex;
-    align-items: center;
-    border-top-left-radius: 0!important;
-    border-top-right-radius: 0!important;
-}
-.text-uppercase-bold-sm {
-    text-transform: uppercase!important;
-    font-weight: 500!important;
-    letter-spacing: 2px!important;
-    font-size: .85rem!important;
-}
-.hover-lift-light {
-    transition: box-shadow .25s ease,transform .25s ease,color .25s ease,background-color .15s ease-in;
-}
-.justify-content-center {
-    justify-content: center!important;
-}
-.btn-group-lg>.btn, .btn-lg {
-    padding: 0.8rem 1.85rem;
-    font-size: 1.1rem;
-    border-radius: 0.3rem;
-}
-.btn-dark {
-    color: #fff;
-    background-color: #1e2e50;
-    border-color: #1e2e50;
-}
-
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid rgba(30,46,80,.09);
-    border-radius: 0.25rem;
-    box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
-}
-
-.p-5 {
-    padding: 3rem!important;
-}
-.card-body {
-    flex: 1 1 auto;
-    padding: 1.5rem 1.5rem;
-}
-
-tbody, td, tfoot, th, thead, tr {
-    border-color: inherit;
-    border-style: solid;
-    border-width: 0;
-}
-
-.table td, .table th {
-    border-bottom: 0;
-    border-top: 1px solid #edf2f9;
-}
-.table>:not(caption)>*>* {
-    padding: 1rem 1rem;
-    background-color: var(--bs-table-bg);
-    border-bottom-width: 1px;
-    box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
-}
-.px-0 {
-    padding-right: 0!important;
-    padding-left: 0!important;
-}
-.table thead th, tbody td, tbody th {
-    vertical-align: middle;
-}
-tbody, td, tfoot, th, thead, tr {
-    border-color: inherit;
-    border-style: solid;
-    border-width: 0;
-}
-
-.mt-5 {
-    margin-top: 3rem!important;
-}
-
-.icon-circle[class*=text-] [fill]:not([fill=none]), .icon-circle[class*=text-] svg:not([fill=none]), .svg-icon[class*=text-] [fill]:not([fill=none]), .svg-icon[class*=text-] svg:not([fill=none]) {
-    fill: currentColor!important;
-}
-.svg-icon>svg {
-    width: 1.45rem;
-    height: 1.45rem;
-}
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Sales Report</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body class="bg-light">
 
-<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Sales Report</h2>
 
-    <div class="container mt-6 mb-7">
-        <div class="row justify-content-center">
-          <div class="col-lg-12 col-xl-7">
-            <div class="card">
-              <div class="card-body p-5">
-                <h2>
-                  Hey Anna,
-                </h2>
-                <p class="fs-sm">
-                  This is the receipt for a payment of <strong>$312.00</strong> (USD) you made to Spacial Themes.
-                </p>
-    
-                <div class="border-top border-gray-200 pt-4 mt-4">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="text-muted mb-2">Payment No.</div>
-                      <strong>#88305</strong>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                      <div class="text-muted mb-2">Payment Date</div>
-                      <strong>Feb/09/20</strong>
-                    </div>
-                  </div>
-                </div>
-    
-                <div class="border-top border-gray-200 mt-4 py-4">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="text-muted mb-2">Client</div>
-                      <strong>
-                        John McClane
-                      </strong>
-                      <p class="fs-sm">
-                        989 5th Avenue, New York, 55832
-                        <br>
-                        <a href="#!" class="text-purple">john@email.com
-                        </a>
-                      </p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                      <div class="text-muted mb-2">Payment To</div>
-                      <strong>
-                        Themes LLC
-                      </strong>
-                      <p class="fs-sm">
-                        9th Avenue, San Francisco 99383
-                        <br>
-                        <a href="#!" class="text-purple">themes@email.com
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-    
-                <table class="table border-bottom border-gray-200 mt-3">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Description</th>
-                      <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="px-0">Theme customization</td>
-                      <td class="text-end px-0">$60.00</td>
-                    </tr>
-                    <tr>
-                      <td class="px-0">Website design</td>
-                      <td class="text-end px-0">$80.00</td>
-                    </tr>
-                  </tbody>
-                </table>
-    
-                <div class="mt-5">
-                  <div class="d-flex justify-content-end">
-                    <p class="text-muted me-3">Subtotal:</p>
-                    <span>$390.00</span>
-                  </div>
-                  <div class="d-flex justify-content-end">
-                    <p class="text-muted me-3">Discount:</p>
-                    <span>-$40.00</span>
-                  </div>
-                  <div class="d-flex justify-content-end mt-3">
-                    <h5 class="me-3">Total:</h5>
-                    <h5 class="text-success">$399.99 USD</h5>
-                  </div>
-                </div>
-              </div>
-              <a href="#!" class="btn btn-dark btn-lg card-footer-btn justify-content-center text-uppercase-bold-sm hover-lift-light">
-                <span class="svg-icon text-white me-2">
-                  <i class="fa fa-credit-card svg-icon  text-white"></i>
-                </span>
-                Pay Now
-              </a>
-            </div>
-          </div>
+        <!-- Sales Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2023-11-01</td>
+                    <td>Product A</td>
+                    <td>10</td>
+                    <td>$20.00</td>
+                    <td>$200.00</td>
+                </tr>
+                <tr>
+                    <td>2023-11-02</td>
+                    <td>Product B</td>
+                    <td>5</td>
+                    <td>$15.00</td>
+                    <td>$75.00</td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end">Total Sales:</td>
+                    <td>$275.00</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Smaller Pie Chart -->
+        <div class="mt-4">
+            <canvas id="salesPieChart" width="200" height="200"></canvas>
         </div>
-      </div>
-      <button id="btn" onclick="prinas()">Print</button>
-</body>
-<script>
-    function prinas(){
-        document.getElementById("btn").style.display = "none";
-        window.print();
-    }
-</script>
+    </div>
 
+    <script>
+        // Data for the pie chart
+        var salesData = {
+            labels: ['Product A', 'Product B'],
+            datasets: [{
+                data: [200, 75],
+                backgroundColor: ['#FF6384', '#36A2EB'],
+                hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+            }]
+        };
+
+        // Get the context of the canvas element
+        var ctx = document.getElementById('salesPieChart').getContext('2d');
+
+        // Create a pie chart
+        var salesPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: salesData,
+        });
+    </script>
+
+    <!-- Bootstrap JS (optional, if needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
 </html>

@@ -1,23 +1,24 @@
 <%- include('../admin/layout/adminSidebar.ejs') -%>
-<%- include('../admin/layout/adminHeader.ejs') -%>
+  <%- include('../admin/layout/adminHeader.ejs') -%>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+      #chart-container {
+        width: 300px;
+        height: 300px;
+        position: relative;
+      }
 
-<style>
-  #chart-container {
-      width: 300px;
-      height: 300px;
-      position: relative;
-  }
-
-  .chart {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-  }
-</style>
-<!-- partial -->
-<div class="container-fluid page-body-wrapper">
-  <!-- partial:partials/_navbar.html -->
-  <!-- <nav class="navbar p-0 fixed-top d-flex flex-row">
+      .chart {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_navbar.html -->
+      <!-- <nav class="navbar p-0 fixed-top d-flex flex-row">
     <div
       class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
       <a class="navbar-brand brand-logo-mini" href="index.html"><img
@@ -233,303 +234,324 @@
       </button>
     </div>
   </nav> -->
-  <!-- partial -->
-  <div class="main-panel">
-    <div class="content-wrapper">
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
 
-      <div class="row">
-        <div class="col-sm-4 grid-margin">
-          <div class="card">
-            <div class="card-body">
-              <h5>Revenue</h5>
-              <div class="row">
-                <div class="col-8 col-sm-12 col-xl-8 my-auto">
-                  <div class="d-flex d-sm-block d-md-flex align-items-center">
-                    <h2 class="mb-0">₹<%= revenue %></h2>
-                    <p class="text-success ml-2 mb-0 font-weight-medium">+<%=
-                      averagePendingRevenue%> Pending</p>
-                  </div>
-                  <h6 class="text-muted font-weight-normal"><%= pendingRevenue%>
-                    Pending Revenue from last month</h6>
-                </div>
-                <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
-                  <i class="icon-lg mdi mdi-codepen text-primary ml-auto"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4 grid-margin">
-          <div class="card">
-            <div class="card-body">
-              <h5>Sales</h5>
-              <div class="row">
-                <div class="col-8 col-sm-12 col-xl-8 my-auto">
-                  <div class="d-flex d-sm-block d-md-flex align-items-center">
-                    <h2 class="mb-0"><%= sales %></h2>
-                    <p class="text-success ml-2 mb-0 font-weight-medium">+<%=
-                      pendingSales %> Pending to Delivery</p>
-                  </div>
-                  <h6 class="text-muted font-weight-normal"><%= %></h6>
-                </div>
-                <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
-                  <i class="icon-lg mdi mdi-wallet-travel text-danger ml-auto"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4 grid-margin">
-          <div class="card">
-            <div class="card-body">
-              <h5>Users</h5>
-              <div class="row">
-                <div class="col-8 col-sm-12 col-xl-8 my-auto">
-                  <div class="d-flex d-sm-block d-md-flex align-items-center">
-                    <h2 class="mb-0"><%= usersCount %></h2>
-                    <%if(usersCount > purchasersCount ){%>
-                    <p class="text-danger ml-2 mb-0 font-weight-medium "><%=
-                      purchasersCount%> Users Only Purchased</p>
-                    <%}else{%>
-                    <p class="text-success ml-2 mb-0 font-weight-medium"><%=purchaseCount%>
-                      Users Purchased</p>
-                    <%}%>
-
-                  </div>
-                  <h6 class="text-muted font-weight-normal">2.27% Since
-                    lastmonth</h6>
-                </div>
-                <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
-                  <i class="icon-lg mdi mdi-monitor text-success ml-auto"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-3 col-xl-3 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex flex-row justify-content-between">
-                <h4 class="card-title">Revenue Overview</h4>
-                <p class="text-muted mb-1 small"></p>
-              </div>
-
-              <div id="chart-container">
-                <canvas id="myChart" class="chart"></canvas>
-              </div>
-
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-xl-3 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex flex-row justify-content-between">
-                <h4 class="card-title">Orders</h4>
-                <p class="text-muted mb-1 small"></p>
-              </div>
-
-              <div id="chart-container" class="d-flex justify-content-center">
-                <canvas id="productStatusChart" class="chart"></canvas>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-xl-6 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex flex-row justify-content-between">
-                <h4 class="card-title">Letest Sales</h4>
-                <p class="text-muted mb-1 small">View all</p>
-              </div>
-
-              <div class="preview-list">
-                <%if (letestSales.length > 0) {%>
-                <% letestSales.forEach((order, i) => { %>
-                <div class="preview-item border-bottom">
-                  <%order.products.forEach(product=>{ %>
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-primary">
-                      <img src="/products/images/<%= product.image %>"
-                        alt="image">
+          <div class="row">
+            <div class="col-sm-4 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h5>Revenue</h5>
+                  <div class="row">
+                    <div
+                      class="col-8 col-sm-12 col-xl-8 my-auto">
+                      <div
+                        class="d-flex d-sm-block d-md-flex align-items-center">
+                        <h2 class="mb-0">₹<%= revenue %>
+                        </h2>
+                        <p
+                          class="text-success ml-2 mb-0 font-weight-medium">
+                          +<%= averagePendingRevenue%>
+                            Pending</p>
+                      </div>
+                      <h6
+                        class="text-muted font-weight-normal">
+                        <%= pendingRevenue%>
+                          Pending Revenue from last month
+                      </h6>
+                    </div>
+                    <div
+                      class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                      <i
+                        class="icon-lg mdi mdi-codepen text-primary ml-auto"></i>
                     </div>
                   </div>
-                  <div class="preview-item-content d-sm-flex flex-grow">
-                    <div class="flex-grow">
-                      <h6 class="preview-subject">Product Name: <%=
-                        product.product_name %></h6>
-                      <p class="text-muted mb-0">Ordered Quantity:<%=
-                        product.quantity %></p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted"><%= order.date.toLocaleDateString('en-US',
-                        { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g,
-                        '-')%></p>
-                    </div>
-                  </div>
-                  <%})%>
                 </div>
-                <% }) %>
-                <% }else{%>
-                <div class="preview-item-content d-sm-flex flex-grow">
-                  <div class="flex-grow">
-                    <h6 class="preview-subject">No sales</h6>
-                    <p class="text-muted mb-0"></p>
-                  </div>
-                  <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                    <p class="text-muted"></p>
+              </div>
+            </div>
+            <div class="col-sm-4 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h5>Sales</h5>
+                  <div class="row">
+                    <div
+                      class="col-8 col-sm-12 col-xl-8 my-auto">
+                      <div
+                        class="d-flex d-sm-block d-md-flex align-items-center">
+                        <h2 class="mb-0">
+                          <%= sales %>
+                        </h2>
+                        <p
+                          class="text-success ml-2 mb-0 font-weight-medium">
+                          +<%= pendingSales %> Pending to
+                            Delivery</p>
+                      </div>
+                      <h6
+                        class="text-muted font-weight-normal">
+                        <%= %>
+                      </h6>
+                    </div>
+                    <div
+                      class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                      <i
+                        class="icon-lg mdi mdi-wallet-travel text-danger ml-auto"></i>
+                    </div>
                   </div>
                 </div>
-                <%} %>
+              </div>
+            </div>
+            <div class="col-sm-4 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h5>Users</h5>
+                  <div class="row">
+                    <div
+                      class="col-8 col-sm-12 col-xl-8 my-auto">
+                      <div
+                        class="d-flex d-sm-block d-md-flex align-items-center">
+                        <h2 class="mb-0">
+                          <%= usersCount %>
+                        </h2>
+                        <%if(usersCount> purchasersCount
+                          ){%>
+                          <p
+                            class="text-danger ml-2 mb-0 font-weight-medium ">
+                            <%= purchasersCount%> Users Only
+                              Purchased
+                          </p>
+                          <%}else{%>
+                            <p
+                              class="text-success ml-2 mb-0 font-weight-medium">
+                              <%=purchaseCount%>
+                                Users Purchased
+                            </p>
+                            <%}%>
 
+                      </div>
+                      <h6
+                        class="text-muted font-weight-normal">
+                        2.27% Since
+                        lastmonth</h6>
+                    </div>
+                    <div
+                      class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                      <i
+                        class="icon-lg mdi mdi-monitor text-success ml-auto"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+          <div class="row">
+            <div
+              class="col-md-6 col-xl-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex flex-row justify-content-between">
+                    <h4 class="card-title">Download Sales Report</h4>
+                    <p class="text-muted mb-1 small"></p>
+                  </div>
+                  <div class="btns">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <input type="date"
+                            class="form-control" id="fromDate"
+                            placeholder="From"
+                            name="fromDate">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <div class="input-group">
+                            <input type="date"
+                              class="form-control" id="toDate"
+                              placeholder="To" name="toDate">
+                            <button type="button" class="btn btn-primary"
+                              onclick="downloadCustomReport()">Download</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-      <!-- <div class="row">
-        <div class="col-12 grid-margin">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">Order Status</h4>
-              <div class="table-responsive">
-                <table class="table" style="width: 100%; border-collapse: collapse;">
-                  <thead>
-                    <tr>
-                      <th>
-                        <div
-                          class="form-check form-check-muted m-0">
-                          <label
-                            class="form-check-label">
-                            <input type="checkbox"
-                              class="form-check-input">
-                          </label>
-                        </div>
-                      </th>
-                      <th>Client Name</th>
-                      <th>Order No</th>
-                      <th>Product Cost</th>
-                      <th>Products</th>
-                      <th>Payment Mode</th>
-                      <th>Ordered Date</th>
-                      <th>Delivery Address</th>
-                      <th>Order Status</th>
-                      <th>Action</th>
-                      
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% orders.forEach(order=> { %>
-                    <tr>
-                      <td>
-                        <div
-                          class="form-check form-check-muted m-0">
-                          <label
-                            class="form-check-label">
-                            <input type="checkbox"
-                              class="form-check-input">
-                          </label>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="pl-2">
-                          <%= order.userId.name %>
-                        </span>
-                      </td>
-                      <td>
-                        <%= order._id %>
-                      </td>
-                      <td>$<%= order.amount %>
-                      </td>
-                      <td>
-                        <%
-                        order.products.forEach(product=>
-                        { %>
-                        <img src="/products/images/<%=product.image%>" alt="<%=product.product_name%>" width="50">
-                        <p>Product: <%=
-                          product.product_name %>,
-                             
-                          Quantity: <%=
-                          product.quantity %>
-                        </p>
-                        <% }) %>
-                      </td>
-                      <td>
-                        <%= order.paymentType %>
-                      </td>
-                      <td>
-                        <%= order.date.toLocaleDateString('en-US', { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g, '-') %>
-                      </td>
-                      <td>
-                        Name:<%= order.address.firstName %> <%= order.address.lastName %>
-                        <br>
-                        Address: <%= order.address.address %>, <%= order.address.city %>,
-                        <br>
-                         <%= order.address.state %>,
-                        <br>
-                         Pin: <%= order.address.pin %>
-                        <br>
-                        Phone: <%= order.address.phone %>
-                        <br>
-                        Email: <%= order.address.email %>
-                        <br>
-                        Additional Info: <%= order.address.additional %>
+                </div>
+              </div>
 
-                      </td>
-                      <td>
-                        <div class="badge 
-                            <%= order.status === 'delivered' ? 'badge-outline-success' : 
-                              (order.status === 'pending' ? 'badge-outline-warning' : 
-                              (order.status === 'canselled' ? 'badge-outline-danger' : 
-                              (order.status === 'shipped' ? 'badge-outline-info' : ''))) %>">
-                            <span class="order-status" data-order-id="<%= order._id %>">
-                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
-                            </span>
+            </div>
+            <div
+              class="col-md-6 col-xl-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex flex-row justify-content-between">
+                    <h4 class="card-title">Quick Reports</h4>
+                    <p class="text-muted mb-1 small"><a href="/admin/downloadSalesReport"><i class="fa fa-download"></i></a></p>
+                  </div>
+                  <div class="btns">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <a 
+                            href="/admin/downloadSalesReport?button=lastWeek"
+                            class="btn btn-primary btn-block"
+                            onclick="downloadReport('lastWeek')">Last
+                            Week</a>
                         </div>
-                      </td>   
-                                       
-                      <td>
-                        <select class="form-select"
-                          id="orderStatus<%= order._id %>"
-                          onchange="changeOrderStatus('<%= order._id %>') ">
-                          <option value="delivered"
-                            <%=order.status==='delivered'
-                            ? 'selected' : '' %>
-                            >Delivered</option>
-                          <option value="pending"
-                            <%=order.status==='pending'
-                            ? 'selected' : '' %>
-                            >Pending</option>
-                          <option value="rejected"
-                            <%=order.status==='rejected'
-                            ? 'selected' : '' %>
-                            >Rejected</option>
-                          <option value="shipped"
-                            <%=order.status==='shipped'
-                            ? 'selected' : '' %>
-                            >Shipped</option>
-                        </select>
-                      </td>
-                    </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <a 
+                            href="/admin/downloadSalesReport?button=lastMonth"
+                            class="btn btn-primary btn-block"
+                            onclick="downloadReport('lastMonth')">Last
+                            Month</a>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <a
+                            href="/admin/downloadSalesReport?button=lastYear"
+                            class="btn btn-primary btn-block"
+                            onclick="downloadReport('lastYear')">Last
+                            Year</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div> -->
-      <div class="row">
+          <div class="row">
+            <div
+              class="col-md-3 col-xl-3 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex flex-row justify-content-between">
+                    <h4 class="card-title">Revenue Overview
+                    </h4>
+                    <p class="text-muted mb-1 small"></p>
+                  </div>
 
-      </div>
+                  <div id="chart-container">
+                    <canvas id="myChart"
+                      class="chart"></canvas>
+                  </div>
 
-      <div class="row">
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-3 col-xl-3 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex flex-row justify-content-between">
+                    <h4 class="card-title">Orders</h4>
+                    <p class="text-muted mb-1 small"></p>
+                  </div>
+
+                  <div id="chart-container"
+                    class="d-flex justify-content-center">
+                    <canvas id="productStatusChart"
+                      class="chart"></canvas>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="col-md-6 col-xl-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div
+                    class="d-flex flex-row justify-content-between">
+                    <h4 class="card-title">Letest Sales</h4>
+                    <p class="text-muted mb-1 small">View
+                      all</p>
+                  </div>
+
+                  <div class="preview-list">
+                    <%if (letestSales.length> 0) {%>
+                      <% letestSales.forEach((order, i)=> {
+                        %>
+                        <%order.products.forEach(product=>{
+                          %>
+                          <div
+                            class="preview-item border-bottom">
+                            <div class="preview-thumbnail">
+                              <div
+                                class="preview-icon bg-primary">
+                                <img
+                                  src="/products/images/<%= product.image %>"
+                                  alt="image">
+                              </div>
+                            </div>
+                            <div
+                              class="preview-item-content d-sm-flex flex-grow">
+                              <div class="flex-grow">
+                                <h6 class="preview-subject">
+                                  Product Name: <%=
+                                    product.product_name.slice(0,
+                                    20) %>
+                                </h6>
+                                <p class="text-muted mb-0">
+                                  Ordered Quantity:<%=
+                                    product.quantity %>
+                                </p>
+                              </div>
+                              <div
+                                class="mr-auto text-sm-right pt-2 pt-sm-0">
+                                <p class="text-muted">
+                                  <%=
+                                    order.date.toLocaleDateString('en-US',
+                                    { year:'numeric',
+                                    month: 'short' ,
+                                    day: '2-digit'
+                                    }).replace(/\//g, '-'
+                                    )%>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <%})%>
+                            <% }) %>
+                              <% }else{%>
+                                <div
+                                  class="preview-item-content d-sm-flex flex-grow">
+                                  <div class="flex-grow">
+                                    <h6
+                                      class="preview-subject">
+                                      No sales</h6>
+                                    <p
+                                      class="text-muted mb-0">
+                                    </p>
+                                  </div>
+                                  <div
+                                    class="mr-auto text-sm-right pt-2 pt-sm-0">
+                                    <p class="text-muted">
+                                    </p>
+                                  </div>
+                                </div>
+                                <%} %>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+
+          </div>
+
+          <!-- <div class="row">
         <div class="col-md-6 col-xl-4 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
@@ -710,150 +732,176 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-    </div>
-    <!-- content-wrapper ends -->
-    <!-- partial:partials/_footer.html -->
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
 
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Include jQuery or use a local copy -->
-    <script>
+        <script
+          src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Include jQuery or use a local copy -->
+        <script>
           document.addEventListener('DOMContentLoaded', function () {
-    const orderStatusSelects = document.querySelectorAll('.order-status');
+            const orderStatusSelects = document.querySelectorAll('.order-status');
 
-    orderStatusSelects.forEach(select => {
-        select.addEventListener('click', function () {
-            console.log('Order status clicked');
-            
-            const orderId = this.getAttribute('data-order-id');
-            console.log('Order ID:', orderId);
+            orderStatusSelects.forEach(select => {
+              select.addEventListener('click', function () {
+                console.log('Order status clicked');
 
-            const newStatus = prompt('Enter new status (approved, pending, or rejected):');
-            console.log('New status:', newStatus);
+                const orderId = this.getAttribute('data-order-id');
+                console.log('Order ID:', orderId);
 
-            if (newStatus) {
-                console.log('Making AJAX request...');
-                
-                // Make an AJAX request to update the order status
-                fetch('/update-order-status', {
+                const newStatus = prompt('Enter new status (approved, pending, or rejected):');
+                console.log('New status:', newStatus);
+
+                if (newStatus) {
+                  console.log('Making AJAX request...');
+
+                  // Make an AJAX request to update the order status
+                  fetch('/update-order-status', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                      'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ orderId, newStatus }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response:', data);
+                  })
+                    .then(response => response.json())
+                    .then(data => {
+                      console.log('Response:', data);
 
-                    if (data.success) {
+                      if (data.success) {
                         // Update the displayed status
                         this.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
                         // Optionally, update the badge color based on the new status
                         this.parentElement.className = `badge ${newStatus === 'approved' ? 'badge-outline-success' : (newStatus === 'pending' ? 'badge-outline-warning' : 'badge-outline-danger')}`;
-                    } else {
+                      } else {
                         alert('Failed to update order status.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to update order status.');
-                });
-            }
-        });
-    });
-});
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error:', error);
+                      alert('Failed to update order status.');
+                    });
+                }
+              });
+            });
+          });
 
 
           // Define the changeOrderStatus function
           function changeOrderStatus(orderId) {
             console.log("in the fetch")
-      const newStatus = event.target.value
-    console.log(newStatus)
-    fetch(`/admin/update-order-status/${orderId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ newStatus }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        const orderTable = document.getElementById('orderTable');
-         location.reload();
-        // Optionally, update the UI or show a notification upon success
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        // Optionally, handle the error or show a notification
-      });
+            const newStatus = event.target.value
+            console.log(newStatus)
+            fetch(`/admin/update-order-status/${orderId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ newStatus }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Success:', data);
+                const orderTable = document.getElementById('orderTable');
+                location.reload();
+                // Optionally, update the UI or show a notification upon success
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+                // Optionally, handle the error or show a notification
+              });
             // Your implementation of changeOrderStatus
           }
         </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-      let COD=<%= cod %>, Online=<%= online %>
+        <script>
+          // Download the reports repending the buttons clicked
+          function downloadCustomReport() {
+            let start=document.getElementById("fromDate").value
+            let end=document.getElementById("toDate").value
+            $.ajax({
+              type: "GET",
+              url: "/admin/downloadSalesReport?button=custom",
+              data: {
+                fromDate:start,
+                toDate:end
+              },
+              contentType: "application/json",
+              success: function (data) {
+                //sweetalert("success")
+                
+                window.location.href = data
+              },
+              error: function (data) {
+                console.log(data)
+              }
+            })
+          }
+        </script>
+
+        <script
+          src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+          let COD =<%= cod %>, Online =<%= online %>
         // Sample data
         var data = {
             labels: ['COD', 'Online', 'Wallet'],
             datasets: [{
-                data: [COD, Online, 0],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+              data: [COD, Online, 0],
+              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
             }]
-        };
+          };
 
-        // Get the context of the canvas element
-        var ctx = document.getElementById('myChart').getContext('2d');
+          // Get the context of the canvas element
+          var ctx = document.getElementById('myChart').getContext('2d');
 
-        // Create a pie chart
-        var myPieChart = new Chart(ctx, {
+          // Create a pie chart
+          var myPieChart = new Chart(ctx, {
             type: 'pie',
             data: data
-        });
-    </script>
-    <script>
-      // let delivered=<%= dele %>, pending=<%= pend %>, returned=<%= ret %>
-      // Updated data for delivered products, pending, and returned
-      var productStatusData = {
-        labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
-        datasets: [{
-          label: "Delivered",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          borderColor: "rgba(75, 192, 192, 1)",
-          borderWidth: 1,
-          data: [1, 1, 1, 1, 1],
-        }, {
-          label: "Pending",
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 1,
-          data: [1, 1,0, 0, 0],
-        }, {
-          label: "Returned",
-          backgroundColor: "rgba(255, 205, 86, 0.2)",
-          borderColor: "rgba(255, 205, 86, 1)",
-          borderWidth: 1,
-          data: [1, 1, 1, 1, 1],
-        }],
-      };
-  
-      // Get the canvas element and render the bar chart
-      var ctx = document.getElementById('productStatusChart').getContext('2d');
-      var productStatusChart = new Chart(ctx, {
-        type: 'bar',
-        data: productStatusData,
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    </script>
+          });
+        </script>
+        <script>
+          // let delivered=<%= dele %>, pending=<%= pend %>, returned=<%= ret %>
+          // Updated data for delivered products, pending, and returned
+          var productStatusData = {
+            labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+            datasets: [{
+              label: "Delivered",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+              data: [1, 1, 1, 1, 1],
+            }, {
+              label: "Pending",
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+              data: [1, 1, 0, 0, 0],
+            }, {
+              label: "Returned",
+              backgroundColor: "rgba(255, 205, 86, 0.2)",
+              borderColor: "rgba(255, 205, 86, 1)",
+              borderWidth: 1,
+              data: [1, 1, 1, 1, 1],
+            }],
+          };
 
-    <%- include('../admin/layout/adminFooter.ejs') -%>
+          // Get the canvas element and render the bar chart
+          var ctx = document.getElementById('productStatusChart').getContext('2d');
+          var productStatusChart = new Chart(ctx, {
+            type: 'bar',
+            data: productStatusData,
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        </script>
+
+        <%- include('../admin/layout/adminFooter.ejs') -%>

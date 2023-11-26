@@ -703,6 +703,152 @@ const SalesReport = async (req, res) => {
       console.log(error.message);
     }
   }
+  let report=async(req,res)=>{
+      try{
+        let orderdata = await Order.find({}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });
+        //calculate revenue from the delivered orders
+        let totalSales = await Order.aggregate([
+          {
+            $match: {
+              status: "delivered",
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$amount" },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              total: 1,
+            },
+          },
+        ]);
+        totalSales=totalSales[0].total
+        console.log(totalSales);
+
+    // console.log(orderdata);
+        let button = req.query.button
+        
+        if(button=="lastWeek"){
+          orderdata = await Order.find({date:{$gte: new Date(Date.now() - 7*24*60*60*1000)}}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });
+          totalSales = await Order.aggregate([
+            {
+              $match: {
+                date: {
+                  $gte: new Date(Date.now() - 7*24*60*60*1000),
+                },
+                status: "delivered",
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$amount" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                total: 1,
+              },
+            },
+          ]);
+          totalSales=totalSales[0].total
+        }else if(button=="lastMonth"){
+          orderdata = await Order.find({date:{$gte: new Date(Date.now() - 30*24*60*60*1000)}}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });    
+          totalSales = await Order.aggregate([
+            {
+              $match: {
+                date: {
+                  $gte: new Date(Date.now() - 30*24*60*60*1000),
+                },
+                status: "delivered",
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$amount" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                total: 1,
+              },
+            },
+          ]);
+          totalSales=totalSales[0].total
+        }else if(button=="lastYear"){
+          orderdata = await Order.find({date:{$gte: new Date(Date.now() - 365*24*60*60*1000)}}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });
+          totalSales = await Order.aggregate([
+            {
+              $match: {
+                date: {
+                  $gte: new Date(Date.now() - 365*24*60*60*1000),  
+                },
+                status: "delivered",
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$amount" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                total: 1,
+              },
+            },
+          ]);
+          totalSales=totalSales[0].total
+        }else if(button=="custom"){
+            let startDate = new Date(req.query.fromDate)
+            let endDate = new Date(req.query.toDate)
+            orderdata = await Order.find({date:{$gte: startDate,$lte: endDate}}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });
+            totalSales = await Order.aggregate([
+              {
+                $match: {
+                  date: {
+                    $gte: startDate,
+                    $lte: endDate
+                  },
+                  status: "delivered",
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$amount" },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  total: 1,
+                },
+              }
+            ])
+            if(orderdata.length==0){
+                totalSales=0
+                console.log(totalSales);
+            }else{
+                totalSales=totalSales[0].total
+                console.log(totalSales);
+            }
+        }
+          res.render('salesReport',{orderdata,totalSales})
+      }catch(error){
+          console.log(error.message);
+          res.status(500).send(error.message);
+      }
+      
+  }
 
 module.exports = {
     adminLogin,
@@ -726,4 +872,5 @@ module.exports = {
     productAdd,
     updateProductPage,
     blockProduct,
+    report
 };

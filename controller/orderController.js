@@ -112,8 +112,8 @@ let placeOrder = async (req, res) => {
             if(paymentMethod === 'COD'){
 
                 res.json({ success: true, message: 'Order placed successfully' });
-            }else{
-
+            }else if(paymentMethod === 'razorpay'){
+                
             }
         
             res.json({ success: true, message: 'Order placed successfully' });                                      
@@ -125,6 +125,89 @@ let placeOrder = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
+const createOrder = async (req, res) => {
+    try {
+      const userDa = req.session.user_id;
+      const total = await Cart.find({ userid: userDa }).populate("products.productId")
+
+      const datatotal = total[0].products.map((item) => {
+        return item.totalPrice;
+      })
+  
+      let totalsum = 0;
+      if (datatotal.length > 0) {
+        totalsum = datatotal.reduce((x, y) => {
+          return x + y;
+        });
+      }
+      console.log(totalsum);
+  
+      console.log("create order");
+      const options = {
+        amount: totalsum * 100, // Amount in smallest currency unit (e.g., paisa)
+        currency: "INR", // Currency code
+        receipt: order_rcptid_$(Math.floor(Math.random() * 1000)),
+
+      };
+      console.log("create order222");
+      const order = await Razorpay.orders.create(options);
+      console.log(order, ";aosdfhasjf");
+      res.json(order);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  };
+  
+  //==========================Verify order =========================
+  const verifypayment = async (req, res) => {
+    try {
+      console.log("verifff");
+  
+      const user_id = req.session.user_id;
+      const paymentData = req.body;
+      const cartData = await Cart.find({ userid: user_id });
+  
+      console.log(
+        "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+      );
+  
+      console.log(cartData);
+  
+      const hmac = crypto.createHmac("sha256", process.env.key_secret);
+      hmac.update(
+        paymentData.payment.razorpay_order_id +
+          "|" +
+          paymentData.payment.razorpay_payment_id
+      );
+      console.log(hmac);
+      const hmacValue = hmac.digest("hex");
+      if (hmacValue === paymentData.payment.razorpay_signature) {
+        //     const productIds = cartData.products.map((product) => product.productId);
+        // console.log("Product IDs:", productIds);
+        //       await product.findByIdAndUpdate(
+        //         { _id: productIds },
+        //         { $inc: { quantity: -count } })
+  
+        // await Order.findByIdAndUpdate(
+        //   { _id: paymentData.order.receipt },
+        //   {
+        //     $set: {
+        //       paymentStatus: "placed",
+        //       paymentId: paymentData.payment.razorpay_payment_id,
+        //     },
+        //   }
+        // );
+  
+        // await Cart.deleteOne({ userid: user_id });
+        console.log("XP 9");
+        res.json({ placed: true });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
 // Order Page
 let orderPage = async (req, res) => {
     try {
@@ -267,6 +350,15 @@ let cancelOrder = async (req, res) => {
     }
 }
 
+let report=async(req,res)=>{
+    try{
+        res.render('report')
+    }catch(error){
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+}
+
 module.exports = {
     checkoutPage,
     orderPage,
@@ -274,5 +366,6 @@ module.exports = {
     updateOrderStatus,
     cancelOrder,
     order,
-    downloadInvoice
+    downloadInvoice,
+    report
 }

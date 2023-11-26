@@ -45,7 +45,7 @@ adminRoute.get('/updateProductPage',adminControll.updateProductPage)
 adminRoute.post('/updateProduct',fileUpload.productImagesUpload,adminControll.updateProduct)
 adminRoute.get('/blockProduct',adminControll.blockProduct)
 adminRoute.post('/update-order-status/:id', orderController.updateOrderStatus);
-
+adminRoute.get('/downloadSalesReport',adminControll.report)
 
 
 module.exports=adminRoute

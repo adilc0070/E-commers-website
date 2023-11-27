@@ -46,13 +46,13 @@ const razorpay = new Razorpay({
 
 let placeOrder = async (req, res) => {
     try {
-        console.log("Place Order");
+        // console.log("Place Order");
         let { addressId, amount, paymentMethod } = req.body;
-        // console.log('Address:', addressId, 'Amount:', amount, 'Payment Method:', paymentMethod);
+        console.log('Address:', addressId, 'Amount:', amount, 'Payment Method:', paymentMethod);
     
         // Check if the required fields are provided
         if (!addressId || !amount || !paymentMethod) {
-            console.log("Required fields are missing");
+            // console.log("Required fields are missing");
             return res.status(400).json({ success: false, message: 'Address, amount, and paymentMethod are required fields.' });
         }
     
@@ -63,7 +63,7 @@ let placeOrder = async (req, res) => {
         // Check if the product stock is sufficient for the order
         for (let i = 0; i < products.length; i++) {
             if (cartData.products[i].count > products[i].stock) {
-                console.log("Insufficient stock for product:", products[i].product_name);
+                // console.log("Insufficient stock for product:", products[i].product_name);
                 return res.status(400).json({ success: false, message: 'Insufficient stock for some products in the order' });
             }
         }
@@ -91,10 +91,10 @@ let placeOrder = async (req, res) => {
     
         // Check if the address is found
         if (!deliveryAddress) {
-            console.log("Delivery address not found");
+            // console.log("Delivery address not found");
             return res.status(404).json({ success: false, message: 'Delivery address not found' });
         }else{
-            console.log("Delivery address found:", deliveryAddress.addresses[0]);
+            // console.log("Delivery address found:", deliveryAddress.addresses[0]);
             // Example: Create an order document in the database
             let order = new Order({
                 userId: req.session.user_id,
@@ -115,7 +115,7 @@ let placeOrder = async (req, res) => {
             });
 
             let savedOrder = await order.save();
-            console.log("Saved Order:", savedOrder);
+            // console.log("Saved Order:", savedOrder);
         
             // Clear the user's cart after placing the order
             
@@ -123,7 +123,8 @@ let placeOrder = async (req, res) => {
                 res.json({ success: true, message: 'Order placed successfully' });
                 await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
             }else if(savedOrder.paymentType == 'paypal'){
-                console.log("paypal method");
+                await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
+                // console.log("paypal method");
                 const options = {
                     amount: savedOrder.amount * 100, // Amount should be in paise
                     currency: 'INR',
@@ -135,7 +136,7 @@ let placeOrder = async (req, res) => {
                     if (err) {
                         throw new Error('something went wrong, try again later');
                     } else {
-                        console.log("orders :", order);
+                        // console.log("orders :", order);
                         res.json({ order });
                     }
                   });

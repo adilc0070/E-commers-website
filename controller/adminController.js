@@ -39,9 +39,9 @@ let adminLogin = async (req, res) => {
 let adminLogon = async (req, res) => {
     try {
         let { adminEmail, adminPassword } = req.body;
-        console.log(adminEmail, adminPassword);
+        // console.log(adminEmail, adminPassword);
         let admi = await adminModel.findOne({ email: adminEmail });
-        console.log(admi);
+        // console.log(admi);
         let emailErrorMessage; // Initialize these variables
         let passwordErrorMessage;
 
@@ -182,7 +182,7 @@ let adminRender = async (req, res) => {
         let letestSales = await Order.find({ status: "delivered" })
             .sort({ date: -1 })
             .populate("products.productId")
-            .populate({ path: "userId", select: "name" });
+            .populate({ path: "userId", select: "name" }).limit(4);
 
         // console.log(letestSales);
         letestSales.forEach((order) => {
@@ -287,9 +287,9 @@ let adminRender = async (req, res) => {
         for(i=0;i<pendingOrdersCount.length;i++){
             pend[i]=pendingOrdersCount[i].count
         }
-        console.log("deliveredOrdersCount : ", dele);
-        console.log("returnedOrdersCount : ", ret);
-        console.log("pendingOrdersCount : ", pend);
+        // console.log("deliveredOrdersCount : ", dele);
+        // console.log("returnedOrdersCount : ", ret);
+        // console.log("pendingOrdersCount : ", pend);
         
         // console.log("user:",userName.name); // Add this line
         res.render("dashboard", {
@@ -358,18 +358,18 @@ let ordersDashboard = async (req, res) => {
         //average pending revenue
         // Calculate average pending revenue
         let averagePendingRevenue = pendingRevenue / pendingSales || 0;
-        console.log("Average Pending Revenue:", averagePendingRevenue);
-
-        console.log("revenue:", revenue, "pendingRevenue:", pendingRevenue);
-        console.log("sales:", sales, "pendingSales:", pendingSales);
-        console.log(
-            "purchases:",
-            purchases,
-            "usersCount:",
-            usersCount,
-            "purchasersCount:",
-            purchasersCount.length
-        );
+        
+        // console.log("Average Pending Revenue:", averagePendingRevenue);
+        // console.log("revenue:", revenue, "pendingRevenue:", pendingRevenue);
+        // console.log("sales:", sales, "pendingSales:", pendingSales);
+        // console.log(
+        //     "purchases:",
+        //     purchases,
+        //     "usersCount:",
+        //     usersCount,
+        //     "purchasersCount:",
+        //     purchasersCount.length
+        // );
         // console.log("deliveredOrders:",deliveredOrders);
 
         // console.log("user:",userName.name); // Add this line
@@ -434,7 +434,7 @@ let addCategory = async (req, res) => {
     try {
         let categoryErrorMessage;
         let { categoryName } = req.body;
-        console.log(categoryName);
+        // console.log(categoryName);
         // Use a case-insensitive regular expression for the query
         let existingCategory = await category.findOne({
             name: { $regex: new RegExp(categoryName, "i") },
@@ -442,7 +442,7 @@ let addCategory = async (req, res) => {
         if (!existingCategory) {
             let newCategory = new category({ name: categoryName });
             await newCategory.save();
-            console.log(newCategory);
+            // console.log(newCategory);
             res.redirect("/admin/categoryManagement");
         } else {
             categoryErrorMessage = "Category Already Exists";
@@ -554,16 +554,16 @@ let productAdd = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         let errors=''
-        console.log(req.body);
+        // console.log(req.body);
         let details = req.body;
         const files = await req.files;
-        console.log(files);
-        console.log(
-            files.image1[0].filename,
-            files.image2[0].filename,
-            files.image3[0].filename,
-            files.image4[0].filename
-        );
+        // console.log(files);
+        // console.log(
+        //     files.image1[0].filename,
+        //     files.image2[0].filename,
+        //     files.image3[0].filename,
+        //     files.image4[0].filename
+        // );
         if(details.stock>0||details.price>0){
             let product = new ProductDB({
                 product_name: details.product_name,
@@ -777,6 +777,8 @@ const SalesReport = async (req, res) => {
             },
           ]);
           totalSales=totalSales[0].total
+          res.render('salesReport',{orderdata,totalSales})
+
         }else if(button=="lastMonth"){
           orderdata = await Order.find({date:{$gte: new Date(Date.now() - 30*24*60*60*1000)}}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });    
           totalSales = await Order.aggregate([
@@ -802,6 +804,8 @@ const SalesReport = async (req, res) => {
             },
           ]);
           totalSales=totalSales[0].total
+          res.render('salesReport',{orderdata,totalSales})
+
         }else if(button=="lastYear"){
           orderdata = await Order.find({date:{$gte: new Date(Date.now() - 365*24*60*60*1000)}}).sort({date:-1}).populate('products.productId').populate( { path: 'userId', select: 'name' });
           totalSales = await Order.aggregate([
@@ -827,6 +831,7 @@ const SalesReport = async (req, res) => {
             },
           ]);
           totalSales=totalSales[0].total
+          res.render('salesReport',{orderdata,totalSales})
         }else if(button=="custom"){
             let startDate = new Date(req.query.fromDate)
             let endDate = new Date(req.query.toDate)
@@ -862,8 +867,41 @@ const SalesReport = async (req, res) => {
                 // console.log("orderdata.length:",orderdata.length);
                 // console.log(totalSales);
             }
-        }
+            ejs.renderFile(
+              path.join(__dirname, "../views/admin/", "salesReport.ejs"),
+              {
+                orderdata,
+                totalSales
+              },
+              (err, data) => {
+                if (err) {
+                  res.send(err);
+                } else {
+                  let options = {
+                    height: "11.25in",
+                    width: "8.5in",
+                    header: {
+                      height: "0mm",
+                    },
+                    footer: {
+                      height: "0mm",
+                    },
+                  };
+                  pdf.create(data, options).toFile("report.pdf", function (err, data) {
+                    if (err) {
+                      res.send(err);
+                    } else {
+                      const pdfpath = path.join(__dirname, "../report.pdf");
+                      res.sendFile(pdfpath);
+                    }
+                  });
+                }
+              }
+            )
+
+        }else{
           res.render('salesReport',{orderdata,totalSales})
+        }
       }catch(error){
           console.log(error.message);
           res.status(500).send(error.message);

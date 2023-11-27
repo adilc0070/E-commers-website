@@ -508,12 +508,16 @@ let insertAddress = async (req, res) => {
 let editAddressPage = async (req, res) => {
     try {
       console.log('Reached editAddressPage route');
-      let addresses = await address.find({ user: req.session.user_id });
+      let errors = [];
       let userDa = await user.findById(req.session.user_id);
       let cartData= await cart.findOne({ userid: req.session.user_id })
-
+      
       let id = req.query.id;
-      res.render("editAddress", { userDa, id ,cartData});
+      let addressData = await address.find({ "addresses._id": id });
+    //   console.log("addresses", addressData);
+      let addresses=addressData[0].addresses[0]
+    //   console.log("addresses", addresses);
+      res.render("editAddress", { userDa, id ,cartData, addresses, errors });
     } catch (error) {
       console.error(error.message);
       res.status(500).send('Internal Server Error');
@@ -528,9 +532,12 @@ let editAddress = async (req, res) => {
     let userDa = await user.findById(req.session.user_id);
     let cartData= await cart.findOne({ userid: req.session.user_id })
     let edit = req.query.id;
-
+    console.log("edit", edit);
+    console.log("user addresses", addresses);
     if (edit) {
-      let addresss = await address.findOne({ "addresses._id": edit });
+        console.log("edit");
+      let addresss = await addresses.find({ "addresses._id": edit });
+      console.log("edit address", addresss);
       let {
         firstName,
         lastName,
@@ -595,29 +602,29 @@ let editAddress = async (req, res) => {
       } else {
         // All validations passed, proceed with updating the address
         await address.updateOne(
-          { "addresses._id": edit },
+          { "addresses.$._id": edit },
           {
             $set: {
-              "addresses.$.firstName": req.body.firstName,
-              "addresses.$.lastName": req.body.lastName,
-              "addresses.$.address": req.body.address,
-              "addresses.$.city": req.body.city,
-              "addresses.$.state": req.body.state,
-              "addresses.$.pin": req.body.pin,
-              "addresses.$.country": req.body.country,
-              "addresses.$.phone": req.body.phone,
-              "addresses.$.email": req.body.email,
-              "addresses.$.additional": req.body.additional,
+              "addresses.$.firstName": req.body.editFirstName,
+              "addresses.$.lastName": req.body.editLastName,
+              "addresses.$.address": req.body.editAddress,
+              "addresses.$.city": req.body.editCity,
+              "addresses.$.state": req.body.editState,
+              "addresses.$.pin": req.body.editPin,
+            //   "addresses.country": req.body.editCountry,
+              "addresses.$.phone": req.body.editPhone,
+              "addresses.$.email": req.body.editEmail,
+              "addresses.$.additional": req.body.editAdditional,
             },
           }
         );
 
         // Redirect to the address page after successful update
-        res.redirect("/edit-address?id=" + edit);
+        res.redirect("/editaddress?id=" + edit);
       }
     } else {
       // Handle the case where edit query parameter is not provided
-      res.render("editAddress", { userDa, error: "Invalid request." ,cartData});
+      res.render("editAddress", { userDa, error: "Invalid request." ,cartData, addresses });
     }
   } catch (error) {
     console.log(error.message);

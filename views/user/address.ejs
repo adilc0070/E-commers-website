@@ -13,7 +13,8 @@
                                 <div class="card-body">
                                     <!-- Edit and Delete Icons -->
                                     <div style="position: absolute; top: 10px; right: 10px;">
-                                        <a href="/editAddress?id=<%= addr._id %>"><i class="fa fa-pencil" aria-hidden="true" style="color: #FFA500; font-size: 24px;"></i></a>
+                                        
+                                        <a href="/editAddressPage?id=<%= addr._id %>"><i class="fa fa-pencil" aria-hidden="true" style="color: #FFA500; font-size: 24px;"></i></a>
                                         <a href="/deleteAddress?id=<%= addr._id %>"><i class="fa fa-trash" aria-hidden="true" style="color: #FFA500; margin-left: 10px; font-size: 24px;"></i></a>
                                     </div>
                                     <!-- Card Content -->
@@ -52,5 +53,7 @@
     </div>
 </div>
 </div>
+
+
 
 <%- include ('../user/layout/footer.ejs')%>

@@ -4,7 +4,7 @@ let userController=require('../controller/userController');
 let bodyParser=require('body-parser');
 let path=require('path')
 const fileUpload = require('../middleware/multer');
-let is_auth=require('../middleware/isAuth')
+const userAuth = require("../middleware/userAuth");
 let cartController = require('../controller/cartController')
 let orderController = require('../controller/orderController')
 
@@ -39,30 +39,30 @@ userRoute.post('/filterProducts', userController.filterProducts);
 userRoute.get('/filteredProducts', userController.displayFilteredProducts);
 userRoute.post('/searchProduct',userController.searchitems)
 
-userRoute.get('/profile',userController.userProfile)
-userRoute.get('/editProfile',userController.editProfile)
+userRoute.get('/profile',userAuth.isAuth,userController.userProfile)
+userRoute.get('/editProfile',userAuth.isAuth,userController.editProfile)
 
-userRoute.get('/address',userController.addressPage)
-userRoute.get('/addAddress',userController.addAddressPage)
-userRoute.post('/addNewAddress',userController.insertAddress)
-userRoute.get('/deleteAddress',userController.deleteAddress)
-userRoute.get('/editAddressPage',userController.editAddressPage)
-userRoute.post('/editAddress',userController.editAddress)
+userRoute.get('/address',userAuth.isAuth,userController.addressPage)
+userRoute.get('/addAddress',userAuth.isAuth,userController.addAddressPage)
+userRoute.post('/addNewAddress',userAuth.isAuth,userController.insertAddress)
+userRoute.get('/deleteAddress',userAuth.isAuth,userController.deleteAddress)
+userRoute.get('/editAddressPage',userAuth.isAuth,userController.editAddressPage)
+userRoute.post('/editAddress',userAuth.isAuth,userController.editAddress)
 
-userRoute.get('/cart',cartController.renderCart)
-userRoute.post('/add-to-cart',cartController.add)
-userRoute.post('/update-cart',cartController.updateQuantity)
-userRoute.get('/delete-cart',cartController.deleteCart)
+userRoute.get('/cart',userAuth.isAuth,cartController.renderCart)
+userRoute.post('/add-to-cart',userAuth.isAuth,cartController.add)
+userRoute.post('/update-cart',userAuth.isAuth,cartController.updateQuantity)
+userRoute.get('/delete-cart',userAuth.isAuth,cartController.deleteCart)
 
 
 
-userRoute.get('/checkout', orderController.checkoutPage);
-userRoute.get('/order', orderController.orderPage);
-userRoute.post('/placeOrder', orderController.placeOrder);
-userRoute.post('/cancelOrder', orderController.cancelOrder);
+userRoute.get('/checkout',userAuth.isAuth, orderController.checkoutPage);
+userRoute.get('/order',userAuth.isAuth, orderController.orderPage);
+userRoute.post('/placeOrder',userAuth.isAuth, orderController.placeOrder);
+userRoute.post('/cancelOrder',userAuth.isAuth, orderController.cancelOrder);
 
-userRoute.get('/ordersss',orderController.orderPage)
-userRoute.get('/orderDetails',orderController.order)
-userRoute.get('/downloadInvoice',orderController.downloadInvoice)
+userRoute.get('/ordersss',userAuth.isAuth,orderController.orderPage)
+userRoute.get('/orderDetails',userAuth.isAuth,orderController.order)
+userRoute.get('/downloadInvoice',userAuth.isAuth,orderController.downloadInvoice)
 // userRoute.post('/productDetails',userController.productDetails)
 module.exports=userRoute

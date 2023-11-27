@@ -1,6 +1,7 @@
 <%- include('../admin/layout/adminSidebar.ejs') -%>
 <%- include('../admin/layout/adminHeader.ejs') -%>
 
+<div></div>
 <div class="content-wrapper">
 
 
@@ -14,6 +15,9 @@
         <form class="forms-sample " action="/admin/addProduct" method="post" enctype="multipart/form-data">
 
           <div class="form-group  row">
+            <%if(errors.length>0){%>
+            <div id="errorMessage" class="col-md-12 text-center alert alert-danger"><span><%=errors%></span></div>
+            <%}%>
             <div class="col-6  text-light">
               <label for="exampleInputName1">Product Titile</label>
               <input type="text" class="form-control  text-light" name="product_name" id="exampleInputName1"

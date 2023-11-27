@@ -5,7 +5,7 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <h2 style="color: #fff;">Address Information</h2>
+        <h2 style="color: black">Address Information</h2>
 
         <% if (errors && errors.length > 0) { %>
           <div class="alert alert-danger">
@@ -17,51 +17,51 @@
           </div>
         <% } %>
 
-        <form action="/edit-address" method="post">
+        <form action="/editaddress?id=<%= addresses._id %>" method="post">
           <div class="form-row">
             <div class="form-group col-md-6">
-              <label for="first-name" style="color: #fff;">First Name</label>
-              <input type="text" id="first-name" name="first-name" class="form-control" value="<%= addresss.firstName || '' %>" required>
+              <label for="first-name" style="color: black">First Name</label>
+              <input type="text" id="first-name" name="editFirstName" class="form-control" value="<%= addresses.firstName || '' %>" required>
             </div>
             <div class="form-group col-md-6">
-              <label for="last-name" style="color: #fff;">Last Name</label>
-              <input type="text" id="last-name" name="last-name" class="form-control" value="<%= addresss.lastName || '' %>" required>
+              <label for="last-name" style="color: black">Last Name</label>
+              <input type="text" id="last-name" name="editLastName" class="form-control" value="<%= addresses.lastName || '' %>" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="mobile" style="color: #fff;">Mobile</label>
-            <input type="text" id="mobile" name="mobile" class="form-control" value="<%= addresss.phone || '' %>" required>
+            <label for="mobile" style="color: black">Mobile</label>
+            <input type="text" id="mobile" name="editPhone" class="form-control" value="<%= addresses.phone || '' %>" required>
           </div>
 
           <div class="form-group">
-            <label for="email" style="color: #fff;">Email</label>
-            <input type="email" id="email" name="email" class="form-control" value="<%= addresss.email || '' %>" required>
+            <label for="email" style="color: black">Email</label>
+            <input type="email" id="email" name="editEmail" class="form-control" value="<%= addresses.email || '' %>" required>
           </div>
 
           <div class="form-group">
-            <label for="house-no" style="color: #fff;">House/Bulding Number</label>
-            <input type="text" id="house-no" name="house-no" class="form-control" value="<%= addresss.address || '' %>" required>
+            <label for="house-no" style="color: black">House/Bulding Number</label>
+            <input type="text" id="house-no" name="editAddress" class="form-control" value="<%= addresses.address || '' %>" required>
           </div>
 
           <div class="form-group">
-            <label for="city" style="color: #fff;">City</label>
-            <input type="text" id="city" name="city" class="form-control" value="<%= addresss.city || '' %>" required>
+            <label for="city" style="color: black">City</label>
+            <input type="text" id="city" name="editCity" class="form-control" value="<%= addresses.city || '' %>" required>
           </div>
 
           <div class="form-group">
-            <label for="state" style="color: #fff;">State</label>
-            <input type="text" id="state" name="state" class="form-control" value="<%= addresss.state || '' %>" required>
+            <label for="state" style="color: black">State</label>
+            <input type="text" id="state" name="editState" class="form-control" value="<%= addresses.state || '' %>" required>
           </div>
 
           <div class="form-group">
-            <label for="zip" style="color: #fff;">ZIP Code</label>
-            <input type="text" id="zip" name="zip" class="form-control" value="<%= addresss.pin || '' %>" required>
+            <label for="zip" style="color: black">ZIP Code</label>
+            <input type="text" id="zip" name="editPin" class="form-control" value="<%= addresses.pin || '' %>" required>
           </div>
 
           <div class="form-group">
-            <label for="additional-details" style="color: #fff;">Additional Details</label>
-            <textarea id="additional-details" name="additional-details" class="form-control" rows="4"><%= addresss.additional || '' %></textarea>
+            <label for="additional-details" style="color: black">Additional Details</label>
+            <textarea id="additional-details" name="editAdditional" class="form-control" rows="4"><%= addresses.additional || '' %></textarea>
           </div>
 
           <button type="submit" class="btn btn-warning">Save Address</button>
@@ -70,5 +70,5 @@
     </div>
   </div>
 </div>
-
+</div>
 <%- include ('../user/layout/footer.ejs')%>

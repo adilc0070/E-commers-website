@@ -543,7 +543,8 @@ let productManagement = async (req, res) => {
 let productAdd = async (req, res) => {
     try {
         let categories = await category.find();
-        res.render("addProduct", { categories });
+        let errors=''
+        res.render("addProduct", { categories,errors });
     } catch (error) {
         console.log(error.message);
     }
@@ -552,6 +553,7 @@ let productAdd = async (req, res) => {
 //===========productadding
 const addProduct = async (req, res) => {
     try {
+        let errors=''
         console.log(req.body);
         let details = req.body;
         const files = await req.files;
@@ -562,21 +564,27 @@ const addProduct = async (req, res) => {
             files.image3[0].filename,
             files.image4[0].filename
         );
-        let product = new ProductDB({
-            product_name: details.product_name,
-            price: details.price,
-            category: details.category,
-            description: details.description,
-            stock: details.stock,
-            "images.image1": files.image1[0].filename,
-            "images.image2": files.image2[0].filename,
-            "images.image3": files.image3[0].filename,
-            "images.image4": files.image4[0].filename,
-        });
-
-        let result = await product.save();
-        //   console.log(result);
-        res.redirect("/admin/productManagement");
+        if(details.stock>0||details.price>0){
+            let product = new ProductDB({
+                product_name: details.product_name,
+                price: details.price,
+                category: details.category,
+                description: details.description,
+                stock: details.stock,
+                "images.image1": files.image1[0].filename,
+                "images.image2": files.image2[0].filename,
+                "images.image3": files.image3[0].filename,
+                "images.image4": files.image4[0].filename,
+            });
+    
+            let result = await product.save();
+            //   console.log(result);
+            res.redirect("/admin/productManagement");
+        }else{
+            errors='Please Enter Valid Stock and Price'
+            let categories = await category.find();
+            res.render("addProduct",{errors,categories})
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -586,6 +594,10 @@ const addProduct = async (req, res) => {
 // ---------------------------------------
 const updateProduct = async (req, res) => {
     try {
+        let errors=''
+        let categories = await category.find();
+        let Id = req.query.id;
+        let products = await ProductDB.findOne({ _id: Id });
         let details = req.body;
         let imagesFiles = req.files;
         let currentData = await ProductDB.findOne({ _id: req.query.id });
@@ -606,27 +618,34 @@ const updateProduct = async (req, res) => {
             ? imagesFiles.image4[0].filename
             : currentData.images.image4;
 
-        let update = await ProductDB.updateOne(
-            { _id: req.query.id },
-            {
-                $set: {
-                    product_name: details.product_name,
-                    price: details.price,
-                    frame_shape: details.frame_shape,
-                    gender: details.gender,
-                    description: details.description,
-                    stock: details.stock,
-                    "images.image1": img1,
-                    "images.image2": img2,
-                    "images.image3": img3,
-                    "images.image4": img4,
-                },
-            }
-        );
+        if(details.stock>0||details.price>0){
+            let update = await ProductDB.updateOne(
+                { _id: req.query.id },
+                {
+                    $set: {
+                        product_name: details.product_name,
+                        price: details.price,
+                        frame_shape: details.frame_shape,
+                        gender: details.gender,
+                        description: details.description,
+                        stock: details.stock,
+                        "images.image1": img1,
+                        "images.image2": img2,
+                        "images.image3": img3,
+                        "images.image4": img4,
+                    },
+                }
+            );
+            res.redirect("/admin/productManagement");
+        }else{
+            errors='Please Enter Valid Stock and Price'
+            res.render("editProduct", { categories, products,errors });
+            
+        }
 
         //   console.log(update);
 
-        res.redirect("/admin/productManagement");
+        
     } catch (error) {
         console.log(error.message);
     }
@@ -635,10 +654,11 @@ const updateProduct = async (req, res) => {
 //===============get the project editng page
 let updateProductPage = async (req, res) => {
     try {
+        let errors=''
         let categories = await category.find();
         let Id = req.query.id;
         let products = await ProductDB.findOne({ _id: Id });
-        res.render("editProduct", { categories, products });
+        res.render("editProduct", { categories, products,errors });
     } catch (error) {
         console.log(error.message);
     }
@@ -727,7 +747,7 @@ const SalesReport = async (req, res) => {
           },
         ]);
         totalSales=totalSales[0].total
-        console.log(totalSales);
+        // console.log(totalSales);
 
     // console.log(orderdata);
         let button = req.query.button
@@ -836,10 +856,11 @@ const SalesReport = async (req, res) => {
             ])
             if(orderdata.length==0){
                 totalSales=0
-                console.log(totalSales);
+                // console.log(totalSales);
             }else{
                 totalSales=totalSales[0].total
-                console.log(totalSales);
+                // console.log("orderdata.length:",orderdata.length);
+                // console.log(totalSales);
             }
         }
           res.render('salesReport',{orderdata,totalSales})

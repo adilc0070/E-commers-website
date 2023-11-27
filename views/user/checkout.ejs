@@ -1,143 +1,288 @@
 <%- include ('../user/layout/header.ejs')%>
-<%- include ('../user/layout/profileSideBar.ejs')%>
+    <%- include ('../user/layout/profileSideBar.ejs')%>
 
-<div class="products-catagories-area clearfix mt-5">
-    <div class="container " >
-        <div class="row">
-            <% if (addresses && addresses.length > 0) { %>
-                <% for(let i = 0; i < addresses.length; i++) { %>
-                    <% addresses[i].addresses.forEach((addr) => { %>
-                        <!-- Card for each address -->
-                        <div class="col-lg-6 mb-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="<%= addr._id %>" checked>
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Billing Address
-                                    </label>
-                                    <h5 class="card-title"><%= addr.firstName %> <%= addr.lastName %></h5>
-                                    <p class="card-text">Mobile: <%= addr.phone %></p>
-                                    <p class="card-text">Email: <%= addr.email %></p>
-                                    <p class="card-text">Address: <%= addr.address %>, <%= addr.city %>, <%= addr.state %>, <%= addr.pin %></p>
-                                    <p class="card-text">Additional Details: <%= addr.additional %></p>
+        <div class="products-catagories-area clearfix mt-5">
+            <div class="container ">
+                <div class="row">
+                    <% if (addresses && addresses.length> 0)
+                        { %>
+                        <% for(let i=0; i <
+                            addresses.length; i++) { %>
+                            <%
+                                addresses[i].addresses.forEach((addr)=>
+                                { %>
+                                <!-- Card for each address -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card">
+                                        <div
+                                            class="card-body">
+                                            <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                name="flexRadioDefault"
+                                                id="flexRadioDefault1"
+                                                value="<%= addr._id %>"
+                                                checked>
+                                            <label
+                                                class="form-check-label"
+                                                for="flexRadioDefault1">
+                                                Billing
+                                                Address
+                                            </label>
+                                            <h5
+                                                class="card-title">
+                                                <%= addr.firstName
+                                                    %>
+                                                    <%= addr.lastName
+                                                        %>
+                                            </h5>
+                                            <p
+                                                class="card-text">
+                                                Mobile: <%=
+                                                    addr.phone
+                                                    %>
+                                            </p>
+                                            <p
+                                                class="card-text">
+                                                Email: <%=
+                                                    addr.email
+                                                    %>
+                                            </p>
+                                            <p
+                                                class="card-text">
+                                                Address: <%=
+                                                    addr.address
+                                                    %>, <%=
+                                                        addr.city
+                                                        %>,
+                                                        <%= addr.state
+                                                            %>
+                                                            ,
+                                                            <%= addr.pin
+                                                                %>
+                                            </p>
+                                            <p
+                                                class="card-text">
+                                                Additional
+                                                Details: <%=
+                                                    addr.additional
+                                                    %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }); %>
+                                    <%}%>
+                                        <% } else { %>
+                                            <div
+                                                class="col-12 mb-4">
+                                                <!-- Display a message when no addresses are found -->
+                                                <span>No
+                                                    Address
+                                                    found</span>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- Card for adding a new address -->
+                                                <div
+                                                    class="col-lg-6 mb-4">
+                                                    <div
+                                                        class="card">
+                                                        <a href="/addAddress"
+                                                            style="text-decoration: none;">
+                                                            <div
+                                                                class="card-body text-center">
+                                                                <!-- Icon for adding a new address with orange color -->
+                                                                <i class="fa fa-plus fa-3x mb-3"
+                                                                    style="color: #FFA500;"
+                                                                    aria-hidden="true"></i>
+                                                                <h5
+                                                                    class="card-title">
+                                                                    Add
+                                                                    New
+                                                                    Address
+                                                                </h5>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="cart-summary"
+                            style="margin: 3%; background-color: beige; padding: 20px; border-radius: 20px;">
+                            <h5>Cart Total</h5>
+                            <ul class="summary-table">
+                                <li id=" subtotal">
+                                    <span>Subtotal:</span>
+                                    <span>₹<%=
+                                            cartTotal.toFixed(2)
+                                            %></span></li>
+                                <li id="deliveryCharge">
+                                    <span>Delivery:</span>
+                                    <span>₹<%=
+                                            deliveryCharge.toFixed(2)
+                                            %></span></li>
+                                <li><span>Total:</span>
+                                    <span id="totalPrice">₹
+                                        <%= totalAmount.toFixed(2)
+                                            %></span></li>
+                            </ul>
+                            <div class="payment-method">
+                                <!-- Cash on delivery -->
+                                <div
+                                    class="custom-control custom-radio mr-sm-2">
+                                    <input type="radio"
+                                        class="custom-control-input"
+                                        id="cod"
+                                        name="paymentMethod"
+                                        checked>
+                                    <label
+                                        class="custom-control-label"
+                                        for="cod">Cash on
+                                        Delivery</label>
+                                </div>
+                                <!-- Paypal -->
+                                <div
+                                    class="custom-control custom-radio mr-sm-2">
+                                    <input type="radio"
+                                        class="custom-control-input"
+                                        id="paypal"
+                                        name="paymentMethod">
+                                    <label
+                                        class="custom-control-label"
+                                        for="paypal">Paypal
+                                        <img class="ml-15"
+                                            src="/user/img/core-img/paypal.png"
+                                            alt=""></label>
                                 </div>
                             </div>
+                            <div class="cart-btn mt-100">
+                                <button type="button"
+                                    class="btn amado-btn w-100"
+                                    onclick="checkout()">Place
+                                    Order</button>
+                            </div>
                         </div>
-                    <% }); %>
-                <%}%>
-            <% } else { %>
-                <div class="col-12 mb-4">
-                    <!-- Display a message when no addresses are found -->
-                    <span>No Address found</span>
-                </div>
-            <% } %>
-
-            <!-- Card for adding a new address -->
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <a href="/addAddress" style="text-decoration: none;">
-                        <div class="card-body text-center">
-                            <!-- Icon for adding a new address with orange color -->
-                            <i class="fa fa-plus fa-3x mb-3" style="color: #FFA500;" aria-hidden="true"></i>
-                            <h5 class="card-title">Add New Address</h5>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="cart-summary" style="margin: 3%; background-color: beige; padding: 20px; border-radius: 20px;">
-                    <h5>Cart Total</h5>
-                    <ul class="summary-table">
-                        <li id=" subtotal"><span>Subtotal:</span> <span>₹<%= cartTotal.toFixed(2) %></span></li>
-                        <li id="deliveryCharge"><span>Delivery:</span> <span>₹<%= deliveryCharge.toFixed(2) %></span></li>
-                        <li ><span>Total:</span> <span id="totalPrice">₹<%= totalAmount.toFixed(2) %></span></li>
-                    </ul>
-                    <div class="payment-method">
-                        <!-- Cash on delivery -->
-                        <div class="custom-control custom-radio mr-sm-2">
-                            <input type="radio" class="custom-control-input" id="cod" name="paymentMethod" checked>
-                            <label class="custom-control-label" for="cod">Cash on Delivery</label>
-                        </div>
-                        <!-- Paypal -->
-                        <div class="custom-control custom-radio mr-sm-2">
-                            <input type="radio" class="custom-control-input" id="paypal" name="paymentMethod">
-                            <label class="custom-control-label" for="paypal">Paypal <img class="ml-15" src="/user/img/core-img/paypal.png" alt=""></label>
-                        </div>
-                    </div>
-                    <div class="cart-btn mt-100">
-                        <button type="button" class="btn amado-btn w-100" onclick="checkout()">Place Order</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-</div>
-<script>
-    function checkout() {
-        let address = document.getElementById("flexRadioDefault1").value;
-        console.log(address);
-        let totalPriceElement = document.getElementById('totalPrice');
-        const numericValue = parseInt(totalPriceElement.innerText.replace('₹', '').trim());
-        let method = document.getElementsByName('paymentMethod');
-        let payment = '';
+        </div>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+            function checkout() {
+                let address = document.getElementById("flexRadioDefault1").value;
+                console.log(address);
+                let totalPriceElement = document.getElementById('totalPrice');
+                const numericValue = parseInt(totalPriceElement.innerText.replace('₹', '').trim());
+                let method = document.getElementsByName('paymentMethod');
+                let payment = '';
 
-        if (method[0].checked) {
-            payment = "cod";
-            console.log(payment);
-        } else {
-            payment = "paypal";
-            console.log(payment);
-        }
-
-        $.ajax({
-            method: "post",
-            url: "/placeOrder",
-            data: JSON.stringify({
-                addressId: address,
-                totalPrice: numericValue,
-                paymentMethod: payment,
-                amount: numericValue, // Add this line to provide the amount
-            }),
-            contentType: "application/json",
-            success: function (response) {
-                if (response.success==true) {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'order placed successfully',
-                        text:"Your order has been placed successfully",
-                        
-                    })
-                    setTimeout(function () {
-                        window.location.href = "/";
-                    },3000)
-                } else  {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!',
-
-                    })
+                if (method[0].checked) {
+                    payment = "cod";
+                    console.log(payment);
+                } else {
+                    payment = "paypal";
+                    console.log(payment);
                 }
-            },
-            error: function (xhr, status, error) {
-                Swal.fire({
+
+                $.ajax({
+                    method: "post",
+                    url: "/placeOrder",
+                    data: JSON.stringify({
+                        addressId: address,
+                        totalPrice: numericValue,
+                        paymentMethod: payment,
+                        amount: numericValue, // Add this line to provide the amount
+                    }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.order) {
+                            console.log("razorpay response",response.order);
+                            openRazorPay(response.order);
+                        } else if (response.success == true) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'order placed successfully',
+                                text: "Your order has been placed successfully",
+
+
+                            })
+                            setTimeout(function () {
+                                window.location.href = "/";
+                            }, 3000)
+                        } else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+
+                            })
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred while placing the order.',
+                        })
+
+                    }
+                });
+            }
+
+            function openRazorPay(order) {
+                console.log(order);
+                var options = {
+                    "key": "" + 'rzp_test_y9DKwlZOTNIdUA',
+                    "amount": order.amount,
+                    "currency": "INR",
+                    "name": "RusticLens",
+                    "description": "sample description",
+                    "image": "https://dummyimage.com/600x400/000/fff",
+                    "order_id": "" + order.id,
+                    "handler": function (response) {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'order placed successfully',
+                            text: 'Thank you for shopping with us',
+                        })
+
+                        // verifyOrderPayment(response,order);
+                    },
+                    "notes": {
+                        "description": "Sample description 2"
+                    },
+                    "theme": {
+                        "color": "#2300a3"
+                    }
+                };
+                var razorpayObject = new Razorpay(options);
+                razorpayObject.on('payment.failed', function (response) {
+                    // if (deleteFailedOrder(order.receipt)) {
+                    //     setTimeout(() => {
+                    //         alert('Payment failed, try again');
+                    //         window.location.reload();
+                    //     }, 1000);
+                    // }
+                    Swal.fire({
                         position: 'top-end',
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'An error occurred while placing the order.',
+                        text: 'An error occurred while placing the order in razorpay.',
                     })
 
+                });
+                razorpayObject.open();
             }
-        });
-    }
-</script>
+        </script>
 
 
-<%- include ('../user/layout/footer.ejs')%>
-
+        <%- include ('../user/layout/footer.ejs')%>

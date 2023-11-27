@@ -37,6 +37,12 @@ let checkoutPage = async (req, res) => {
         console.log(error.message);
     }
 };
+const razorpay = new Razorpay({
+    key_id: 'rzp_test_y9DKwlZOTNIdUA',
+    key_secret: '5MlkxrgqqdeEijI8AOszNeDD',
+  });
+
+
 
 let placeOrder = async (req, res) => {
     try {
@@ -46,6 +52,7 @@ let placeOrder = async (req, res) => {
     
         // Check if the required fields are provided
         if (!addressId || !amount || !paymentMethod) {
+            console.log("Required fields are missing");
             return res.status(400).json({ success: false, message: 'Address, amount, and paymentMethod are required fields.' });
         }
     
@@ -56,6 +63,7 @@ let placeOrder = async (req, res) => {
         // Check if the product stock is sufficient for the order
         for (let i = 0; i < products.length; i++) {
             if (cartData.products[i].count > products[i].stock) {
+                console.log("Insufficient stock for product:", products[i].product_name);
                 return res.status(400).json({ success: false, message: 'Insufficient stock for some products in the order' });
             }
         }
@@ -83,8 +91,10 @@ let placeOrder = async (req, res) => {
     
         // Check if the address is found
         if (!deliveryAddress) {
+            console.log("Delivery address not found");
             return res.status(404).json({ success: false, message: 'Delivery address not found' });
         }else{
+            console.log("Delivery address found:", deliveryAddress.addresses[0]);
             // Example: Create an order document in the database
             let order = new Order({
                 userId: req.session.user_id,
@@ -104,19 +114,34 @@ let placeOrder = async (req, res) => {
                 paymentType: paymentMethod,
             });
 
-            await order.save();
+            let savedOrder = await order.save();
+            console.log("Saved Order:", savedOrder);
         
             // Clear the user's cart after placing the order
-            await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
-
+            
             if(paymentMethod === 'COD'){
-
                 res.json({ success: true, message: 'Order placed successfully' });
-            }else if(paymentMethod === 'razorpay'){
-                
+                await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
+            }else if(savedOrder.paymentType == 'paypal'){
+                console.log("paypal method");
+                const options = {
+                    amount: savedOrder.amount * 100, // Amount should be in paise
+                    currency: 'INR',
+                    receipt: savedOrder._id,
+                    payment_capture: 1, // Automatically capture the payment
+                  };
+                  
+                  razorpay.orders.create(options, (err, order) => {
+                    if (err) {
+                        throw new Error('something went wrong, try again later');
+                    } else {
+                        console.log("orders :", order);
+                        res.json({ order });
+                    }
+                  });
             }
         
-            res.json({ success: true, message: 'Order placed successfully' });                                      
+            // res.json({ success: true, message: 'Order placed successfully' });                                      
         }
     
         

@@ -26,6 +26,9 @@ adminRoute.get('/logout',adminControll.logOut)
 
 //dashboard 
 adminRoute.get('/dashboard',adminAuth.isAuth,adminControll.adminRender)
+adminRoute.get('/chartLastWeek',adminAuth.isAuth,adminControll.chartFilterWeek)
+adminRoute.get('/chartLastMonth',adminAuth.isAuth,adminControll.chartFilterMonth)
+adminRoute.get('/chartLastYear',adminAuth.isAuth,adminControll.chartFilterYear)
 
 //order management
 adminRoute.get('/orderManagement',adminAuth.isAuth,adminControll.ordersDashboard)

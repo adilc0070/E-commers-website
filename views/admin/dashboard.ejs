@@ -1,7 +1,8 @@
 <%- include('../admin/layout/adminSidebar.ejs') -%>
   <%- include('../admin/layout/adminHeader.ejs') -%>
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
       #chart-container {
         width: 300px;
@@ -351,7 +352,8 @@
                 <div class="card-body">
                   <div
                     class="d-flex flex-row justify-content-between">
-                    <h4 class="card-title">Download Sales Report</h4>
+                    <h4 class="card-title">Download Sales
+                      Report</h4>
                     <p class="text-muted mb-1 small"></p>
                   </div>
                   <div class="btns">
@@ -359,18 +361,20 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <input type="date"
-                            class="form-control" id="fromDate"
-                            placeholder="From"
-                            name="fromDate">
+                            class="form-control"
+                            id="fromDate" placeholder="From"
+                            name="fromDate" required>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
                           <div class="input-group">
                             <input type="date"
-                              class="form-control" id="toDate"
-                              placeholder="To" name="toDate">
-                            <button type="button" class="btn btn-primary"
+                              class="form-control"
+                              id="toDate" placeholder="To"
+                              name="toDate" required>
+                            <button type="button"
+                              class="btn btn-primary"
                               onclick="downloadCustomReport()">Download</button>
                           </div>
                         </div>
@@ -388,15 +392,18 @@
                 <div class="card-body">
                   <div
                     class="d-flex flex-row justify-content-between">
-                    <h4 class="card-title">Quick Reports</h4>
-                    <p class="text-muted mb-1 small"><a href="/admin/downloadSalesReport"><i class="fa fa-download"></i></a></p>
+                    <h4 class="card-title">Quick Reports
+                    </h4>
+                    <p class="text-muted mb-1 small"><a
+                        href="/admin/downloadSalesReport"><i
+                          class="fa fa-download"></i></a>
+                    </p>
                   </div>
                   <div class="btns">
                     <div class="row">
                       <div class="col-md-4">
                         <div class="form-group">
-                          <a 
-                            href="/admin/downloadSalesReport?button=lastWeek"
+                          <a href="/admin/downloadSalesReport?button=lastWeek"
                             class="btn btn-primary btn-block"
                             onclick="downloadReport('lastWeek')">Last
                             Week</a>
@@ -404,8 +411,7 @@
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
-                          <a 
-                            href="/admin/downloadSalesReport?button=lastMonth"
+                          <a href="/admin/downloadSalesReport?button=lastMonth"
                             class="btn btn-primary btn-block"
                             onclick="downloadReport('lastMonth')">Last
                             Month</a>
@@ -413,8 +419,7 @@
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
-                          <a
-                            href="/admin/downloadSalesReport?button=lastYear"
+                          <a href="/admin/downloadSalesReport?button=lastYear"
                             class="btn btn-primary btn-block"
                             onclick="downloadReport('lastYear')">Last
                             Year</a>
@@ -438,7 +443,8 @@
                     <p class="text-muted mb-1 small"></p>
                   </div>
 
-                  <div id="chart-container">
+                  <div
+                    id="chart-container d-flex justify-content-center position-absolute">
                     <canvas id="myChart"
                       class="chart"></canvas>
                   </div>
@@ -453,7 +459,36 @@
                   <div
                     class="d-flex flex-row justify-content-between">
                     <h4 class="card-title">Orders</h4>
-                    <p class="text-muted mb-1 small"></p>
+                    <nav>
+                      <ul>
+                        <li>
+                          <p 
+                            style="cursor: pointer;"
+                            onclick="salesOrderFilter('week')"
+                            class="text-muted mb-1 small">Last
+                            Week</p>
+                        </li>
+                        <li>
+                          <p 
+                            style="cursor: pointer;"
+                            onclick="salesOrderFilter('month')"
+                            class=text-muted mb-1
+                            small">Last
+                            Month</p>
+                        </li>
+                        <li>
+                          <p 
+                            style="cursor: pointer;"
+                            onclick="salesOrderFilter('year')"
+                            class="text-muted mb-1 small">Last
+                            Year</p>
+                        </li>
+                      </ul>
+                    </nav>
+
+
+
+
                   </div>
 
                   <div id="chart-container"
@@ -819,19 +854,19 @@
         <script>
           // Download the reports repending the buttons clicked
           function downloadCustomReport() {
-            let start=document.getElementById("fromDate").value
-            let end=document.getElementById("toDate").value
+            let start = document.getElementById("fromDate").value
+            let end = document.getElementById("toDate").value
             $.ajax({
               type: "GET",
               url: "/admin/downloadSalesReport?button=custom",
               data: {
-                fromDate:start,
-                toDate:end
+                fromDate: start,
+                toDate: end
               },
               contentType: "application/json",
               success: function (data) {
                 //sweetalert("success")
-                
+
                 window.location.href = data
               },
               error: function (data) {
@@ -862,46 +897,70 @@
             type: 'pie',
             data: data
           });
+
+
         </script>
         <script>
           // let delivered=<%= dele %>, pending=<%= pend %>, returned=<%= ret %>
           // Updated data for delivered products, pending, and returned
-          var productStatusData = {
-            labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+          let productStatusData = {
+            labels: ["COD", " Online", "Wallet"],
             datasets: [{
-              label: "Delivered",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-              data: [1, 1, 1, 1, 1],
-            }, {
-              label: "Pending",
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgba(255, 99, 132, 1)",
-              borderWidth: 1,
-              data: [1, 1, 0, 0, 0],
-            }, {
-              label: "Returned",
-              backgroundColor: "rgba(255, 205, 86, 0.2)",
-              borderColor: "rgba(255, 205, 86, 1)",
-              borderWidth: 1,
-              data: [1, 1, 1, 1, 1],
-            }],
+              data: [10, 5, 6],
+              backgroundColor: ['red', 'green', 'blue'],
+
+            }]
           };
 
-          // Get the canvas element and render the bar chart
+          // Get the canvas element and render the line chart
           var ctx = document.getElementById('productStatusChart').getContext('2d');
           var productStatusChart = new Chart(ctx, {
-            type: 'bar',
-            data: productStatusData,
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              }
-            }
+            type: 'doughnut', // Change this to 'line' for a line chart
+            data: productStatusData
           });
+          let salesOrderFilter = async (filteredby) => {
+            let data
+            if (filteredby == 'week') {
+              data = await fetchWeekData()
+            } else if (filteredby == 'month') {
+              data = await fetchMonthData()
+            } else if (filteredby == 'year') {
+              data = await fetchYearData()
+            }
+            updateChart(data)
+          }
+          const fetchWeekData = async () => {
+            const response = await fetch('/admin/chartLastWeek');
+            const data = await response.json();
+            console.log(data);
+            return data;
+          };
+          const fetchMonthData = async () => {
+            const response = await fetch('/admin/chartLastMonth');
+            const data = await response.json();
+            console.log(data);
+            return data;
+          }
+          const fetchYearData = async () => {
+            const response = await fetch('/admin/chartLastYear');
+            const data = await response.json();
+            console.log(data);
+            return data;
+          }
+
+          const updateChart = (totalData) => {
+            var data = {
+              labels: ["COD", " Online", "Wallet"],
+              datasets: [{
+                data: totalData,
+                backgroundColor: ['red', 'green', 'blue'],
+
+              }]
+            };
+
+            productStatusChart.data = data
+            productStatusChart.update()
+          }
         </script>
 
         <%- include('../admin/layout/adminFooter.ejs') -%>

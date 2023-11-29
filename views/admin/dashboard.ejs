@@ -253,7 +253,7 @@
                         </h2>
                         <p
                           class="text-success ml-2 mb-0 font-weight-medium">
-                          +<%= averagePendingRevenue%>
+                          +<%= averagePendingRevenue.toFixed(2)%>
                             Pending</p>
                       </div>
                       <h6
@@ -314,26 +314,18 @@
                         <h2 class="mb-0">
                           <%= usersCount %>
                         </h2>
-                        <%if(usersCount> purchasersCount
+                        <%if(purchasersCount
                           ){%>
                           <p
-                            class="text-danger ml-2 mb-0 font-weight-medium ">
+                            class="text-success ml-2 mb-0 font-weight-medium ">
                             <%= purchasersCount%> Users Only
                               Purchased
                           </p>
-                          <%}else{%>
-                            <p
-                              class="text-success ml-2 mb-0 font-weight-medium">
-                              <%=purchaseCount%>
-                                Users Purchased
-                            </p>
-                            <%}%>
+                          <%}%>
 
                       </div>
                       <h6
-                        class="text-muted font-weight-normal">
-                        2.27% Since
-                        lastmonth</h6>
+                        class="text-muted font-weight-normal"></h6>
                     </div>
                     <div
                       class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
@@ -444,7 +436,7 @@
                   </div>
 
                   <div
-                    id="chart-container d-flex justify-content-center position-absolute">
+                    class="chart-container d-flex justify-content-center position-absolute">
                     <canvas id="myChart"
                       class="chart"></canvas>
                   </div>
@@ -458,40 +450,17 @@
                 <div class="card-body">
                   <div
                     class="d-flex flex-row justify-content-between">
-                    <h4 class="card-title">Orders</h4>
-                    <nav>
-                      <ul>
-                        <li>
-                          <p 
-                            style="cursor: pointer;"
-                            onclick="salesOrderFilter('week')"
-                            class="text-muted mb-1 small">Last
-                            Week</p>
-                        </li>
-                        <li>
-                          <p 
-                            style="cursor: pointer;"
-                            onclick="salesOrderFilter('month')"
-                            class=text-muted mb-1
-                            small">Last
-                            Month</p>
-                        </li>
-                        <li>
-                          <p 
-                            style="cursor: pointer;"
-                            onclick="salesOrderFilter('year')"
-                            class="text-muted mb-1 small">Last
-                            Year</p>
-                        </li>
-                      </ul>
+                    <h4 class="card-title">Sales Overview</h4>
+                    <nav class="d-flex flex-row justify-content-end">  
+                      <select class="form-control form-control-sm" id="salesOrder" onchange="salesOrderFilter(this.value)">
+                        <option value="week">Last Week</option>
+                        <option value="month">Last Month</option>
+                        <option value="year">Last Year</option>
+                      </select>                    
                     </nav>
-
-
-
-
                   </div>
 
-                  <div id="chart-container"
+                  <div id="chart-container d-flex justify-content-center position-absolute"
                     class="d-flex justify-content-center">
                     <canvas id="productStatusChart"
                       class="chart"></canvas>
@@ -894,7 +863,7 @@
 
           // Create a pie chart
           var myPieChart = new Chart(ctx, {
-            type: 'pie',
+            type: 'bar',
             data: data
           });
 

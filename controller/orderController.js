@@ -38,8 +38,8 @@ let checkoutPage = async (req, res) => {
     }
 };
 const razorpay = new Razorpay({
-    key_id: 'rzp_test_y9DKwlZOTNIdUA',
-    key_secret: '5MlkxrgqqdeEijI8AOszNeDD',
+    key_id: process.env.RAZORPAYKEY,
+    key_secret: process.env.RAZORPAYSECRET,
   });
 
 

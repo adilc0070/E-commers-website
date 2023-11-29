@@ -1,23 +1,33 @@
 <%-include ('../user/layout/header.ejs') %>
-<%-include ('../user/layout/sideBar.ejs') %>
+    <%-include ('../user/layout/sideBar.ejs') %>
         <div class="shop_sidebar_area">
 
             <!-- ##### Single Widget ##### -->
             <div class="widget catagory mb-50">
                 <!-- Widget Title -->
-                <h6 class="widget-title mb-30">Catagories</h6>
-                
+                <h6 class="widget-title mb-30">Catagories
+                </h6>
+
                 <!--  Catagories  -->
                 <div class="filter-form">
-                    <form action="/filterProducts?page=<%= currentPage %>" method="get">
-                        <label for="categoryId">Filter by Category:</label>
-                        <select name="categoryId" id="categoryId">
-                            <option value="" selected>All Categories</option>
-                            <% catago.forEach((cat) => { %>
-                                <option value="<%= cat._id %>"><%= cat.name %></option>
-                            <% }) %>
+                    <form
+                        action="/filterProducts?page=<%= currentPage %>"
+                        method="get">
+                        <label for="categoryId">Filter by
+                            Category:</label>
+                        <select name="categoryId"
+                            id="categoryId">
+                            <option value="" selected>All
+                                Categories</option>
+                            <% catago.forEach((cat)=> { %>
+                                <option
+                                    value="<%= cat._id %>">
+                                    <%= cat.name %>
+                                </option>
+                                <% }) %>
                         </select>
-                        <button type="submit">Apply Filter</button>
+                        <button type="submit">Apply
+                            Filter</button>
                     </form>
                 </div>
             </div>
@@ -30,14 +40,17 @@
                 <div class="widget-desc">
                     <!-- Single Form Check -->
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="amado">
-                        <label class="form-check-label" for="amado">Amado</label>
+                        <input class="form-check-input"
+                            type="checkbox" value=""
+                            id="amado">
+                        <label class="form-check-label"
+                            for="amado">Amado</label>
                     </div>
-                    
+
                 </div>
             </div>
 
-            
+
 
             <!-- ##### Single Widget ##### -->
             <div class="widget price mb-50">
@@ -46,12 +59,24 @@
 
                 <div class="widget-desc">
                     <div class="slider-range">
-                        <div data-min="10" data-max="1000" data-unit="$" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="10" data-value-max="1000" data-label-result="">
-                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                        <div data-min="10" data-max="1000"
+                            data-unit="$"
+                            class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"
+                            data-value-min="10"
+                            data-value-max="1000"
+                            data-label-result="">
+                            <div
+                                class="ui-slider-range ui-widget-header ui-corner-all">
+                            </div>
+                            <span
+                                class="ui-slider-handle ui-state-default ui-corner-all"
+                                tabindex="0"></span>
+                            <span
+                                class="ui-slider-handle ui-state-default ui-corner-all"
+                                tabindex="0"></span>
                         </div>
-                        <div class="range-price">$10 - $1000</div>
+                        <div class="range-price">$10 - $1000
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,137 +87,199 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+                        <div
+                            class="product-topbar d-xl-flex align-items-end justify-content-between">
                             <!-- Total Products -->
                             <div class="total-products">
-                                <p>Showing 1-8 0f 25</p>
+                                <p>Showing </p>
                                 <div class="view d-flex">
-                                    <a href="#"><i class="fa fa-th-large" aria-hidden="true"></i></a>
-                                    <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                                    <a href="#"><i
+                                            class="fa fa-th-large"
+                                            aria-hidden="true"></i></a>
+                                    <a href="#"><i
+                                            class="fa fa-bars"
+                                            aria-hidden="true"></i></a>
                                 </div>
                             </div>
                             <!-- Sorting -->
-                            <div class="product-sorting d-flex">
-                                <div class="sort-by-date d-flex align-items-center mr-15">
+                            <div
+                                class="product-sorting d-flex">
+                                <div
+                                    class="sort-by-date d-flex align-items-center mr-15">
                                     <p>Sort by</p>
-                                    <form action="#" method="get">
-                                        <select name="select" id="sortBydate">
-                                            <option value="value">Date</option>
-                                            <option value="value">Newest</option>
-                                            <option value="value">Popular</option>
+                                    <form action="#"
+                                        method="get">
+                                        <select
+                                            name="select"
+                                            id="sortBydate"
+                                            onchange="productsSort(this.value)">
+                                            <option
+                                                value="Newest">
+                                                Newest
+                                            </option>
+                                            <option
+                                                value="Oldest">
+                                                Oldest
+                                            </option>
+                                            <option
+                                                value="PriceLowToHigh">
+                                                Price Low to
+                                                High
+                                            </option>
+                                            <option
+                                                value="PriceHighToLow">
+                                                Price High
+                                                to Low
+                                            </option>
                                         </select>
                                     </form>
                                 </div>
-                                <div class="view-product d-flex align-items-center">
-                                    <p>View</p>
-                                    <form action="#" method="get">
-                                        <select name="select" id="viewProduct">
-                                            <option value="value">12</option>
-                                            <option value="value">24</option>
-                                            <option value="value">48</option>
-                                            <option value="value">96</option>
-                                        </select>
-                                    </form>
-                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <% product.forEach(function(product) { %>
-                    <!-- Single Product Area -->
-                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
-                        <div class="single-product-wrapper">
-                            <!-- Product Image -->
-                            <div class="product-img">
-                                <a href="/productDetail?id=<%= product._id %>">
-                                <img src="/products/images/<%= product.images.image2 %>"
-                                     style="width: 100%; height: 400px; object-fit: cover;"
-                                     alt="Product Image">
-                                <!-- Hover Thumb -->
-                                <img class="hover-img" src="/products/images/<%= product.images.image3 %>" style="width: 100%; height: 400px; object-fit: cover;"
-                                alt="Product Image">
-                                </a>
-                            </div>
-                
-                            <!-- Product Description -->
-                            <div class="product-description d-flex align-items-center justify-content-between">
-                                <!-- Product Meta Data -->
-                                <div class="product-meta-data">
-                                    <div class="line"></div>
-                                    <p class="product-price"><%= product.price %></p>
-                                    <a href="/productDetail?id=<%= product._id %>">
-                                        <h6><%= product.product_name %></h6>
+                    <% product.forEach(function(product) {
+                        %>
+                        <!-- Single Product Area -->
+                        <div
+                            class="col-12 col-sm-6 col-md-12 col-xl-6">
+                            <div
+                                class="single-product-wrapper">
+                                <!-- Product Image -->
+                                <div class="product-img">
+                                    <a
+                                        href="/productDetail?id=<%= product._id %>">
+                                        <img src="/products/images/<%= product.images.image2 %>"
+                                            style="width: 100%; height: 400px; object-fit: cover;"
+                                            alt="Product Image">
+                                        <!-- Hover Thumb -->
+                                        <img class="hover-img"
+                                            src="/products/images/<%= product.images.image3 %>"
+                                            style="width: 100%; height: 400px; object-fit: cover;"
+                                            alt="Product Image">
                                     </a>
                                 </div>
-                                <!-- Ratings & Cart -->
-                                <div class="ratings-cart text-right">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="false"></i>
+
+                                <!-- Product Description -->
+                                <div
+                                    class="product-description d-flex align-items-center justify-content-between">
+                                    <!-- Product Meta Data -->
+                                    <div
+                                        class="product-meta-data">
+                                        <div class="line">
+                                        </div>
+                                        <p
+                                            class="product-price">
+                                            <%= product.price
+                                                %>
+                                        </p>
+                                        <a
+                                            href="/productDetail?id=<%= product._id %>">
+                                            <h6>
+                                                <%= product.product_name
+                                                    %>
+                                            </h6>
+                                        </a>
                                     </div>
-                                    <div class="cart">
-                                        <a data-toggle="tooltip" onclick="showSwal('<%= product._id %>')" data-placement="left" title="Add to Cart"><img src="/user/img/core-img/cart.png" alt=""></a>
+                                    <!-- Ratings & Cart -->
+                                    <div
+                                        class="ratings-cart text-right">
+                                        <div
+                                            class="ratings">
+                                            <i class="fa fa-star"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star"
+                                                aria-hidden="true"></i>
+                                            <i class="fa fa-star"
+                                                aria-hidden="false"></i>
+                                        </div>
+                                        <div class="cart">
+                                            <a data-toggle="tooltip"
+                                                onclick="showSwal('<%= product._id %>')"
+                                                data-placement="left"
+                                                title="Add to Cart"><img
+                                                    src="/user/img/core-img/cart.png"
+                                                    alt=""></a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <% }) %>
+                        <% }) %>
                 </div>
-                                
+
 
                 <div class="row">
                     <div class="col-12">
                         <!-- Pagination -->
                         <nav aria-label="navigation">
-                            <ul class="pagination justify-content-end mt-50">
-                                <% for (let i = 1; i <= totalPages; i++) { %>
-                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                        <a class="page-link" href="/products?page=<%= i %>"><%= i %></a>
+                            <ul
+                                class="pagination justify-content-end mt-50">
+                                <% for (let i=1; i
+                                    <=totalPages; i++) { %>
+                                    <li
+                                        class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link"
+                                            href="/products?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
                                     </li>
-                                <% } %>
+                                    <% } %>
                             </ul>
                         </nav>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- ##### Main Content Wrapper End ##### -->
+        </div>
+        <!-- ##### Main Content Wrapper End ##### -->
 
 
-    <script>
-        function showSwal(id) {
-            $.ajax({
-              url: '/add-to-cart',
-              method: 'post',
-              data: {
-                id: id
-              },
-              success: function(response) {
-                  if(response.success==true){
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Product added to cart',
-                        text:"Your product has been added to your cart",
+        <script>
+
+            function showSwal(id) {
+                $.ajax({
+                    url: '/add-to-cart',
+                    method: 'post',
+                    data: {
+                        id: id
+                    },
+                    success: function (response) {
+                        if (response.success == true) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Product added to cart',
+                                text: "Your product has been added to your cart",
+                            })
+                        } else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Stock exceeded',
+                                text: "Please reduce the quantity",
+                            })
+                        }
+                    }
+                })
+            }
+        </script>
+        <script>
+            let productsSort = (value) => {
+                fetch(`/products?sort=${value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        window.location.href = `/products?sort=${value}`
                     })
-                  }else{
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Stock exceeded',
-                        text:"Please reduce the quantity",
-                    })
-                  }
-              }
-            })
-        }
-    </script>
+                    .catch(error => console.error('Error:', error));
+            }
+        </script>
 
-<%-include ('../user/layout/footer.ejs') %>
+        <%-include ('../user/layout/footer.ejs') %>

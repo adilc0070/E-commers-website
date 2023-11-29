@@ -595,7 +595,14 @@ let unblockCategory = async (req, res) => {
 let productManagement = async (req, res) => {
     try {
         let products = await ProductDB.find();
-        // console.log(products);
+        let query = {};
+
+        // Check if there is a search query
+        if (req.query.search) {
+            console.log("req.query.search");
+            // Case-insensitive search by product name
+            query = { product_name: { $regex: new RegExp(req.query.search, 'i') } };
+        }
 
         res.render("productManagement", { products });
     } catch (error) {
@@ -683,7 +690,7 @@ const updateProduct = async (req, res) => {
             ? imagesFiles.image4[0].filename
             : currentData.images.image4;
 
-        if (details.stock > 0 || details.price > 0) {
+        if (details.stock > 0 && details.price > 0) {
             let update = await ProductDB.updateOne(
                 { _id: req.query.id },
                 {
@@ -954,8 +961,10 @@ let report = async (req, res) => {
                         };
                         pdf.create(data, options).toFile("report.pdf", function (err, data) {
                             if (err) {
+                                console.log("error", err);
                                 res.send(err);
                             } else {
+                                console.log("success");
                                 const pdfpath = path.join(__dirname, "../report.pdf");
                                 res.sendFile(pdfpath);
                             }

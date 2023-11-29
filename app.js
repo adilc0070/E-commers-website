@@ -1,15 +1,6 @@
 // connecting mongo db
 
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/project')
-  .then(() => {
-    console.log('MongoDB connected');
-  })
-  .catch((error) => {
-    console.error('Failed to connect to MongoDB:', error);
-  });
 
-  require("dotenv").config();
 // modules 
 let path=require('path')
 let express=require('express')
@@ -19,9 +10,18 @@ let adminRoute=require('./router/adminRoute');
 let session=require('express-session')
 
 let config=require('./config/config')
+require("dotenv").config();
 
 let crypto=require('crypto')
 let nocache=require('nocache')
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODBURL)
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch((error) => {
+    console.error('Failed to connect to MongoDB:', error);
+  });
 
 app.use(session({
   secret:crypto.randomBytes(64).toString('hex'),

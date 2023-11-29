@@ -363,14 +363,46 @@ let productPage = async (req, res) => {
 
         // Pagination Logic
         const page = parseInt(req.query.page) || 1;
-        const limit = 8; // Number of products per page
+        const limit = parseInt(req.query.limit) || 12; // Updated to use the custom limit
         const skip = (page - 1) * limit;
 
         const productCount = await Products.countDocuments({ block: 0 });
         const totalPages = Math.ceil(productCount / limit);
 
-        const product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+        let product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+        // Sorting Logic
+        let sortOption = req.query.sort;
+        let sortQuery = {};
 
+        switch (sortOption) {
+            case 'Newest':
+                sortQuery = { _id: -1 };
+                console.log(sortQuery);
+                break;
+            case 'Oldest':
+                sortQuery = { _id: 1 };
+                console.log(sortQuery);
+                break;
+            case 'PriceLowToHigh':
+                sortQuery = { price: 1 };
+                console.log(sortQuery);
+                break;
+            case 'PriceHighToLow':
+                sortQuery = { price: -1 };
+                console.log(sortQuery);
+                break;
+            default:
+                sortQuery = { _id: -1 };
+                console.log(sortQuery);
+                // Default sorting by newest
+                break;
+        }
+
+        product = await Products.find({ block: 0 })
+            .sort(sortQuery)
+            .skip(skip)
+            .limit(limit);
+        console.log(product);
         res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
     } catch (error) {
         console.log(error.message);

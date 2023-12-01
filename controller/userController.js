@@ -402,8 +402,9 @@ let productPage = async (req, res) => {
             .sort(sortQuery)
             .skip(skip)
             .limit(limit);
-        console.log(product);
-        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
+        // console.log(product);
+        res.json({ product, totalPages, currentPage: page });
+        // res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');

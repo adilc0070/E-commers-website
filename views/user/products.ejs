@@ -82,156 +82,93 @@
             </div>
         </div>
 
-        <div class="amado_product_area section-padding-100">
+        <div id="product-list" class="amado_product_area section-padding-100">
             <div class="container-fluid">
-
                 <div class="row">
                     <div class="col-12">
-                        <div
-                            class="product-topbar d-xl-flex align-items-end justify-content-between">
+                        <div class="product-topbar d-xl-flex align-items-end justify-content-between">
                             <!-- Total Products -->
                             <div class="total-products">
                                 <p>Showing </p>
                                 <div class="view d-flex">
-                                    <a href="#"><i
-                                            class="fa fa-th-large"
-                                            aria-hidden="true"></i></a>
-                                    <a href="#"><i
-                                            class="fa fa-bars"
-                                            aria-hidden="true"></i></a>
+                                    <a href="#"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+                                    <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
                                 </div>
                             </div>
                             <!-- Sorting -->
-                            <div
-                                class="product-sorting d-flex">
-                                <div
-                                    class="sort-by-date d-flex align-items-center mr-15">
+                            <div class="product-sorting d-flex">
+                                <div class="sort-by-date d-flex align-items-center mr-15">
                                     <p>Sort by</p>
-                                    <form action="#"
-                                        method="get">
-                                        <select
-                                            name="select"
-                                            id="sortBydate"
-                                            onchange="productsSort(this.value)">
-                                            <option
-                                                value="Newest">
-                                                Newest
-                                            </option>
-                                            <option
-                                                value="Oldest">
-                                                Oldest
-                                            </option>
-                                            <option
-                                                value="PriceLowToHigh">
-                                                Price Low to
-                                                High
-                                            </option>
-                                            <option
-                                                value="PriceHighToLow">
-                                                Price High
-                                                to Low
-                                            </option>
+                                    <form action="#" method="get">
+                                        <select name="select" id="sortBydate" onchange="productsSort(this.value)">
+                                            <option value="Newest">Newest</option>
+                                            <option value="Oldest">Oldest</option>
+                                            <option value="PriceLowToHigh">Price Low to High</option>
+                                            <option value="PriceHighToLow">Price High to Low</option>
                                         </select>
                                     </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-
+        
                 <div class="row">
-                    <% product.forEach(function(product) {
-                        %>
+                    <% product.forEach(function(product) { %>
                         <!-- Single Product Area -->
-                        <div
-                            class="col-12 col-sm-6 col-md-12 col-xl-6">
-                            <div
-                                class="single-product-wrapper">
+                        <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                            <div class="single-product-wrapper">
                                 <!-- Product Image -->
                                 <div class="product-img">
-                                    <a
-                                        href="/productDetail?id=<%= product._id %>">
-                                        <img src="/products/images/<%= product.images.image2 %>"
-                                            style="width: 100%; height: 400px; object-fit: cover;"
-                                            alt="Product Image">
-                                        <!-- Hover Thumb -->
-                                        <img class="hover-img"
-                                            src="/products/images/<%= product.images.image3 %>"
-                                            style="width: 100%; height: 400px; object-fit: cover;"
-                                            alt="Product Image">
+                                    <a href="/productDetail?id=<%= product._id %>">
+                                        <img src="/products/images/<%= product.images.image2 %>" style="width: 100%; height: 400px; object-fit: cover;" alt="Product Image">
+                                        <img class="hover-img" src="/products/images/<%= product.images.image3 %>" style="width: 100%; height: 400px; object-fit: cover;" alt="Product Image">
                                     </a>
                                 </div>
-
+        
                                 <!-- Product Description -->
-                                <div
-                                    class="product-description d-flex align-items-center justify-content-between">
+                                <div class="product-description d-flex align-items-center justify-content-between">
                                     <!-- Product Meta Data -->
-                                    <div
-                                        class="product-meta-data">
-                                        <div class="line">
-                                        </div>
-                                        <p
-                                            class="product-price">
-                                            <%= product.price
-                                                %>
-                                        </p>
-                                        <a
-                                            href="/productDetail?id=<%= product._id %>">
-                                            <h6>
-                                                <%= product.product_name
-                                                    %>
-                                            </h6>
+                                    <div class="product-meta-data">
+                                        <div class="line"></div>
+                                        <p class="product-price"><%= product.price %></p>
+                                        <a href="/productDetail?id=<%= product._id %>">
+                                            <h6><%= product.product_name %></h6>
                                         </a>
                                     </div>
                                     <!-- Ratings & Cart -->
-                                    <div
-                                        class="ratings-cart text-right">
-                                        <div
-                                            class="ratings">
-                                            <i class="fa fa-star"
-                                                aria-hidden="true"></i>
-                                            <i class="fa fa-star"
-                                                aria-hidden="true"></i>
-                                            <i class="fa fa-star"
-                                                aria-hidden="true"></i>
-                                            <i class="fa fa-star"
-                                                aria-hidden="true"></i>
-                                            <i class="fa fa-star"
-                                                aria-hidden="false"></i>
+                                    <div class="ratings-cart text-right">
+                                        <div class="ratings">
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="false"></i>
                                         </div>
                                         <div class="cart">
-                                            <a data-toggle="tooltip"
-                                                onclick="showSwal('<%= product._id %>')"
-                                                data-placement="left"
-                                                title="Add to Cart"><img
-                                                    src="/user/img/core-img/cart.png"
-                                                    alt=""></a>
+                                            <a data-toggle="tooltip" onclick="showSwal('<%= product._id %>')" data-placement="left" title="Add to Cart">
+                                                <img src="/user/img/core-img/cart.png" alt="">
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <% }) %>
+                    <% }) %>
                 </div>
-
-
+        
                 <div class="row">
                     <div class="col-12">
                         <!-- Pagination -->
                         <nav aria-label="navigation">
-                            <ul
-                                class="pagination justify-content-end mt-50">
-                                <% for (let i=1; i
-                                    <=totalPages; i++) { %>
-                                    <li
-                                        class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                        <a class="page-link"
-                                            href="/products?page=<%= i %>">
+                            <ul class="pagination justify-content-end mt-50">
+                                <% for (let i=1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="/products?page=<%= i %>">
                                             <%= i %>
                                         </a>
                                     </li>
-                                    <% } %>
+                                <% } %>
                             </ul>
                         </nav>
                     </div>
@@ -239,11 +176,8 @@
             </div>
         </div>
         </div>
-        <!-- ##### Main Content Wrapper End ##### -->
-
-
+        
         <script>
-
             function showSwal(id) {
                 $.ajax({
                     url: '/add-to-cart',
@@ -270,16 +204,94 @@
                     }
                 })
             }
-        </script>
-        <script>
-            let productsSort = (value) => {
-                fetch(`/products?sort=${value}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        window.location.href = `/products?sort=${value}`
-                    })
-                    .catch(error => console.error('Error:', error));
+        
+            
+        
+            function updateProductListing(products) {
+                console.log("products", products);
+                const productListDiv = document.getElementById('product-list');
+                productListDiv.innerHTML = "";
+                 
+        
+                products.forEach(product => {
+                    console.log("product", product);
+                    // Create HTML elements for each product and append to the productListDiv
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'single-product-wrapper';
+        
+                    // Your product HTML structure based on the existing one
+                    productDiv.innerHTML = `
+                        <div class="product-img">
+                            <a href="/productDetail?id=${product._id}">
+                                <img src="/products/images/${product.images.image2}" style="width: 100%; height: 400px; object-fit: cover;" alt="Product Image">
+                                <img class="hover-img" src="/products/images/${product.images.image3}" style="width: 100%; height: 400px; object-fit: cover;" alt="Product Image">
+                            </a>
+                        </div>
+                        <div class="product-description d-flex align-items-center justify-content-between">
+                            <div class="product-meta-data">
+                                <div class="line"></div>
+                                <p class="product-price">${product.price}</p>
+                                <a href="/productDetail?id=${product._id}">
+                                    <h6>${product.product_name}</h6>
+                                </a>
+                            </div>
+                            <div class="ratings-cart text-right">
+                                <div class="ratings">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="false"></i>
+                                </div>
+                                <div class="cart">
+                                    <a data-toggle="tooltip" onclick="showSwal('${product._id}')" data-placement="left" title="Add to Cart">
+                                        <img src="/user/img/core-img/cart.png" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+        
+                    productListDiv.appendChild(productDiv);
+                });
             }
         </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchToggle = document.querySelector('.search-toggle');
+        const searchModal = $('#searchModal');
+        const productNameInput = $('#productName');
+        const searchButton = $('#searchButton');
+        const productListContainer = $('#productListContainer'); 
+
+        searchToggle.addEventListener('click', function () {
+            searchModal.modal('show');
+        });
+
+        searchButton.on('click', function () {
+            const searchData = productNameInput.val();
+            console.log(searchData);
+            searchProducts(searchData);
+            searchModal.modal('hide');
+        });
+
+        function productsSort(searchData) {
+            $.ajax({
+                url: '/searchProducts',
+                method: 'GET',
+                data: { searchdata: searchData },
+                success: function (data) {
+                    const productListHtml = $(data).find('#productListContainer').html();
+            productListContainer.html(productListHtml);
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        }
+    });
+</script>
+
+        
         <%-include ('../user/layout/footer.ejs') %>

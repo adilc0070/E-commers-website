@@ -382,17 +382,35 @@ const chartFilterYear = async (req, res) => {
 }
 let ordersDashboard = async (req, res) => {
     try {
-        // Fetch all orders, pending orders, and delivered orders
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 8;
+
+        // Fetch all orders
+        let allOrders = await Order.find().countDocuments();
+
+        // Calculate total pages based on total orders and page size
+        const totalPages = Math.ceil(allOrders / pageSize);
+
+        // Fetch paginated orders
         let orders = await Order.find()
+            .sort({ date: -1 })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
+        // Fetch all orders, pending orders, and delivered order
         let pendingOrders = await Order.find({ status: { $ne: "delivered" } })
+            .sort({ date: -1 })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
         let deliveredOrders = await Order.find({ status: "delivered" })
+            .sort({ date: -1 })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
-
         //fetch user count
         let usersCount = await user.count();
         let purchasersCount = await Order.distinct("userId");
@@ -423,21 +441,6 @@ let ordersDashboard = async (req, res) => {
         //average pending revenue
         // Calculate average pending revenue
         let averagePendingRevenue = pendingRevenue / pendingSales || 0;
-
-        // console.log("Average Pending Revenue:", averagePendingRevenue);
-        // console.log("revenue:", revenue, "pendingRevenue:", pendingRevenue);
-        // console.log("sales:", sales, "pendingSales:", pendingSales);
-        // console.log(
-        //     "purchases:",
-        //     purchases,
-        //     "usersCount:",
-        //     usersCount,
-        //     "purchasersCount:",
-        //     purchasersCount.length
-        // );
-        // console.log("deliveredOrders:",deliveredOrders);
-
-        // console.log("user:",userName.name); // Add this line
         res.render("orders", {
             orders,
             revenue,
@@ -449,6 +452,88 @@ let ordersDashboard = async (req, res) => {
             averagePendingRevenue,
             pendingRevenue,
             pendingSales,
+            currentPage: page,
+            totalPages,
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+};
+let salesDashboard = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 8;
+
+        // Fetch all orders
+        let allOrders = await Order.find().countDocuments();
+
+        // Calculate total pages based on total orders and page size
+        const totalPages = Math.ceil(allOrders / pageSize);
+
+        // Fetch paginated orders
+        let orders = await Order.find()
+            .sort({ date: -1 })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
+            .populate("products.productId")
+            .populate({ path: "userId", select: "name" });
+        // Fetch all orders, pending orders, and delivered order
+        let pendingOrders = await Order.find({ status: { $ne: "delivered" } })
+            .sort({ date: -1 })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
+            .populate("products.productId")
+            .populate({ path: "userId", select: "name" });
+        let deliveredOrders = await Order.find({ status: "delivered" })
+            .sort({ date: -1 })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
+            .populate("products.productId")
+            .populate({ path: "userId", select: "name" });
+        //fetch user count
+        let usersCount = await user.count();
+        let purchasersCount = await Order.distinct("userId");
+
+        // Initialize variables
+        let revenue = 0;
+        let sales = 0;
+        let purchases = 0;
+        let pendingRevenue = 0;
+        let pendingSales = 0;
+        // Calculate revenue
+        deliveredOrders.forEach((order) => {
+            order.products.forEach((product) => {
+                revenue += product.productId.price * product.quantity;
+                purchases += product.quantity;
+            });
+            sales += 1; // Increment sales for each delivered order
+        });
+        // calculate pending revenue
+        pendingOrders.forEach((order) => {
+            order.products.forEach((product) => {
+                pendingRevenue += product.productId.price * product.quantity;
+                purchases += product.quantity;
+            });
+            pendingSales += 1; // Increment sales for each delivered order
+        });
+
+        //average pending revenue
+        // Calculate average pending revenue
+        let averagePendingRevenue = pendingRevenue / pendingSales || 0;
+        res.render("new", {
+            orders,
+            revenue,
+            sales,
+            usersCount,
+            purchasersCount: purchasersCount.length,
+            deliveredOrders,
+            pendingOrders,
+            averagePendingRevenue,
+            pendingRevenue,
+            pendingSales,
+            currentPage: page,
+            totalPages,
         });
     } catch (error) {
         console.log(error.message);
@@ -795,7 +880,8 @@ const SalesReport = async (req, res) => {
         console.log(error.message);
     }
 }
-let report = async (req, res) => {
+let 
+report = async (req, res) => {
     try {
         let orderdata = await Order.find({}).sort({ date: -1 }).populate('products.productId').populate({ path: 'userId', select: 'name' });
         //calculate revenue from the delivered orders
@@ -1009,4 +1095,5 @@ module.exports = {
     chartFilterWeek,
     chartFilterMonth,
     chartFilterYear,
+    salesDashboard
 };

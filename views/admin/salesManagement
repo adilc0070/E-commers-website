@@ -16,22 +16,6 @@
     text-overflow: ellipsis; /* Display an ellipsis (...) for truncated text */
     white-space: nowrap; /* Prevent text from wrapping to the next line */
   }
-  .pagination {
-    margin-top: 20px;
-}
-
-.pagination a {
-    color: wheat;
-    float: left;
-    padding: 8px 16px;
-    text-decoration: none;
-}
-
-.pagination a.active {
-    background-color: #4caf50;
-    color: white;
-}
-
 </style>
 
 <div class="main-panel">
@@ -41,14 +25,21 @@
             <div class="col-12 grid-margin">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Order Status</h4>
+                        <h4 class="card-title">Sales</h4>
                         <div class="table-responsive">
                             <table class="table"
                                 style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr>
                                         <th>
-                                            
+                                            <div
+                                                class="form-check form-check-muted m-0">
+                                                <label
+                                                    class="form-check-label">
+                                                    <input type="checkbox"
+                                                        class="form-check-input">
+                                                </label>
+                                            </div>
                                         </th>
                                         <th>Client Name</th>
                                         <th>Order No</th>
@@ -58,16 +49,21 @@
                                         <th>Ordered Date</th>
                                         <th>Delivery Address</th>
                                         <th>Order Status</th>
-                                        <th>Action</th>
                                         <!-- Added Action column for changing order status -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% let i=0; %>
                                     <% orders.forEach(order=> { %>
                                     <tr>
                                         <td>
-                                            <%= i+1%>
+                                            <div
+                                                class="form-check form-check-muted m-0">
+                                                <label
+                                                    class="form-check-label">
+                                                    <input type="checkbox"
+                                                        class="form-check-input">
+                                                </label>
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="pl-2">
@@ -135,61 +131,10 @@
                                                 </span>
                                             </div>
                                         </td>
-
-                                        <td>
-                                            <!-- Select box for changing order status -->
-                                            <select class="form-select"
-                                                id="orderStatus<%= order._id %>"
-                                                onchange="changeOrderStatus('<%= order._id %>') ">
-                                                <option value="delivered"
-                                                    <%=order.status==='delivered'
-                                                    ? 'selected' : '' %>
-                                                    >Delivered</option>
-                                                <option value="pending"
-                                                    <%=order.status==='pending'
-                                                    ? 'selected' : '' %>
-                                                    >Pending</option>
-                                                <option value="rejected"
-                                                    <%=order.status==='rejected'
-                                                    ? 'selected' : '' %>
-                                                    >Rejected</option>
-                                                <option value="shipped"
-                                                    <%=order.status==='shipped'
-                                                    ? 'selected' : '' %>
-                                                    >Shipped</option>
-                                            </select>
-                                        </td>
                                     </tr>
-                                    <% i++; %>
                                     <% }) %>
                                 </tbody>
                             </table>
-                        </div>
-                        <!-- Pagination -->
-                        <div class="pagination-container">
-                            <ul class="pagination">
-                                <% if (currentPage > 1) { %>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                <% } %>
-
-                                <% for (let i = 1; i <= totalPages; i++) { %>
-                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                                    </li>
-                                <% } %>
-
-                                <% if (currentPage < totalPages) { %>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                <% } %>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -197,6 +142,83 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include jQuery or use a local copy -->
+<script>
+          document.addEventListener('DOMContentLoaded', function () {
+    const orderStatusSelects = document.querySelectorAll('.order-status');
+
+    orderStatusSelects.forEach(select => {
+        select.addEventListener('click', function () {
+            console.log('Order status clicked');
+            
+            const orderId = this.getAttribute('data-order-id');
+            console.log('Order ID:', orderId);
+
+            const newStatus = prompt('Enter new status (approved, pending, or rejected):');
+            console.log('New status:', newStatus);
+
+            if (newStatus) {
+                console.log('Making AJAX request...');
+                
+                // Make an AJAX request to update the order status
+                fetch('/update-order-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ orderId, newStatus }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response:', data);
+
+                    if (data.success) {
+                        // Update the displayed status
+                        this.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                        // Optionally, update the badge color based on the new status
+                        this.parentElement.className = `badge ${newStatus === 'approved' ? 'badge-outline-success' : (newStatus === 'pending' ? 'badge-outline-warning' : 'badge-outline-danger')}`;
+                    } else {
+                        alert('Failed to update order status.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update order status.');
+                });
+            }
+        });
+    });
+});x
+
+
+          // Define the changeOrderStatus function
+          function changeOrderStatus(orderId) {
+            console.log("in the fetch")
+      const newStatus = event.target.value
+    console.log(newStatus)
+    fetch(`/admin/update-order-status/${orderId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newStatus }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        const orderTable = document.getElementById('orderTable');
+         location.reload();
+        // Optionally, update the UI or show a notification upon success
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Optionally, handle the error or show a notification
+      });
+            // Your implementation of changeOrderStatus
+          }
+        </script>
+
 <%- include('../admin/layout/adminFooter.ejs') -%>

@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sign In Form by RusticLens</title>
 
     <!-- Font Icon -->
-    <link rel="stylesheet" href="/user/fonts/material-icon/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet"
+        href="/user/fonts/material-icon/css/material-design-iconic-font.min.css">
 
     <!-- Main css -->
     <link rel="stylesheet" href="/user/css/style.css">
@@ -19,8 +22,13 @@
                 errorMessage.style.display = 'none';
             }
         }
+        function validateEmail(email) {
+            const regex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|icloud\.com|yahoo\.com)$/; // Only allowing . and _ before the domain
+            return regex.test(email);
+        }
     </script>
 </head>
+
 <body>
 
     <div class="main">
@@ -30,36 +38,83 @@
             <div class="container">
                 <div class="signin-content">
                     <div class="signin-image">
-                        <form action="/signup" method="post">
-                            <figure><img src="/user/images/signin-image.jpg" alt="sing in image"></figure>
-                            <a href="/signUp" class="signup-image-link">Create an account</a>
+                        <form action="/signup"
+                            method="post">
+                            <figure><img
+                                    src="/user/images/signin-image.jpg"
+                                    alt="sing in image">
+                            </figure>
+                            <a href="/signUp"
+                                class="signup-image-link">Create
+                                an account</a>
                         </form>
                     </div>
 
                     <div class="signin-form">
-                        <h2 class="form-title">Sign in</h2> 
-                        <form method="POST" class="register-form" action="/signin" id="login-form">
-                            <span id="blockMessage" style="color: red; display: block;"><%= locals.blockMessage %></span>
+                        <h2 class="form-title">Sign in</h2>
+                        <form method="POST"
+                            class="register-form"
+                            action="/signin"
+                            id="login-form">
+                            <span id="blockMessage"
+                                style="color: red; display: block;">
+                                <%= locals.blockMessage %>
+                            </span>
                             <div class="form-group">
-                                <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input type="email" name="email" id="email" placeholder="Your Email" oninput="clearErrorMessage('emailMessage')"/>
-                                <span id="emailMessage" style="color: red; display: block;"><%= locals.emailMessage %></span>
+                                <label for="email"><i
+                                        class="zmdi zmdi-email"></i></label>
+                                <input type="email"
+                                    name="email" id="email"
+                                    placeholder="Your Email"
+                                    oninput="clearErrorMessage('emailMessage')" />
+                                <span id="emailMessage"
+                                    style="color: red; display: block;">
+                                    <%= locals.emailMessage
+                                        %>
+                                </span>
                             </div>
                             <div class="form-group">
-                                <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="password" id="your_pass" placeholder="Password" oninput="clearErrorMessage('passwordMessage')"/>
-                                <span id="passwordMessage" style="color: red; display: block;"><%= locals.passwordMessage %></span>
-                                <span><a href="/forgotPassword"class=class="text-end" style="color:rgba(255, 0, 0, 0.313); "><div id="error-message" >Forgot Password?</div></a></span>
-                                <span><a href="/">a</a></span>
+                                <label for="your_pass"><i
+                                        class="zmdi zmdi-lock"></i></label>
+                                <input type="password"
+                                    name="password"
+                                    id="your_pass"
+                                    placeholder="Password"
+                                    oninput="clearErrorMessage('passwordMessage')" />
+                                <span id="passwordMessage"
+                                    style="color: red; display: block;">
+                                    <%= locals.passwordMessage
+                                        %>
+                                </span>
+                                <span><a href="/forgotPassword"
+                                        class=class="text-end"
+                                        style="color:rgba(255, 0, 0, 0.313); ">
+                                        <div
+                                            id="error-message">
+                                            Forgot Password?
+                                        </div>
+                                    </a></span>
+                                <span><a
+                                        href="/">a</a></span>
                             </div>
                             <div class="form-group">
-                                <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
-                                <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
+                                <input type="checkbox"
+                                    name="remember-me"
+                                    id="remember-me"
+                                    class="agree-term" />
+                                <label for="remember-me"
+                                    class="label-agree-term"><span><span></span></span>Remember
+                                    me</label>
                             </div>
-                            <div class="form-group form-button">
-                                
-                                <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
-                                
+                            <div
+                                class="form-group form-button">
+
+                                <input type="submit"
+                                    name="signin"
+                                    id="signin"
+                                    class="form-submit"
+                                    value="Log in" />
+
                             </div>
                         </form>
 
@@ -86,7 +141,9 @@
             input.addEventListener('input', clearErrorMessage);
         });
     </script>
-    <script src="/user/vendor/jquery/jquery.min.js"></script>
+    <script
+        src="/user/vendor/jquery/jquery.min.js"></script>
     <script src="/user/js/main.js"></script>
 </body>
+
 </html>

@@ -461,12 +461,14 @@ let displayFilteredProducts = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-
+let Order=require("../models/orederModel")
 let userProfile=async(req,res)=>{
     try {
 
         let userDa=await user.findById(req.session.user_id)
-        res.render("profilePage",{userDa})
+        let deliveredOrders=await Order.find({userId:req.session.user_id,status:"delivered"}).sort({date:-1})
+        let pendingOrders=await Order.find({userId:req.session.user_id,status:{ $in: ["pending", "shipped"] }}).sort({date:-1})        
+        res.render("profilePage",{userDa,deliveredOrders,pendingOrders})
     } catch (error) {
         console.log(error.message);
     }

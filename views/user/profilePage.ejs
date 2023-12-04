@@ -66,10 +66,10 @@
 
                                                 </p>
                                             </div>
-                                            <button
+                                            <a href="/editProfile"><button
                                                 class="btn btn-primary btn-rounded btn-lg">
-                                                <a href="/editProfile">Edit Profile</a>
-                                            </button>
+                                                Edit Profile
+                                            </button></a>
                                             <div
                                                 class="d-flex justify-content-between text-center mt-5 mb-2">
                                                 <div>
@@ -93,7 +93,7 @@
                                                     <%}else{%>
                                                         <p
                                                         class="mb-2 h5">
-                                                        <%= deliveredOrders.length %>    
+                                                        0   
                                                         </p>
                                                     <%}%>
                                                     <p
@@ -104,12 +104,12 @@
                                                 <div>
                                                     <p
                                                         class="mb-2 h5">
-                                                        4751
+                                                        <%= pendingOrders.length %>
                                                     </p>
                                                     <p
                                                         class="text-muted mb-0">
-                                                        Total
-                                                        Transactions
+                                                        Pending
+                                                        Orders
                                                     </p>
                                                 </div>
                                             </div>

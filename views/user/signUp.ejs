@@ -19,6 +19,83 @@
                 errorMessage.style.display = 'none';
             }
         }
+        $(document).ready(function () {
+				const signUpForm = $('#register-form');
+				const submitButton = signUpForm.find('button[type="submit"]');
+
+				signUpForm.submit(function (event) {
+					if (!validateForm()) {
+						event.preventDefault();
+					}
+				});
+
+				// Use input event to trigger validation on user input
+				signUpForm.find('input').on('input', function () {
+					validateForm();
+				});
+
+				function validateForm() {
+                    let isValid = true;
+
+                    // Clear existing error messages
+                    $('#emailErrorMsg').text(''); 
+                    $('#passwordErrorMsg').text('');
+                    $('#numberErrorMsg').text(''); 
+                    $('#nameErrorMsg').text(''); 
+                    
+
+
+                    const name = $('#name').val();
+                    const email = $('#email').val();
+                    const password = $('#password').val();
+                    const number = $('#phone').val();
+                    const confirm_password = $('#confirm_password').val();
+                    
+                    // Validate email
+                    const regex = /^[a-zA-Z0-9._]+@(gmail\.com|icloud\.com|yahoo\.com|outlook\.com|hotmail\.com)$/;
+                    if (!regex.test(email)) {
+                        console.log("email not valid");
+                        $('#emailErrorMsg').text('Please enter a valid email address.');
+                        isValid = false;
+                    }
+
+                    // Validate password complexity
+                    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+                    if (!passwordRegex.test(password)) {
+                        console.log("password not valid");
+                        $('#passwordErrorMsg').text('Password must be 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                        isValid = false;
+                    }
+
+                    // Validate phone number
+                    const phoneRegex = /^\d{10}$/;
+                    if (!phoneRegex.test(number)) {
+                        console.log("number not valid");
+                        $('#numberErrorMsg').text('Please enter a valid 10-digit phone number.');
+                        isValid = false;
+                    }
+
+                    // Validate name must be at least 3 characters
+                    if (name.length < 3) {
+                        console.log("name not valid");
+                        $('#nameErrorMsg').text('Name must be at least 3 characters long.');
+                        isValid = false;
+                    }
+
+                    // Validate password and confirm password match
+                    if (password !== confirm_password) {
+                        console.log("password not valid");
+                        $('#passwordErrorMsg').text('Passwords do not match.');
+                        isValid = false;
+                    }
+
+                    // Enable/disable the submit button based on the overall validation status
+                    submitButton.prop('disabled', !isValid);
+                    console.log("isValid", isValid);
+
+                    return isValid;
+                }
+			});
     </script>
 </head>
 <body>
@@ -32,17 +109,32 @@
                     <div class="signup-form">
                         <h2 class="form-title">Sign up</h2>
                         <form method="POST" action="/signup" class="register-form" id="register-form">
+                            <%if(locals.nameErrorMsg || locals.emailErrorMsg || locals.numberErrorMsg || locals.passwordErrorMsg) {%>
+                            <div class="errorsFromBackend">
+                                <div class="alert alert-danger">
+                                    <%= locals.nameErrorMsg %>
+                                    <%= locals.emailErrorMsg %>
+                                    <%= locals.numberErrorMsg %>
+                                    <%= locals.passwordErrorMsg %>
+                                    <%= locals.confirm_password %>
+                                </div>
+                            </div>
+                            <%}%>
                             <div class="form-group">
                                 <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="name" id="name" placeholder="Your Name" oninput="clearErrorMessage('nameErrorMsg')">
-                                <span id="nameErrorMsg" style="color: red; display: block;"><%= locals.nameErrorMsg %></span>
+                                
+                                <input type="text" name="name" id="name" placeholder="Your Name">
+                                
+                                <span id="nameErrorMsg" style="color: red; display: block;"></span>
 
                             </div>
                 
                             <div class="form-group">
                                 <label for="email"><i class="zmdi zmdi-email"></i></label>
-                                <input type="email" name="email" id="email" placeholder="Your Email"  oninput="clearErrorMessage('emailErrorMsg')">
-                                <span id="emailErrorMsg" style="color: red; display: block;"><%= locals.emailErrorMsg %></span>
+                                
+                                <input type="email" name="email" id="email" placeholder="Your Email" >
+                                
+                                <span id="emailErrorMsg" style="color: red; display: block;"></span>
                                 
 
                             </div>
@@ -50,18 +142,22 @@
                                
                             <div class="form-group">
                                 <label for="phone"><i class="zmdi zmdi-phone"></i></label>
-                                <input type="number" name="phone" id="phone" placeholder="Your number" oninput="clearErrorMessage('numberErrorMsg')">
-                                <span id="numberErrorMsg" style="color: red; display: block;"><%= locals.numberErrorMsg %></span>
+                                 
+                                <input type="number" name="phone" id="phone" placeholder="Your number">
+                                
+                                <span id="numberErrorMsg" style="color: red; display: block;"></span>
                             </div>
                             <div class="form-group">
                                 <label for="password"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="password" id="password" placeholder="Password"  oninput="clearErrorMessage('passwordErrorMsg')">
-                                <span id="passwordErrorMsg" style="color: red; display: block;"><%= locals.passwordErrorMsg %></span>
+                                
+                                <input type="password" name="password" id="password" placeholder="Password" >
+                                
+                                <span id="passwordErrorMsg" style="color: red; display: block;"></span>
                             </div>
                             <div class="form-group">
                                 <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                                <input type="password" name="confirm_password" id="re_pass" placeholder="Repeat your password" oninput="clearErrorMessage('confirm_password')">
-                                <span id="confirm_password" style="color: red; display: block;"><%= locals.confirm_password %></span>
+                                <input type="password" name="confirm_password" id="re_pass" placeholder="Repeat your password">
+                                <span id="confirm_password" style="color: red; display: block;"></span>
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required/>
@@ -69,7 +165,7 @@
                             </div>
                             <div class="form-group form-button">
                                 
-                                <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                                <button type="submit" name="signup" id="signup" class="form-submit" value="Register">Register</button>
                             </div>
                         </form>
                     </div>

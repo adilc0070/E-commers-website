@@ -7,6 +7,28 @@ const fileUpload = require('../middleware/multer');
 const userAuth = require("../middleware/userAuth");
 let cartController = require('../controller/cartController')
 let orderController = require('../controller/orderController')
+const multer = require('multer');
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "public/ProfilePhotos/images");
+    },
+    filename: function (req, file, cb) {
+      
+      cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname))
+    },
+  });
+  
+  const upload = multer({
+    storage: storage,
+  });
+  
+  
+
+
+
+
 
 userRoute.use(bodyParser.json())
 userRoute.use(bodyParser.urlencoded({extended:true}))
@@ -41,6 +63,7 @@ userRoute.post('/searchProduct',userController.searchitems)
 
 userRoute.get('/profile',userAuth.isAuth,userController.userProfile)
 userRoute.get('/editProfile',userAuth.isAuth,userController.editProfile)
+userRoute.post('/updateProfile',userAuth.isAuth,upload.array('images',1),userController.updateProfile)
 
 userRoute.get('/address',userAuth.isAuth,userController.addressPage)
 userRoute.get('/addAddress',userAuth.isAuth,userController.addAddressPage)

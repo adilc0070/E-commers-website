@@ -77,25 +77,31 @@ async function insertUser(req, res) {
 
         let nameErrorMsg, emailErrorMsg, numberErrorMsg, passwordErrorMsg, confirm_password;
         let exxist = await user.findOne({ email: req.body.email });
+        let writed={
+            name:req.body.name,
+            email:req.body.email,
+            phone:req.body.phone,
+            password:req.body.password
+        }
         if(exxist){
             emailErrorMsg= "Email Already Exist"
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password});
+            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
         }else if (req.body.name === "") {
             nameErrorMsg= "Please Enter Your Name" 
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password});
+            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
         } else if (!validateEmail(req.body.email)) {
             emailErrorMsg= "Please Enter a Valid Email" 
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password});
+            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
         } else if (!/^\d+$/.test(req.body.phone) || req.body.phone.length !== 10) {
             numberErrorMsg = "Please Enter a Valid 10-digit Phone Number";
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg, passwordErrorMsg, confirm_password });
+            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg, passwordErrorMsg, confirm_password, writed});
         } else if(!validatePassword(req.body.password)){
             passwordErrorMsg= "Please Enter a Valid Password, at least 8 characters long and contain both letters and numbers"
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password});
+            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password, writed});
 
         }else if( req.body.confirm_password != req.body.password ){
             confirm_password= "Please Enter Valid Password"
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password});
+            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password, writed});
 
         } else {
             const passSec = await hashPassword(req.body.password);
@@ -127,7 +133,13 @@ async function insertUser(req, res) {
 //--------------signup page----------------
 async function signUpPage(req, res) {
     try {
-        res.render("signup");
+        let writed = {
+            name: "",
+            email: "",
+            phone: "",
+            password: "",
+        }
+        res.render("signup", { writed });
     } catch (error) {
         res.status(500).send(error);
     }
@@ -137,7 +149,13 @@ async function signUpPage(req, res) {
 async function loginPage(req, res) {
     try {
         if(!req.session.user_id){
-            res.render("signIn");
+            let writed = {
+                name: "",
+                email: "",
+                phone: "",
+                password: "",
+            }
+            res.render("signIn", { writed });
         }else{
             res.redirect("/home")
         }
@@ -152,27 +170,31 @@ async function loginUser(req, res) {
         let emailMessage = '';
         let passwordMessage = '';
         let blockMessage = '';
+        let writed = {
+            email:(req.body.email).trim(),
+            password:req.body.password
+        }
 
         if (req.body.email === "" || req.body.password === "") {
             emailMessage = "Please Enter Your Email";
             passwordMessage = "Please Enter Your Password";
-            res.render('signin', { emailMessage, passwordMessage, blockMessage });
+            res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
             return;
         }
 
-        const foundUser = await user.findOne({ email: req.body.email });
+        const foundUser = await user.findOne({ email: (req.body.email).trim() });
 
         if (foundUser) {
             if (foundUser.verified !== 0) {
                 const msg = "Please Verify Your Email";
-                sendVerifyMail(req.body.email);
+                sendVerifyMail((req.body.email).trim());
                 res.render('otp', { msg });
-            } else if (!validateEmail(req.body.email) || req.body.email === "") {
+            } else if (!validateEmail((req.body.email).trim()) || (req.body.email).trim() === "") {
                 emailMessage = "Please Enter a Valid Email";
-                res.render('signin', { emailMessage, passwordMessage, blockMessage });
+                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
             } else if (foundUser.is_block === 1) {
                 blockMessage = "Your account is blocked";
-                res.render('signin', { emailMessage, passwordMessage, blockMessage });
+                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
             } else {
                 const passwordMatch = await bcrypt.compare(req.body.password, foundUser.password);
 
@@ -182,7 +204,7 @@ async function loginUser(req, res) {
                     res.redirect("/home");
                 } else {
                     passwordMessage = "Incorrect Password";
-                    res.render('signin', { emailMessage, passwordMessage, blockMessage });
+                    res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
                 }
             }
         } else {
@@ -476,12 +498,67 @@ let userProfile=async(req,res)=>{
 let editProfile=async(req,res)=>{
     try {
         let userDa=await user.findById(req.session.user_id)
+
         res.render("dashChanges",{userDa})
     } catch (error) {
         console.log(error.message);
     }
 }
 
+
+let updateProfile=async(req,res)=>{
+    try {
+        let userDa=await user.findById(req.session.user_id)
+        let prePassword=userDa.password
+        let newProfile
+        if(req.files[0]){
+            newProfile=req.files[0].filename
+        }else{
+            newProfile=userDa.profile
+        }
+        let newName=req.body.username
+        let newEmail= req.body.useremail
+        let newPassword=req.body.userpassword 
+        let newPhone=req.body.usernumber
+        
+        
+        if(newName=='' || newEmail=='' || newPhone==''){
+            console.log("empty");
+            res.render("dashChanges",{userDa})
+        }else if(!validateEmail(newEmail)){
+            console.log("invalid email");
+            res.render("dashChanges",{userDa})
+        }else if(!newPhone.length==10){
+            console.log("invalid number");
+            res.render("dashChanges",{userDa})
+        }else{
+            console.log("valid");
+            if(newPassword==''){
+                console.log("no password");
+                newPassword=prePassword
+            }else{
+                console.log("password");
+                if(!validatePassword(newPassword)){
+                    console.log("invalid password");
+                    res.render("dashChanges",{userDa})
+                }else{
+                    newPassword=await hashPassword(newPassword)
+                }
+                console.log("updated");
+            }
+            let update=await user.updateOne({_id:req.session.user_id},{
+                name:newName,
+                email:newEmail,
+                password:newPassword,
+                profile:newProfile,
+                number:newPhone
+            })
+            res.redirect("/profile")
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}   
 
 let addressPage = async (req, res) => {
     try {
@@ -723,5 +800,6 @@ module.exports = {
     editAddressPage,
     searchitems,
     filterProducts,
-    displayFilteredProducts
+    displayFilteredProducts,
+    updateProfile,
 };

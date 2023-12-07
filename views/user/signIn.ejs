@@ -60,7 +60,7 @@
                     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
                     if (!passwordRegex.test(password)) {
                         console.log("password not valid");
-                        $('#passwordMessage').text('Password must be 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                        $('#passwordMessage').text('Password must be 8 characters long and include at least one letter and one number.');
                         isValid = false;
                     }
 
@@ -142,8 +142,6 @@
                                             Forgot Password?
                                         </div>
                                     </a></span>
-                                <span><a
-                                        href="/">a</a></span>
                             </div>
                             <div
                                 class="form-group form-button">
@@ -154,6 +152,7 @@
                                     class="form-submit"
                                     value="Log in" >Log
                                     in</button>
+                                <a href="/" style="color:rgba(255, 0, 166, 0.313); ">Skip Now</a>
 
                             </div>
                         </form>

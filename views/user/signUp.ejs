@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!-- Main css -->
     <link rel="stylesheet" href="/user/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // JavaScript function to update the error message using the fetch API
         function clearErrorMessage(fieldId) {
@@ -31,6 +32,7 @@
 
 				// Use input event to trigger validation on user input
 				signUpForm.find('input').on('input', function () {
+                    
 					validateForm();
 				});
 
@@ -43,13 +45,14 @@
                     $('#numberErrorMsg').text(''); 
                     $('#nameErrorMsg').text(''); 
                     
+                    
 
 
                     const name = $('#name').val();
                     const email = $('#email').val();
                     const password = $('#password').val();
                     const number = $('#phone').val();
-                    const confirm_password = $('#confirm_password').val();
+                    
                     
                     // Validate email
                     const regex = /^[a-zA-Z0-9._]+@(gmail\.com|icloud\.com|yahoo\.com|outlook\.com|hotmail\.com)$/;
@@ -63,17 +66,20 @@
                     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
                     if (!passwordRegex.test(password)) {
                         console.log("password not valid");
-                        $('#passwordErrorMsg').text('Password must be 8 characters long and include at least one uppercase letter, one lowercase letter, one special character, and one number.');
+                        $('#passwordErrorMsg').text('Password must be 8 characters long and contain both letters and numbers.');
                         isValid = false;
                     }
 
                     // Validate phone number
                     const phoneRegex = /^\d{10}$/;
+                    
+
                     if (!phoneRegex.test(number)) {
-                        console.log("number not valid");
+                        console.log("Number not valid");
                         $('#numberErrorMsg').text('Please enter a valid 10-digit phone number.');
                         isValid = false;
                     }
+
 
                     // Validate name must be at least 3 characters
                     if (name.length < 3) {
@@ -82,12 +88,6 @@
                         isValid = false;
                     }
 
-                    // Validate password and confirm password match
-                    if (password !== confirm_password) {
-                        console.log("password not valid");
-                        $('#passwordErrorMsg').text('Passwords do not match.');
-                        isValid = false;
-                    }
 
                     // Enable/disable the submit button based on the overall validation status
                     submitButton.prop('disabled', !isValid);
@@ -155,9 +155,9 @@
                                 <span id="passwordErrorMsg" style="color: red; display: block;"></span>
                             </div>
                             <div class="form-group">
-                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                                <label for="re-pass"><i class="zmdi zmdi-lock-outline "></i></label>
                                 <input type="password" name="confirm_password" id="re_pass" placeholder="Repeat your password">
-                                <span id="confirm_password" style="color: red; display: block;"></span>
+                                <span id="confrmPasswordError" style="color: red; display: block;"></span>
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required/>

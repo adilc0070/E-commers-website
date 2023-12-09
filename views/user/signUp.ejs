@@ -13,13 +13,8 @@
     <link rel="stylesheet" href="/user/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // JavaScript function to update the error message using the fetch API
-        function clearErrorMessage(fieldId) {
-            const errorMessage = document.getElementById(fieldId);
-            if (errorMessage) {
-                errorMessage.style.display = 'none';
-            }
-        }
+        
+        
         $(document).ready(function () {
 				const signUpForm = $('#register-form');
 				const submitButton = signUpForm.find('button[type="submit"]');
@@ -43,21 +38,22 @@
                     $('#emailErrorMsg').text(''); 
                     $('#passwordErrorMsg').text('');
                     $('#numberErrorMsg').text(''); 
-                    $('#nameErrorMsg').text(''); 
+                    $('#nameErrorMsg').text('');
+                    $('#confirmPasswordMessage').text('');
                     
                     
 
 
                     const name = $('#name').val();
                     const email = $('#email').val();
-                    const password = $('#password').val();
                     const number = $('#phone').val();
+                    const password = $('#password').val();
+                    const confirmPassword = $('#re_pass').val();
                     
                     
                     // Validate email
                     const regex = /^[a-zA-Z0-9._]+@(gmail\.com|icloud\.com|yahoo\.com|outlook\.com|hotmail\.com)$/;
                     if (!regex.test(email)) {
-                        console.log("email not valid");
                         $('#emailErrorMsg').text('Please enter a valid email address.');
                         isValid = false;
                     }
@@ -65,7 +61,7 @@
                     // Validate password complexity
                     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
                     if (!passwordRegex.test(password)) {
-                        console.log("password not valid");
+                        
                         $('#passwordErrorMsg').text('Password must be 8 characters long and contain both letters and numbers.');
                         isValid = false;
                     }
@@ -75,7 +71,6 @@
                     
 
                     if (!phoneRegex.test(number)) {
-                        console.log("Number not valid");
                         $('#numberErrorMsg').text('Please enter a valid 10-digit phone number.');
                         isValid = false;
                     }
@@ -83,16 +78,22 @@
 
                     // Validate name must be at least 3 characters
                     if (name.length < 3) {
-                        console.log("name not valid");
                         $('#nameErrorMsg').text('Name must be at least 3 characters long.');
+                        isValid = false;
+                    }
+
+
+                    // Validate confirm password
+                    if (password !== confirmPassword) {
+                        $('#confirmPasswordMessage').text('Passwords do not match.');
                         isValid = false;
                     }
 
 
                     // Enable/disable the submit button based on the overall validation status
                     submitButton.prop('disabled', !isValid);
-                    console.log("isValid", isValid);
 
+                
                     return isValid;
                 }
 			});
@@ -110,7 +111,7 @@
                         <h2 class="form-title">Sign up</h2>
                         <form method="POST" action="/signup" class="register-form" id="register-form">
                             <%if(locals.nameErrorMsg || locals.emailErrorMsg || locals.numberErrorMsg || locals.passwordErrorMsg) {%>
-                            <div class="errorsFromBackend">
+                            <div class="errorsFromBackend" id="errors">
                                 <div class="alert alert-danger">
                                     <%= locals.nameErrorMsg %>
                                     <%= locals.emailErrorMsg %>
@@ -157,7 +158,7 @@
                             <div class="form-group">
                                 <label for="re-pass"><i class="zmdi zmdi-lock-outline "></i></label>
                                 <input type="password" name="confirm_password" id="re_pass" placeholder="Repeat your password">
-                                <span id="confrmPasswordError" style="color: red; display: block;"></span>
+                                <span id="confirmPasswordMessage" style="color: red; display: block;"></span>
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" required/>

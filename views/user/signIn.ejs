@@ -14,7 +14,8 @@
 
     <!-- Main css -->
     <link rel="stylesheet" href="/user/css/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // JavaScript function to update the error message using the fetch API
         function clearErrorMessage(fieldId) {
@@ -22,56 +23,53 @@
             if (errorMessage) {
                 errorMessage.style.display = 'none';
             }
-        }        
-			$(document).ready(function () {
-				const signUpForm = $('#login-form');
-				const submitButton = signUpForm.find('button[type="submit"]');
+        }
+        $(document).ready(function () {
+            const signUpForm = $('#login-form');
+            const submitButton = signUpForm.find('button[type="submit"]');
 
-				signUpForm.submit(function (event) {
-					if (!validateForm()) {
-						event.preventDefault();
-					}
-				});
-
-				// Use input event to trigger validation on user input
-				signUpForm.find('input').on('input', function () {
-					validateForm();
-				});
-
-				function validateForm() {
-                    let isValid = true;
-
-                    // Clear existing error messages
-                    $('#emailMessage').text(''); // Clear email error message
-                    $('#passwordMessage').text(''); // Clear password error message
-
-                    const email = $('#email').val();
-                    const password = $('#your_pass').val();
-
-                    // Validate email
-                    const regex = /^[a-zA-Z0-9._]+@(gmail\.com|icloud\.com|yahoo\.com|outlook\.com|hotmail\.com)$/;
-                    if (!regex.test(email)) {
-                        console.log("email not valid");
-                        $('#emailMessage').text('Please enter a valid email address.');
-                        isValid = false;
-                    }
-
-                    // Validate password complexity
-                    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
-                    if (!passwordRegex.test(password)) {
-                        console.log("password not valid");
-                        $('#passwordMessage').text('Password must be 8 characters long and include at least one letter and one number.');
-                        isValid = false;
-                    }
-
-                    // Enable/disable the submit button based on the overall validation status
-                    submitButton.prop('disabled', !isValid);
-                    console.log("isValid", isValid);
-
-                    return isValid;
+            signUpForm.submit(function (event) {
+                if (!validateForm()) {
+                    event.preventDefault();
                 }
-			});
-		
+            });
+
+            // Use input event to trigger validation on user input
+            signUpForm.find('input').on('input', function () {
+                validateForm();
+            });
+
+            function validateForm() {
+                let isValid = true;
+
+                // Clear existing error messages
+                $('#emailMessage').text(''); // Clear email error message
+                $('#passwordMessage').text(''); // Clear password error message
+
+                const email = $('#email').val();
+                const password = $('#your_pass').val();
+
+                // Validate email
+                const regex = /^[a-zA-Z0-9._]+@(gmail\.com|icloud\.com|yahoo\.com|outlook\.com|hotmail\.com)$/;
+                if (!regex.test(email)) {
+                    $('#emailMessage').text('Please enter a valid email address.');
+                    isValid = false;
+                }
+
+                // Validate password complexity
+                const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+                if (!passwordRegex.test(password)) {
+                    $('#passwordMessage').text('Password must be 8 characters long and include at least one letter and one number.');
+                    isValid = false;
+                }
+
+                // Enable/disable the submit button based on the overall validation status
+                submitButton.prop('disabled', !isValid);
+
+                return isValid;
+            }
+        });
+
     </script>
 </head>
 
@@ -102,47 +100,52 @@
                             class="register-form"
                             action="/signin"
                             id="login-form">
-                            <span id="blockMessage"
+                            <%if(locals.numberErrorMsg || locals.passwordErrorMsg) {%>
+                                <div class="errorsFromBackend" id="errors">
+                                    <div class="alert alert-danger">
+                                        <%= locals.blockMessage %>
+                                        <%= locals.emailMessage %>
+                                        <%= locals.passwordMessage %>
+                                    </div>
+                                </div>
+                                <%}%>
+                            <span id=""
                                 style="color: red; display: block;">
-                                <%= locals.blockMessage %>
-                                <%= locals.emailMessage %>
-                                <%= locals.passwordMessage %>
+                                
+                            </span>
+                            <span id="emailMessage"
+                                style="color: red; display: block;">
                             </span>
                             <div class="form-group">
                                 <label for="email"><i
                                         class="zmdi zmdi-email"></i></label>
-                                        
+
                                 <input type="email"
                                     name="email" id="email"
-                                    placeholder="Your Email"
-                                    />
-                                
-                                <span id="emailMessage"
-                                    style="color: red; display: block;">
-                                </span>
+                                    placeholder="Your Email" />
+
                             </div>
+                            <span id="passwordMessage"
+                                style="color: red; display: block;">
+
+                            </span>
                             <div class="form-group">
                                 <label for="your_pass"><i
                                         class="zmdi zmdi-lock"></i></label>
-                                
+
                                 <input type="password"
                                     name="password"
                                     id="your_pass"
                                     placeholder="Password"
-                                     value="1234567a" />
-                                <span id="passwordMessage"
-                                    style="color: red; display: block;">
-                                    
-                                </span>
-                                <span><a href="/forgotPassword"
-                                        class=class="text-end"
-                                        style="color:rgba(255, 0, 0, 0.313); ">
-                                        <div
-                                            id="error-message">
-                                            Forgot Password?
-                                        </div>
-                                    </a></span>
+                                    value="1234567a" />
                             </div>
+                            <span><a href="/forgotPassword"
+                                    class=class="text-end"
+                                    style="color:rgba(255, 0, 0, 0.594); ">
+                                    <div id="error-message">
+                                        Forgot Password?
+                                    </div>
+                                </a></span>
                             <div
                                 class="form-group form-button">
 
@@ -150,21 +153,31 @@
                                     name="signin"
                                     id="signin"
                                     class="form-submit"
-                                    value="Log in" >Log
+                                    value="Log in">Log
                                     in</button>
-                                <a href="/" style="color:rgba(255, 0, 166, 0.313); ">Skip Now</a>
+                                <a href="/"
+                                    style="color:black; margin-left: 3%;">Skip
+                                    Now</a>
 
                             </div>
                         </form>
 
-                        <!-- <div class="social-login">
-                            <span class="social-label">Or login with</span>
+
+                        <div class="social-login">
+                            <span class="social-label">Or
+                                login with</span>
                             <ul class="socials">
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                                <li><a href="#"><i
+                                            class="display-flex-center zmdi zmdi-facebook"></i></a>
+                                </li>
+                                <li><a href="#"><i
+                                            class="display-flex-center zmdi zmdi-twitter"></i></a>
+                                </li>
+                                <li><a href="#"><i
+                                            class="display-flex-center zmdi zmdi-google"></i></a>
+                                </li>
                             </ul>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>

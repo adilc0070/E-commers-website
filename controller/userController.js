@@ -382,16 +382,29 @@ let productPage = async (req, res) => {
         let userDa = await user.findById(req.session.user_id);
         let catago = await category.find({ blocked: 0 });
         let cartData = await cart.findOne({ userid: req.session.user_id });
+        let search = req.query.search
 
         // Pagination Logic
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 12; // Updated to use the custom limit
         const skip = (page - 1) * limit;
+        let productCount
+        let totalPages 
+        if(search){
+             productCount = await Products.countDocuments({ product_name: { $regex: search, $options: 'i' },block: 0 });
+             totalPages = Math.ceil(productCount / limit);
+        }else{
+            productCount = await Products.countDocuments({ block: 0 });
+            totalPages = Math.ceil(productCount / limit);
+        }
 
-        const productCount = await Products.countDocuments({ block: 0 });
-        const totalPages = Math.ceil(productCount / limit);
+        let product
+        if(search){
+            product = await Products.find({ product_name: { $regex: search, $options: 'i' },block: 0 }).skip(skip).limit(limit);
+        }else{
 
-        let product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+            product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+        }
         // Sorting Logic
         let sortOption = req.query.sort;
         let sortQuery = {};
@@ -420,13 +433,20 @@ let productPage = async (req, res) => {
                 break;
         }
 
-        product = await Products.find({ block: 0 })
+        if(search){
+            product = await Products.find({ product_name: { $regex: search, $options: 'i' }, block: 0 })
+                .sort(sortQuery)
+                .skip(skip)
+                .limit(limit);
+        }else{
+            product = await Products.find({ block: 0 })
             .sort(sortQuery)
             .skip(skip)
             .limit(limit);
+        }
         // console.log(product);
-        res.json({ product, totalPages, currentPage: page });
-        // res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
+        // res.json({ product, totalPages, currentPage: page });
+        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -483,7 +503,8 @@ let displayFilteredProducts = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-let Order=require("../models/orederModel")
+let Order=require("../models/orederModel");
+const { render } = require("../router/userRoute");
 let userProfile=async(req,res)=>{
     try {
 
@@ -760,19 +781,76 @@ let deleteAddress = async (req, res) => {
 // product and catogory search
 let searchitems = async (req, res) => {
     try {
-        let search = req.body.search;
+        let userDa = await user.findById(req.session.user_id);
+        let catago = await category.find({ blocked: 0 });
+        let cartData = await cart.findOne({ userid: req.session.user_id });
+        let search = req.query.search;
+        // Pagination Logic
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12; // Updated to use the custom limit
+        const skip = (page - 1) * limit;
+
+        const productCount = await Products.countDocuments({ block: 0 });
+        const totalPages = Math.ceil(productCount / limit);
+
+        let product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+        // Sorting Logic
+        let sortOption = req.query.sort;
+        let sortQuery = {};
+
+        switch (sortOption) {
+            case 'Newest':
+                sortQuery = { _id: -1 };
+                console.log(sortQuery);
+                break;
+            case 'Oldest':
+                sortQuery = { _id: 1 };
+                console.log(sortQuery);
+                break;
+            case 'PriceLowToHigh':
+                sortQuery = { price: 1 };
+                console.log(sortQuery);
+                break;
+            case 'PriceHighToLow':
+                sortQuery = { price: -1 };
+                console.log(sortQuery);
+                break;
+            default:
+                sortQuery = { _id: -1 };
+                console.log(sortQuery);
+                // Default sorting by newest
+                break;
+        }
+
+        product = await Products.find({ block: 0 })
+            .sort(sortQuery)
+            .skip(skip)
+            .limit(limit);
+        if(search){
+            product = await Products.find({ block: 0, name: { $regex: search, $options: 'i' } })
+            .sort(sortQuery)
+            .skip(skip)
+            .limit(limit);
+        }
+        
+        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+let walletPage = async (req, res) => {
+    try {
         let userDa = await user.findById(req.session.user_id);
         let cartData = await cart.findOne({ userid: req.session.user_id });
-        let product = await Products.find({ name: { $regex: search, $options: "i" } });
-        let catago = await category.find({ name: { $regex: search, $options: "i" } });
-        res.render("products", { product, userDa, catago, cartData });
+        res.render("wallet", { userDa, cartData });
     } catch (error) {
         console.log(error.message);
         // Handle the error appropriately, e.g., send an error response
         res.status(500).send('Internal Server Error');
     }
 }
-
 
 
 // Export the functions
@@ -802,4 +880,5 @@ module.exports = {
     filterProducts,
     displayFilteredProducts,
     updateProfile,
+    walletPage
 };

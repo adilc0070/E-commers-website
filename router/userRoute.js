@@ -59,7 +59,7 @@ userRoute.get('/productDetail',userController.productDetail)
 userRoute.get('/products',userController.productPage)
 userRoute.post('/filterProducts', userController.filterProducts);
 userRoute.get('/filteredProducts', userController.displayFilteredProducts);
-userRoute.post('/searchProduct',userController.searchitems)
+userRoute.get('/searchProduct',userController.searchitems)
 
 userRoute.get('/profile',userAuth.isAuth,userController.userProfile)
 userRoute.get('/editProfile',userAuth.isAuth,userController.editProfile)
@@ -88,4 +88,7 @@ userRoute.get('/ordersss',userAuth.isAuth,orderController.orderPage)
 userRoute.get('/orderDetails',userAuth.isAuth,orderController.order)
 userRoute.get('/downloadInvoice',userAuth.isAuth,orderController.downloadInvoice)
 // userRoute.post('/productDetails',userController.productDetails)
+
+
+userRoute.get('/wallet',userAuth.isAuth,userController.walletPage)
 module.exports=userRoute

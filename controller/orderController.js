@@ -235,19 +235,31 @@ const createOrder = async (req, res) => {
   };
 
 // Order Page
+
 let orderPage = async (req, res) => {
     try {
-        // Fetch user data and orders
-        let userDa = await user.findById(req.session.user_id); // Corrected: 'user' to 'User'
-        let orders = await Order.find({ userId: req.session.user_id }).populate('products.productId').sort({ createdAt: -1 });
+        // Fetch user data and orders with pagination
+        let userDa = await user.findById(req.session.user_id);
         
-        // console.log(orders);
-        res.render('tailes', { userDa, orders });
+        const page = +req.query.page || 1; // Get the page from the query parameter or default to 1
+        const ITEMS_PER_PAGE = 5; // Adjust the number of items per page as needed
+
+        const totalOrders = await Order.countDocuments({ userId: req.session.user_id });
+        const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
+
+        const orders = await Order.find({ userId: req.session.user_id })
+            .populate('products.productId')
+            .sort({ date: -1 })
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
+
+        res.render('tailes', { userDa, orders, currentPage: page, totalPages });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
+
 let order = async (req, res) => {
     try {
         // Fetch user data and orders
@@ -364,7 +376,18 @@ let cancelOrder = async (req, res) => {
     try {
         const id= req.body.orderId;
         let order = await Order.findById(id);
+        let counts=order.products
+        // console.log(counts);
         if(order){
+            for(let i=0;i<counts.length;i++){
+                let product=await ProductDB.findById(counts[i].productId)
+                await ProductDB.updateOne({_id:counts[i].productId},{
+                    $inc:{
+                        stock:counts[i].quantity
+                    }
+                })
+                // console.log("Reached cancelOrder for loop "+product.product_name);
+            }
             await Order.updateOne({ _id: id }, { $set: { status: "cancelled" } });
             res.json({success: true, message: 'Order cancelled successfully.'});
             // console.log("Reached cancelOrder")

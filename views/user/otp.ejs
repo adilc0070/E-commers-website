@@ -9,7 +9,12 @@
     <link rel="stylesheet" href="/user/css/otp.css" />
     <!-- Boxicons CSS -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <!-- <script src="/js/otp.js" defer></script> -->
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
   </head>
   <body>
     <div class="container">
@@ -22,17 +27,23 @@
       <form action="/otp" method="POST" id="otp-form">
         <div id="timer" style="font-size: small; color: gray;"></div>
         <div class="input-field" style="width: auto;">
-
+          
           <input type="number" name="otp" id="otp" oninput="clearErrorMessage('msg')" ">
         </div>
-        <div>
-          <span ><a href="/resendOtp" style="color: rgba(255, 0, 0, 0.411); font-size: small; text-decoration: none" >OTP has not been received?</a></span>
+        <div class="input-field d-flex justify-content-center align-items-center">
+          <span class="resend"><a href="/resendOtp" style="color: rgba(255, 0, 0, 0.411); font-size: small; text-decoration: none" >OTP has not been received?</a></span>
         </div>
+        <p style="color: rgb(0, 72, 255); font-size: small;">check your email inbox or spam folder</p>
         <div>
           <span id="msg">
-            <p style="color: red;"><%= locals.msg  %></p>
+            <p style="color: red; font-size: small"><%= locals.msg  %></p>
           </span>
         </div>
+        
+          <script>
+            toastr.success('OTP sent successfully');
+          </script>
+        
         
         <button type="submit">Verify OTP</button> 
         <button id="resendOtpBtn" style="display: none; cursor: pointer;"><a href="/resendOtp">Resend OTP</a></button>
@@ -40,6 +51,7 @@
       </form>
     </div>
   </body>
+
   <script>
     // JavaScript for countdown timer
     const timer = document.getElementById('timer');
@@ -73,5 +85,7 @@
         inputFields.forEach((input) => {
             input.addEventListener('input', clearErrorMessage);
         });
+
+        
   </script>
 </html>

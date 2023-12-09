@@ -1,13 +1,15 @@
 <%- include ('../user/layout/header.ejs')%>
-<%- include ('../user/layout/profileSideBar.ejs')%>
+  <%- include ('../user/layout/profileSideBar.ejs')%>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"> -->
     <style>
       @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
-      
-      
+
+
       .card {
         position: relative;
         display: -webkit-box;
@@ -24,15 +26,18 @@
         border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 0.1rem;
       }
+
       .card-header:first-child {
         border-radius: calc(0.37rem - 1px) calc(0.37rem - 1px) 0 0;
       }
+
       .card-header {
         padding: 0.75rem 1.25rem;
         margin-bottom: 0;
         background-color: #fff;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       }
+
       .track {
         position: relative;
         background-color: #ddd;
@@ -43,6 +48,7 @@
         margin-bottom: 60px;
         margin-top: 50px;
       }
+
       .track .step {
         -webkit-box-flex: 1;
         -ms-flex-positive: 1;
@@ -52,9 +58,11 @@
         text-align: center;
         position: relative;
       }
+
       .track .step.active:before {
         background: #ff5722;
       }
+
       .track .step::before {
         height: 7px;
         position: absolute;
@@ -63,10 +71,12 @@
         left: 0;
         top: 18px;
       }
+
       .track .step.active .icon {
         background: #ee5435;
         color: #fff;
       }
+
       .track .icon {
         display: inline-block;
         width: 40px;
@@ -76,14 +86,17 @@
         border-radius: 100%;
         background: #ddd;
       }
+
       .track .step.active .text {
         font-weight: 400;
         color: #000;
       }
+
       .track .text {
         display: block;
         margin-top: 7px;
       }
+
       .itemside {
         position: relative;
         display: -webkit-box;
@@ -91,204 +104,335 @@
         display: flex;
         width: 100%;
       }
+
       .itemside .aside {
         position: relative;
         -ms-flex-negative: 0;
         flex-shrink: 0;
       }
+
       .img-sm {
         width: 80px;
         height: 80px;
         padding: 7px;
       }
+
       ul.row,
       ul.row-sm {
         list-style: none;
         padding: 0;
       }
+
       .itemside .info {
         padding-left: 15px;
         padding-right: 7px;
       }
+
       .itemside .title {
         display: block;
         margin-bottom: 5px;
         color: #212529;
       }
+
       p {
         margin-top: 0;
         margin-bottom: 1rem;
       }
+
       .btn-warning {
         color: #ffffff;
         background-color: #ee5435;
         border-color: #ee5435;
         border-radius: 1px;
       }
+
       .btn-warning:hover {
         color: #ffffff;
         background-color: #ff2b00;
         border-color: #ff2b00;
         border-radius: 1px;
       }
+      /* Add these styles to your existing CSS */
+
+.pagination-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 0 5px;
+    color: #fff;
+    background-color: #ff5722; /* Orange color */
+    border: 1px solid #ff5722; /* Orange color */
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pagination-btn:hover,
+.pagination-btn.active {
+    background-color: #f4511e; /* Darker orange on hover/active */
+    border-color: #f4511e; /* Darker orange on hover/active */
+}
+
+.pagination-btn:disabled {
+    color: #ccc;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+  
+
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <div class="container mt-5" id="orderDetails">
-   <div class="container">
-    <%if(orders.length > 0){%>
-     <%orders.forEach((order) => {%>
-       <article class="card">
-         <header class="card-header">My Orders / Tracking</header>
-         <div class="card-body">
-         <h6>Order ID: <%=order._id%></h6>
-         <article class="card">
-           <div class="card-body row">
-             <div class="col">
-               <strong> Ordered Date:</strong> <br /><%= order.date.toLocaleDateString('en-US',
-               { year:'numeric', month: 'short', day: '2-digit'}).replace(/\//g,
-               '-')%>
-             </div>
-             <div class="col">
-               <strong> Total Amount:</strong> <br />
-               <i class="fa fa-inr"></i>₹ <%=order.amount%>
-             </div>
-             <div class="col">
-               <strong>Status:</strong> <br />
-               <%=order.status%>
-             </div>
-             <div class="col">
-               <strong>Address :</strong> <br />
-               <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#myModal">
-                 Show Address
-               </button>
-               <!-- Modal -->
-               <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                 <div class="modal-dialog">
-                   <div class="modal-content">
-                     
-                     
-                     <div class="modal-header">
-                       <h5 class="modal-title" id="exampleModalLabel">Products Order Address</h5>
-                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                     </div>
-                     <div class="modal-body">
-                       
-                       <p>Name : <%=order.address.firstName%> <%=order.address.lastName%></p>
-                       <p>Address : <%=order.address.address%>,<%=order.address.city%>,<%=order.address.state%></p>
-                       <p>Pincode : <%=order.address.pin%></p>
-                       <p>Phone : <%=order.address.phone%></p>
-                       <p>Email : <%=order.address.email%></p>
-                       <p>Additional Details : <%=order.address.additional%></p>
+      <div class="container">
+        <%if(orders.length> 0){%>
+          <%orders.forEach((order)=> {%>
+            <article class="card">
+              <header class="card-header">My Orders /
+                Tracking</header>
+              <div class="card-body">
+                <h6>Order ID: <%=order._id%>
+                </h6>
+                <article class="card">
+                  <div class="card-body row">
+                    <div class="col">
+                      <strong> Ordered Date:</strong> <br />
+                      <%=
+                        order.date.toLocaleDateString('en-US',
+                        { year:'numeric', month: 'short' ,
+                        day: '2-digit' }).replace(/\//g, '-'
+                        )%>
+                    </div>
+                    <div class="col">
+                      <strong> Total Amount:</strong> <br />
+                      <i class="fa fa-inr"></i>₹
+                      <%=order.amount%>
+                    </div>
+                    <div class="col">
+                      <strong>Status:</strong> <br />
+                      <%=order.status%>
+                    </div>
+                    <div class="col">
+                      <strong>Address :</strong> <br />
+                      <button type="button"
+                        class="btn btn-warning"
+                        data-bs-toggle="modal"
+                        data-bs-target="#myModal">
+                        Show Address
+                      </button>
+                      <!-- Modal -->
+                      <div class="modal fade" id="myModal"
+                        tabindex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
 
-                     </div>
-                     <div class="modal-footer">
-                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                       <!-- You can add additional buttons or actions here -->
-                     </div>
-                     
-                   </div>
-                 </div>
-               </div>
 
-             </div>
-           </div>
-         </article>
-         
-         <div class="track">
-           <div class="step <%= order.status === 'pending' || order.status === 'delivered' || order.status === 'shipped' || order.status === 'rejected' ? 'active' : '' %>">
-               <span class="icon"><i class="fa fa-check"></i></span>
-               <span class="text">Order confirmed</span>
-           </div>
-           <div class="step <%= order.status === 'delivered' || order.status === 'shipped' || order.status === 'rejected' ? 'active' : '' %>">
-               <span class="icon"><i class="fa fa-user"></i></span>
-               <span class="text">Shipped</span>
-           </div>
-           <div class="step <%= order.status === 'delivered' || order.status === 'rejected' ? 'active' : '' %>">
-               <span class="icon"><i class="fa fa-box"></i></span>
-               <span class="text">Delivered</span>
-           </div>
-           <div style="color: #101010" class="step <%= order.status === 'rejected' ? 'active' : '' %>">
-               <span class="icon"><i class="fa fa-times"></i></span>
-               <span class="text">Returned</span>
-           </div>
-       </div>
-       
-         <hr />
-         <ul class="row">
-           <li class="col-md-4">
-             <%order.products.forEach((product) => {%>
-             <figure class="itemside mb-3">
-               <div class="aside">
-                 <img
-                   src="/products/images/<%=product.image%>"
-                   class="img-sm border"
-                 />
-               </div>
-               <figcaption class="info align-self-center">
-                 <p class="title">
-                   <%=product.product_name%>
-                 </p>
-                 <span class="text-muted"> <%=product.price%> </span>
-               </figcaption>
-             </figure>
-             <%})%>
-           </li>
-           
-         </ul>
-         <hr />
-         <%if(order.status === 'rejected'){%>
-         <a href="#" class="btn btn-warning" data-abc="true">
-           <i class="fa fa-chevron-left"></i> Back to orders</a>
-         <%}else if(order.status ==='delivered'){%>
-           <a href="#" class="btn btn-warning" data-abc="true">
-             <i class="fa fa-chevron-left"></i> Return order</a>
-           <a href="/downloadInvoice?id=<%=order._id%>" class="btn btn-success">
-             <i class="fa fa-download"></i> View invoice </a>
-           <a href="" class="btn btn-success"><i class="fa fa-star-o"></i>Review</a>
-         <%}else if(order.status ==='pending'||order.status ==='shipped'){%>
-           <span class="btn btn-warning" data-abc="true" onclick="cancelOrder('<%=order._id%>')">
-             <i class="fa fa-chevron-left"></i> Cancel order</span>
-         <%}%>
+                            <div class="modal-header">
+                              <h5 class="modal-title"
+                                id="exampleModalLabel">
+                                Products Order Address</h5>
+                              <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
 
-       </div>
-     </article>
-     <%})%>
-     <%}else{%>
-     <div class="alert alert-danger" role="alert">
-       No orders found
-     </div>
-     <%}%>
- </div>
- </div>
+                              <p>Name :
+                                <%=order.address.firstName%>
+                                  <%=order.address.lastName%>
+                              </p>
+                              <p>Address :
+                                <%=order.address.address%>,
+                                  <%=order.address.city%>,
+                                    <%=order.address.state%>
+                              </p>
+                              <p>Pincode :
+                                <%=order.address.pin%>
+                              </p>
+                              <p>Phone :
+                                <%=order.address.phone%>
+                              </p>
+                              <p>Email :
+                                <%=order.address.email%>
+                              </p>
+                              <p>Additional Details :
+                                <%=order.address.additional%>
+                              </p>
 
-</div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function cancelOrder(orderId) {
-        $.ajax({
-            method: "post",
-            url: "/cancelOrder",
-            data: {
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">Close</button>
+                              <!-- You can add additional buttons or actions here -->
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </article>
+
+                <div class="track">
+                  <div
+                    class="step <%= order.status === 'pending' || order.status === 'delivered' || order.status === 'shipped' || order.status === 'rejected' ? 'active' : '' %>">
+                    <span class="icon"><i
+                        class="fa fa-check"></i></span>
+                    <span class="text">Order
+                      confirmed</span>
+                  </div>
+                  <div
+                    class="step <%= order.status === 'delivered' || order.status === 'shipped' || order.status === 'rejected' ? 'active' : '' %>">
+                    <span class="icon"><i
+                        class="fa fa-user"></i></span>
+                    <span class="text">Shipped</span>
+                  </div>
+                  <div
+                    class="step <%= order.status === 'delivered' || order.status === 'rejected' ? 'active' : '' %>">
+                    <span class="icon"><i
+                        class="fa fa-box"></i></span>
+                    <span class="text">Delivered</span>
+                  </div>
+                  <div style="color: #101010"
+                    class="step <%= order.status === 'rejected' ? 'active' : '' %>">
+                    <span class="icon"><i
+                        class="fa fa-times"></i></span>
+                    <span class="text">Returned</span>
+                  </div>
+                </div>
+
+                <hr />
+                <ul class="row">
+                  <li class="col-md-4">
+                    <%order.products.forEach((product)=> {%>
+                      <figure class="itemside mb-3">
+                        <div class="aside">
+                          <img
+                            src="/products/images/<%=product.image%>"
+                            class="img-sm border" />
+                        </div>
+                        <figcaption
+                          class="info align-self-center">
+                          <p class="title">
+                            <%=product.product_name%>
+                          </p>
+                          <span class="text-muted">
+                            <%=product.price%>
+                          </span>
+                        </figcaption>
+                      </figure>
+                      <%})%>
+                  </li>
+
+                </ul>
+                <hr />
+                <%if(order.status==='rejected' ){%>
+                  <a href="#" class="btn btn-warning"
+                    data-abc="true">
+                    <i class="fa fa-chevron-left"></i> Back
+                    to orders</a>
+                  <%}else if(order.status==='delivered' ){%>
+                    <a href="#" class="btn btn-warning"
+                      data-abc="true">
+                      <i class="fa fa-chevron-left"></i>
+                      Return order</a>
+                    <a href="/downloadInvoice?id=<%=order._id%>"
+                      class="btn btn-success">
+                      <i class="fa fa-download"></i> View
+                      invoice </a>
+                    <a href="" class="btn btn-success"><i
+                        class="fa fa-star-o"></i>Review</a>
+                    <%}else if(order.status==='pending'
+                      ||order.status==='shipped' ){%>
+                      <span class="btn btn-warning"
+                        data-abc="true"
+                        onclick="cancelOrder('<%=order._id%>')">
+                        <i class="fa fa-chevron-left"></i>
+                        Cancel order</span>
+                      <%}%>
+
+              </div>
+            </article>
+            
+            <%})%>
+              <%}else{%>
+                <div class="alert alert-danger"
+                  role="alert">
+                  No orders found
+                </div>
+                <%}%>
+      </div>
+      <div class="pagination-container" style="margin-bottom: 10%;">
+        <% if (currentPage > 1) { %>
+            <a href="?page=<%= currentPage - 1 %>" class="pagination-btn">&laquo; Previous</a>
+        <% } %>
+    
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="?page=<%= i %>" class="pagination-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+    
+        <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>" class="pagination-btn">Next &raquo;</a>
+        <% } %>
+    </div>
+    </div>
+
+    </div>
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script
+      src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      function cancelOrder(orderId) {
+        // Display a SweetAlert2 confirmation dialog
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          // Check if the user clicked "Yes"
+          if (result.isConfirmed) {
+            // Proceed with canceling the order
+            $.ajax({
+              method: "post",
+              url: "/cancelOrder",
+              data: {
                 orderId: orderId
-            },
-            success: function (response) {
+              },
+              success: function (response) {
                 if (response.success) {
-                    $("#orderDetails").load("/order #orderDetails");
-                    Swal.fire({
-                        title: 'Order Canceled',
-                        text: 'Your order has been canceled.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload();
-                        }
-                    });
+                  $("#orderDetails").load("/order #orderDetails");
+                  Swal.fire({
+                    title: 'Order Canceled',
+                    text: 'Your order has been canceled.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      location.reload();
+                    }
+                  });
                 }
-            }
-
+              }
+            });
+          }
         })
-    }
-</script>
-  <%- include ('../user/layout/footer.ejs')%>
+      }
+    </script>
+    <%- include ('../user/layout/footer.ejs')%>

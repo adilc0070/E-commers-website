@@ -120,7 +120,8 @@ async function insertUser(req, res) {
             if (userData) {
                 userVerificationEmail=req.body.email
                 sendVerifyMail(req.body.email);
-                res.render("otp");
+                let otpmsg = "Please Verify Your Email";
+                res.render("otp", { otpmsg });
             } else {
                 res.send("Something went wrong");
             }
@@ -155,7 +156,8 @@ async function loginPage(req, res) {
                 phone: "",
                 password: "",
             }
-            res.render("signIn", { writed });
+            const successMessage = req.query.msg || ''; 
+            res.render('signin', { successMessage, writed });
         }else{
             res.redirect("/home")
         }
@@ -274,8 +276,10 @@ const sendVerifyMail = async (email) => {
 // Render OTP page
 async function otpLoad(req, res) {
     try {
-        
-        res.render("otp");
+        console.log("otpLoad");
+        let otpmsg = req.query.msg || '';
+        console.log(otpmsg);
+        res.render("otp" , { otpmsg });
     } catch (error) {
         res.status(500).send(error);
     }
@@ -285,7 +289,8 @@ let resendOtp=async(req,res)=>{
     try {
         console.log("resendOtp");
         sendVerifyMail(userEmail);
-        res.render("otp");
+        let otpmsg = "OTP sent successfully" || '';
+        res.render("otp" , { otpmsg });
     } catch (error) {
         res.status(500).send(error);
     }
@@ -300,8 +305,10 @@ async function otpVerify(req, res) {
         if (otp == req.body.otp) {
 
             let updateUser = await user.updateOne({ email: userVerificationEmail}, { $set: { verified: 0 } });
-            
-            res.redirect("/signin");
+            msg = "OTP verified successfully!"; 
+
+            // Redirect the user with the success message
+            res.redirect(`/signin?msg=${encodeURIComponent(msg)}`);
         } else {
             msg = "Wrong OTP"
             res.render("otp", { msg});
@@ -455,22 +462,31 @@ let productPage = async (req, res) => {
 
 let filterProducts = async (req, res) => {
     try {
+        console.log("filterProducts");
         const categoryId = req.query.categoryId; 
         let userDa = await user.findById(req.session.user_id);
-        let catago = await category.find({ blocked: 0 });
+        let catago = await category.find({_id: categoryId, blocked: 0 });
         let cartData = await cart.findOne({ userid: req.session.user_id });
-
         // Pagination Logic
         const page = parseInt(req.query.page) || 1;
-        const limit = 8; // Number of products per page
+        const limit = 8; 
         const skip = (page - 1) * limit;
-
+        console.log("page",page,limit,skip);
+        let cattt=catago[0].name
         // Filter products by category
-        const productCount = await Products.countDocuments({ category: categoryId, block: 0 });
+        const productCount = await Products.countDocuments({ block: 0 });
         const totalPages = Math.ceil(productCount / limit);
+        let product
+        if(cattt){
+            console.log("filterProducts category",cattt);
+            product = await Products.find({category: { $regex: cattt, $options: 'i' }, block: 0 }).skip(skip).limit(2);
 
-        const product = await Products.find({ category: categoryId, block: 0 }).skip(skip).limit(limit);
+        }else{
+            product = await Products.find({ block: 0 }).skip(skip).limit(limit);
+            log("no category")
+        }
 
+        console.log(product);
         res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
     } catch (error) {
         console.log(error.message);
@@ -505,6 +521,7 @@ let displayFilteredProducts = async (req, res) => {
 };
 let Order=require("../models/orederModel");
 const { render } = require("../router/userRoute");
+const { log } = require("winston");
 let userProfile=async(req,res)=>{
     try {
 

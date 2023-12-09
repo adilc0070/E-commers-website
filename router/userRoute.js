@@ -57,7 +57,7 @@ userRoute.get('/signout',userController.logOut)
 
 userRoute.get('/productDetail',userController.productDetail)
 userRoute.get('/products',userController.productPage)
-userRoute.post('/filterProducts', userController.filterProducts);
+userRoute.get('/filterProducts', userController.filterProducts);
 userRoute.get('/filteredProducts', userController.displayFilteredProducts);
 userRoute.get('/searchProduct',userController.searchitems)
 

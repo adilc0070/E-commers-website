@@ -17,6 +17,10 @@
         <table class="table">
             <thead>
                 <tr>
+                    <td colspan="4" class="text-end">Total Sales:</td>
+                    <td>₹<%= totalSales %></td>
+                </tr>
+                <tr>
                     <th>Ordered Date</th>
                     <th>Product</th>
                     <th>Unit Price</th>
@@ -32,7 +36,7 @@
                       <tr>
                         <td><%= order.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).replace(/\//g, '-') %></td>
                         <td><%= product.productId.product_name.slice(0, 20) %></td>
-                        <td>$<%= product.productId.price %></td>
+                        <td>₹<%= product.productId.price %></td>
                         <td><%= product.quantity %></td>
                         <td>₹<%= product.quantity * product.productId.price %></td>
                         <td><%= order.paymentType %></td>
@@ -41,12 +45,7 @@
                     <% }) %>
                   <% }) %>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4" class="text-end">Total Sales:</td>
-                        <td>₹<%= totalSales %></td>
-                    </tr>
-                </tfoot>
+                
             </table>
             <%}else{%>
             <p>No orders found.</p>

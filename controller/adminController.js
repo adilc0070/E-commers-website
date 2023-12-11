@@ -12,6 +12,8 @@ const Order = require("../models/orederModel");
 let pdf = require('html-pdf')
 let ejs = require('ejs')
 let path = require('path')
+const ExcelJS = require('exceljs');
+const zip = require('express-zip');
 
 //--------------------email validation function---------------------
 function validateEmail(email) {
@@ -934,7 +936,11 @@ report = async (req, res) => {
                     },
                 },
             ]);
-            totalSales = totalSales[0].total
+            if(totalSales == 0){
+                totalSales = 0
+            }else{
+                totalSales = totalSales[0].total
+            }
             res.render('salesReport', { orderdata, totalSales })
 
         } else if (button == "lastMonth") {
@@ -994,6 +1000,7 @@ report = async (req, res) => {
             let startDate = new Date(req.query.fromDate)
             let endDate = new Date(req.query.toDate)
             orderdata = await Order.find({ date: { $gte: startDate, $lte: endDate } }).sort({ date: -1 }).populate('products.productId').populate({ path: 'userId', select: 'name' });
+            // console.log(orderdata);
             totalSales = await Order.aggregate([
                 {
                     $match: {
@@ -1025,16 +1032,21 @@ report = async (req, res) => {
                 // console.log("orderdata.length:",orderdata.length);
                 // console.log(totalSales);
             }
+            console.log("ejsrender");
             ejs.renderFile(
+                
                 path.join(__dirname, "../views/admin/", "salesReport.ejs"),
                 {
                     orderdata,
                     totalSales
                 },
-                (err, data) => {
+                async (err, data) => {
                     if (err) {
+                        console.log("err");
                         res.send(err);
                     } else {
+                        console.log("else");
+
                         let options = {
                             height: "11.25in",
                             width: "8.5in",
@@ -1045,20 +1057,76 @@ report = async (req, res) => {
                                 height: "0mm",
                             },
                         };
-                        pdf.create(data, options).toFile("report.pdf", function (err, data) {
-                            if (err) {
-                                console.log("error", err);
-                                res.send(err);
-                            } else {
-                                console.log("success");
-                                const pdfpath = path.join(__dirname, "../report.pdf");
-                                res.sendFile(pdfpath);
-                            }
+                        let pdfPromise=new Promise((resolve,reject)=>{
+                            pdf.create(data, options).toFile("report.pdf", function (err, pdfPath) {
+                                if (err) {
+                                    console.log("error", err);
+                                    resolve("Error generating PDF");
+                                } else {
+                                    console.log("pdfPath", pdfPath);
+                                    resolve(pdfPath.filename)
+                                    // const pdfpath = path.join(__dirname, "../report.pdf");
+                                    // console.log("pdfpath", pdfpath);
+                                    // res.json(pdfpath);
+                                }
+                            });
+                        })
+                        // Generate Excel
+                        const excelOptions = {
+                            filename: 'report.xlsx',
+                            useStyles: true,
+                            useSharedStrings: true,
+                        };
+                
+                        const excelPromise = new Promise((resolve, reject) => {
+                            const workbook = new ExcelJS.Workbook();
+                            const worksheet = workbook.addWorksheet('Sales Report');
+                
+                            // Add headers
+
+                            worksheet.addRow([
+                                'Date',
+                                'Product Name',
+                                'Quantity',
+                                'Price',
+                                'Total',
+                            ]);
+                            orderdata.forEach((order) => {
+                                order.products.forEach((product) => {
+                                    worksheet.addRow([
+                                        order.date.toLocaleString('en-US'),
+                                        product.productId.product_name,
+                                        product.quantity,
+                                        `${product.productId.price.toFixed(2)}`, // Add backticks around the template string
+                                        `${(product.quantity * product.productId.price).toFixed(2)}`, // Add backticks around the template string
+                                    ]);
+                                });
+                            })
+                
+                            workbook.xlsx.writeFile(excelOptions.filename).then(() => {
+                            resolve(excelOptions.filename);
+                            }).catch((err) => {
+                            console.log(err);
+                            reject('Error generating Excel');
+                            });
                         });
+                        try {
+                            const [pdfPath, excelPath] = await Promise.all([pdfPromise, excelPromise]);
+                            
+                            res.zip([
+                              { path: pdfPath, name: 'sales_report.pdf' },
+                              { path: excelPath, name: 'sales_report.xlsx' },
+                            ]);
+                            console.log("zip");
+
+                          } catch (error) {
+                            console.log(error);
+                            res.render('500')
+                          }
+
                     }
                 }
             )
-
         } else {
             res.render('salesReport', { orderdata, totalSales })
         }
@@ -1068,6 +1136,151 @@ report = async (req, res) => {
     }
 
 }
+
+
+// const filterSaleYear = async (req, res) => {
+//     try {
+//       let filter = {};
+  
+//       if (req.query.filter) {
+//         const filterType = req.query.filter;
+  
+//         switch (filterType) {
+//           case 'week':
+//             filter = {
+//               purchaseDate: {
+//                 $gte: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
+//               },
+//             };
+//             break;
+  
+//           case 'month':
+//             filter = {
+//               purchaseDate: {
+//                 $gte: new Date(new Date() - 30 * 24 * 60 * 60 * 1000),
+//               },
+//             };
+//             break;
+  
+//           case 'year':
+//             filter = {
+//               purchaseDate: {
+//                 $gte: new Date(new Date() - 365 * 24 * 60 * 60 * 1000),
+//               },
+//             };
+//             break;
+  
+//           case 'custom':
+//             if (req.query.fromDate && req.query.toDate) {
+//               filter = {
+//                 purchaseDate: {
+//                   $gte: new Date(req.query.fromDate),
+//                   $lte: new Date(req.query.toDate),
+//                 },
+//               };
+//             }
+//             break;
+  
+//           default:
+//             break;
+//         }
+//       }
+  
+//       const orderDat = await Order.find(filter)
+//         .populate({
+//           path: 'userid',
+//           select: 'name',
+//         })
+//         .populate('products.productId');
+  
+//       // Render EJS template
+//       ejs.renderFile(
+//         path.join(__dirname, '..', 'views', 'admin', 'salesReport.ejs'),
+//         { orderDat },
+//         async (err, data) => {
+//           if (err) {
+//             console.log(err);
+//             res.render('500')
+//           }
+  
+//           // Generate PDF
+//           const pdfOptions = {
+//             height: '11.25in',
+//             width: '8.5in',
+//             header: {
+//               height: '0mm',
+//             },
+//             footer: {
+//               height: '0mm',
+//             },
+//           };
+  
+//           const pdfPromise = new Promise((resolve, reject) => {
+//             pdf.create(data, pdfOptions).toFile((err, pdfPath) => {
+//               if (err) {
+//                 console.log(err);
+//                 reject('Error generating PDF');
+//               } else {
+//                 resolve(pdfPath.filename);
+//               }
+//             });
+//           });
+  
+//           // Generate Excel
+//           const excelOptions = {
+//             filename: 'report.xlsx',
+//             useStyles: true,
+//             useSharedStrings: true,
+//           };
+  
+//           const excelPromise = new Promise((resolve, reject) => {
+//             const workbook = new ExcelJS.Workbook();
+//             const worksheet = workbook.addWorksheet('Sales Report');
+  
+//             // Add headers
+//             worksheet.addRow(['Order Date', 'Product Name', 'Quantity', 'Price', 'Total Price']);
+  
+//             // Add data
+//             orderDat.forEach(order => {
+//               order.products.forEach(product => {
+//                 worksheet.addRow([
+//                   order.purchaseDate.toLocaleString('en-US'),
+//                   product.productId.productname,
+//                   product.count,
+//                   $${product.productId.price.toFixed(2)},
+//                   $${(product.count * product.productId.price).toFixed(2)},
+//                 ]);
+//               });
+//             });
+  
+//             workbook.xlsx.writeFile(excelOptions.filename).then(() => {
+//               resolve(excelOptions.filename);
+//             }).catch((err) => {
+//               console.log(err);
+//               reject('Error generating Excel');
+//             });
+//           });
+  
+//           // Wait for both promises to resolve
+//           try {
+//             const [pdfPath, excelPath] = await Promise.all([pdfPromise, excelPromise]);
+  
+//             // Send both files using express-zip
+//             res.zip([
+//               { path: pdfPath, name: 'sales_report.pdf' },
+//               { path: excelPath, name: 'sales_report.xlsx' },
+//             ]);
+//           } catch (error) {
+//             console.log(error);
+//             res.render('500')
+//           }
+//         }
+//       );
+//     } catch (error) {
+//       console.log(error.message);
+//       res.render('500')
+//     }
+//   };
 
 module.exports = {
     adminLogin,

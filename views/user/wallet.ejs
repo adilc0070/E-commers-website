@@ -211,7 +211,7 @@ body {
                                             <small class="bill-date">date of purchase</small>
                                         </div>
                                         <div class="col-lg-5 col-4 mt-4">
-                                            <h2 class="bill-head px-xl-5 px-lg-4"><i class="fa fa-chevron-up"></i></h2>
+                                            <h2 class="bill-head px-xl-5 px-lg-4">4<sub><i class="fa fa-chevron-down text-danger"></i></sub></h2>
                                         </div>
                                     </div>
                                     <div class="row transaction-row">
@@ -221,7 +221,7 @@ body {
 
                                         </div>
                                         <div class="col-lg-5 col-4 mt-4">
-                                            <h2 class="bill-head px-xl-5 px-lg-4">4<sub><i class="fa fa-chevron-up"></i></sub></h2>
+                                            <h2 class="bill-head px-xl-5 px-lg-4">4<sup><i class="fa fa-chevron-up text-success"></i></sup></h2>
                                         </div>
                                     </div>
                                     <div class="row transaction-row">
@@ -250,17 +250,13 @@ body {
                             <div class="card rounded-0 border-0 card2" id="paypage">
                                 <div class="form-card">
                                     <h2 id="heading2" class="text-danger">Wallet</h2>
-                                    <div class="radio-group">
-                                        <div class='radio' data-value="credit"><img src="https://i.imgur.com/28akQFX.jpg" width="200px" height="60px"></div>
-                                        <div class='radio' data-value="paypal"><img src="https://i.imgur.com/5QFsx7K.jpg" width="200px" height="60px"></div>
-                                        <br>
-                                    </div>
+                                    
                                     <label class="pay">Name on Card</label>
                                     <input type="text" name="holdername" value="John Doe" readonly>
                                     <div class="row">
                                         <div class="col-8 col-md-6">
                                             <label class="pay">Wallet Id</label>
-                                            <input type="text" name="cardno" id="cr_no" placeholder="0000-0000-0000-0000" minlength="19" maxlength="19">
+                                            <input type="text" name="cardno" id="cr_no" value="0000-0000-0000-0000" minlength="19" maxlength="19" readonly>
                                         </div>
                                         <div class="col-4 col-md-6">
                                             <label class="pay">CVV</label>

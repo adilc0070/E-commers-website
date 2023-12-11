@@ -119,7 +119,7 @@ let placeOrder = async (req, res) => {
         
             // Clear the user's cart after placing the order
             
-            if(paymentMethod === 'COD'){
+            if(paymentMethod === 'cod'){
                 res.json({ success: true, message: 'Order placed successfully' });
                 await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
             }else if(savedOrder.paymentType == 'paypal'){
@@ -140,6 +140,15 @@ let placeOrder = async (req, res) => {
                         res.json({ order });
                     }
                   });
+            }else if(paymentMethod==="wallet"){
+                if(userDa.wallet < amount){
+                    res.json({ success: false, message: 'Insufficient balance in wallet' });
+                }else{
+                    userDa.wallet = userDa.wallet - amount;
+                    await userDa.save();
+                    await Cart.updateOne({ userid: req.session.user_id }, { $set: { products: [] } });
+                    res.json({ success: true, message: 'Order placed successfully' });
+                }
             }
         
             // res.json({ success: true, message: 'Order placed successfully' });                                      

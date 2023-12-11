@@ -21,7 +21,7 @@ let userVerificationEmail=''
 //home page
 let homePage = async (req, res) => {
     try {
-        let produ=await Products.find()
+        let produ=await Products.find({block:0})
         // console.log(produ)
         let cartData
         let cat=await category.find()
@@ -451,9 +451,10 @@ let productPage = async (req, res) => {
             .skip(skip)
             .limit(limit);
         }
+        let cattt
         // console.log(product);
         // res.json({ product, totalPages, currentPage: page });
-        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
+        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page,cattt });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -479,15 +480,15 @@ let filterProducts = async (req, res) => {
         let product
         if(cattt){
             console.log("filterProducts category",cattt);
-            product = await Products.find({category: { $regex: cattt, $options: 'i' }, block: 0 }).skip(skip).limit(2);
+            product = await Products.find({block: 0 }).skip(skip).limit(limit);
 
         }else{
             product = await Products.find({ block: 0 }).skip(skip).limit(limit);
             log("no category")
         }
 
-        console.log(product);
-        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page });
+        // console.log(product);
+        res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page, cattt });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');

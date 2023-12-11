@@ -32,13 +32,13 @@
                 </div>
             </div>
 
-            <!-- ##### Single Widget ##### -->
+            <!-- ##### Single Widget #####
             <div class="widget brands mb-50">
-                <!-- Widget Title -->
+                Widget Title
                 <h6 class="widget-title mb-30">Brands</h6>
 
                 <div class="widget-desc">
-                    <!-- Single Form Check -->
+                    Single Form Check
                     <div class="form-check">
                         <input class="form-check-input"
                             type="checkbox" value=""
@@ -48,13 +48,13 @@
                     </div>
 
                 </div>
-            </div>
+            </div> -->
 
 
 
-            <!-- ##### Single Widget ##### -->
+            <!-- ##### Single Widget #####
             <div class="widget price mb-50">
-                <!-- Widget Title -->
+                Widget Title
                 <h6 class="widget-title mb-30">Price</h6>
 
                 <div class="widget-desc">
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div id="product-list" class="amado_product_area section-padding-100">
@@ -112,8 +112,100 @@
                         </div>
                     </div>
                 </div>
-        
                 <div class="row">
+                    <%if(cattt){%>
+                    <div class="col-12">
+                        <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+                            <!-- Total Products -->
+                            <div class="total-products">
+                                <p>Showing </p>
+                                <div class="view d-flex">
+                                    <a href="#"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+                                    <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                            <!-- Sorting -->
+                            <div class="product-sorting d-flex">
+                                <div class="sort-by-date d-flex align-items-center mr-15">
+                                    <p>Sort by</p>
+                                    <form action="#" method="get">
+                                        <select name="select" id="sortBydate" onchange="productsSort(this.value)">
+                                            <option value="Newest">Newest</option>
+                                            <option value="Oldest">Oldest</option>
+                                            <option value="PriceLowToHigh">Price Low to High</option>
+                                            <option value="PriceHighToLow">Price High to Low</option>
+                                        </select>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <%=cattt%>
+                        <div class="row">
+                            <% if(product.length > 0) { %>
+                            <% product.forEach(function(product) { %>
+                               <% if(product.category==cattt){%>
+                                <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                                    <div class="single-product-wrapper">
+                                        <!-- Product Image -->
+                                        <div class="product-img">
+                                            <a href="/productDetail?id=<%= product._id %>">
+                                                <img src="/products/images/<%= product.images.image2 %>" style="width: 100%; height: 400px; object-fit: cover;" alt="Product Image">
+                                                <img class="hover-img" src="/products/images/<%= product.images.image3 %>" style="width: 100%; height: 400px; object-fit: cover;" alt="Product Image">
+                                            </a>
+                                        </div>
+                
+                                        <!-- Product Description -->
+                                        <div class="product-description d-flex align-items-center justify-content-between">
+                                            <!-- Product Meta Data -->
+                                            <div class="product-meta-data">
+                                                <div class="line"></div>
+                                                <p class="product-price"><%= product.price %></p>
+                                                <a href="/productDetail?id=<%= product._id %>">
+                                                    <h6><%= product.product_name %></h6>
+                                                </a>
+                                            </div>
+                                            <!-- Ratings & Cart -->
+                                            <div class="ratings-cart text-right">
+                                                <div class="ratings">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                    <i class="fa fa-star" aria-hidden="false"></i>
+                                                </div>
+                                                <div class="cart">
+                                                    <a data-toggle="tooltip" onclick="showSwal('<%= product._id %>')" data-placement="left" title="Add to Cart">
+                                                        <img src="/user/img/core-img/cart.png" alt="">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                asdadssaassaadsfdasf
+                                <%}%>
+                            <% }) %>
+                            <% } else { %><!--Product not found-->
+                                asddasdsa
+                            <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                                <div class="single-product-wrapper">
+                                    <!-- Product Description -->
+                                    <div class="product-description d-flex align-items-center justify-content-between">
+                                        <!-- Product Meta Data -->
+                                        <div class="product-meta-data">
+                                            <div class="line"></div>
+                                            <p class="product-price">No product found</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <%}%>
+                </div>
+                <div class="row">
+                    <% if(product.length > 0) { %>
                     <% product.forEach(function(product) { %>
                         <!-- Single Product Area -->
                         <div class="col-12 col-sm-6 col-md-12 col-xl-6">
@@ -155,6 +247,20 @@
                             </div>
                         </div>
                     <% }) %>
+                    <% } else { %><!--Product not found-->
+                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                        <div class="single-product-wrapper">
+                            <!-- Product Description -->
+                            <div class="product-description d-flex align-items-center justify-content-between">
+                                <!-- Product Meta Data -->
+                                <div class="product-meta-data">
+                                    <div class="line"></div>
+                                    <p class="product-price">No product found</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
                 </div>
         
                 <div class="row">

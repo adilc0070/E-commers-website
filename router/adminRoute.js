@@ -34,6 +34,7 @@ adminRoute.get('/chartLastYear',adminAuth.isAuth,adminControll.chartFilterYear)
 adminRoute.get('/orderManagement',adminAuth.isAuth,adminControll.ordersDashboard)
 adminRoute.post('/update-order-status/:id',adminAuth.isAuth, orderController.updateOrderStatus);
 adminRoute.get('/downloadSalesReport',adminAuth.isAuth,adminControll.report)
+adminRoute.get('/download',adminAuth.isAuth,adminControll.download)
 adminRoute.get('/salesManagement',adminAuth.isAuth,adminControll.salesDashboard)
 //user management
 adminRoute.get('/userManagement',adminAuth.isAuth,adminControll.userManagement)

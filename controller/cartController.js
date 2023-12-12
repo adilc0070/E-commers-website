@@ -101,15 +101,15 @@ let updateQuantity = async (req, res) => {
         const newCount = req.body.quantity;
 
         // Fetch the product data
-        const productData = await ProductDB.findOne({ _id: productId });
+        const productData = await ProductDB.findOne({ _id: productId ,block:0});
 
         // Check if the product data is available
         if (!productData) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
+            return res.status(404).json({ success: false, message: 'Product not found or blocked' });
         }
 
         // Check if the new quantity is valid (non-negative and within stock limits)
-        if (newCount < 0 || newCount > productData.stock) {
+        if (newCount > productData.stock) {
             return res.status(400).json({ success: false, message: 'Invalid quantity or stock exceeded' });
         }
 

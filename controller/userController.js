@@ -658,7 +658,7 @@ let insertAddress = async (req, res) => {
 
 let editAddressPage = async (req, res) => {
     try {
-      console.log('Reached editAddressPage route');
+    //   console.log('Reached editAddressPage route');
       let errors = [];
       let userDa = await user.findById(req.session.user_id);
       let cartData= await cart.findOne({ userid: req.session.user_id })
@@ -683,95 +683,99 @@ let editAddress = async (req, res) => {
     let userDa = await user.findById(req.session.user_id);
     let cartData= await cart.findOne({ userid: req.session.user_id })
     let edit = req.query.id;
-    console.log("edit", edit);
-    console.log("user addresses", addresses);
+    // console.log("edit", edit);
+    // console.log("user addresses", addresses);
     if (edit) {
-        console.log("edit");
-      let addresss = await addresses.find({ "addresses._id": edit });
-      console.log("edit address", addresss);
+        // console.log("edit", edit);
+        let newAddres=require('../models/address')
+
+        addresses = await newAddres.findOne({ "addresses._id": edit });
+
+        // console.log("edit address", addresses);
+
+        // if (!addresses) {
+        // console.log("Address not found for edit ID:", edit);
+        // // Handle this case as needed (e.g., render an error page)
+        // return;
+        // }
       let {
-        firstName,
-        lastName,
-        address,
-        city,
-        state,
-        pin,
-        country,
-        phone,
-        email,
-        additional,
-      } = addresss;
+        editFirstName,
+        editLastName,
+        editAddress,
+        editCity,
+        editState,
+        editPin,  
+        editPhone,
+        editEmail,
+        editAdditional,
+      } = req.body;
 
       // Validation checks
       let errors = [];
 
-      if (!firstName) {
+      if (!editFirstName) {
         errors.push("First name is required.");
       }
 
-      if (!lastName) {
+      if (!editLastName) {
         errors.push("Last name is required.");
       }
 
-      if (!address) {
+      if (!editAddress) {
         errors.push("Address is required.");
       }
 
-      if (!city) {
+      if (!editCity) {
         errors.push("City is required.");
       }
 
-      if (!state) {
+      if (!editState) {
         errors.push("State is required.");
       }
 
-      if (!pin) {
+      if (!editPin) {
         errors.push("Zip code is required.");
-      } else if (!/^\d{5}$/.test(pin)) {
+      } else if (!/^\d{6}$/.test(editPin)) {
         errors.push("Invalid zip code format. It should be 5 digits.");
       }
 
-      if (!country) {
-        errors.push("Country is required.");
-      }
-
-      if (!phone) {
+      if (!editPhone) {
         errors.push("Phone number is required.");
-      } else if (!/^\d{10}$/.test(phone)) {
+      } else if (!/^\d{10}$/.test(editPhone)) {
         errors.push("Invalid phone number format. It should be 10 digits.");
       }
 
-      if (!email) {
+      if (!editEmail) {
         errors.push("Email is required.");
-      } else if (!/\S+@\S+\.\S+/.test(email)) {
+      } else if (!/^[a-zA-Z0-9._]+@(gmail\.com|icloud\.com|yahoo\.com|outlook\.com|hotmail\.com)$/.test(editEmail)) {
         errors.push("Invalid email format.");
       }
 
       if (errors.length > 0) {
         // If there are validation errors, render the view with the errors
-        res.render("editAddress", { userDa, addresss, errors, cartData });
+        res.render("editAddress", { userDa, addresses, errors, cartData });
       } else {
         // All validations passed, proceed with updating the address
         await address.updateOne(
-          { "addresses.$._id": edit },
-          {
-            $set: {
-              "addresses.$.firstName": req.body.editFirstName,
-              "addresses.$.lastName": req.body.editLastName,
-              "addresses.$.address": req.body.editAddress,
-              "addresses.$.city": req.body.editCity,
-              "addresses.$.state": req.body.editState,
-              "addresses.$.pin": req.body.editPin,
-            //   "addresses.country": req.body.editCountry,
-              "addresses.$.phone": req.body.editPhone,
-              "addresses.$.email": req.body.editEmail,
-              "addresses.$.additional": req.body.editAdditional,
-            },
-          }
-        );
+            { "addresses._id": edit },
+            {
+              $set: {
+                "addresses.$.firstName": req.body.editFirstName,
+                "addresses.$.lastName": req.body.editLastName,
+                "addresses.$.address": req.body.editAddress,
+                "addresses.$.city": req.body.editCity,
+                "addresses.$.state": req.body.editState,
+                "addresses.$.pin": req.body.editPin,
+                "addresses.$.phone": req.body.editPhone,
+                "addresses.$.email": req.body.editEmail,
+                "addresses.$.additional": req.body.editAdditional,
+              },
+            }
+          );
+          
 
         // Redirect to the address page after successful update
-        res.redirect("/editaddress?id=" + edit);
+        res.redirect("/address");
       }
     } else {
       // Handle the case where edit query parameter is not provided

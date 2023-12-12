@@ -452,6 +452,11 @@ let productPage = async (req, res) => {
             .limit(limit);
         }
         let cattt
+        if(cattt){
+            cattt=catago[0].name
+            console.log(cattt);
+            product=await Products.find({category:cattt})
+        }
         // console.log(product);
         // res.json({ product, totalPages, currentPage: page });
         res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page,cattt });
@@ -480,7 +485,7 @@ let filterProducts = async (req, res) => {
         let product
         if(cattt){
             console.log("filterProducts category",cattt);
-            product = await Products.find({block: 0 }).skip(skip).limit(limit);
+            product = await Products.find({ category: cattt})
 
         }else{
             product = await Products.find({ block: 0 }).skip(skip).limit(limit);

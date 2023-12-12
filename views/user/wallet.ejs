@@ -252,22 +252,26 @@ body {
                                     <h2 id="heading2" class="text-danger">Wallet</h2>
                                     
                                     <label class="pay">Name on Card</label>
-                                    <input type="text" name="holdername" value="John Doe" readonly>
+                                    <input type="text" name="holdername" value="<%=userDa.name%>" readonly>
                                     <div class="row">
                                         <div class="col-8 col-md-6">
                                             <label class="pay">Wallet Id</label>
-                                            <input type="text" name="cardno" id="cr_no" value="0000-0000-0000-0000" minlength="19" maxlength="19" readonly>
+                                            <input type="text" name="cardno" id="cr_no" value="<%=userDa.wallet%>" minlength="19" maxlength="19" readonly>
                                         </div>
                                         <div class="col-4 col-md-6">
-                                            <label class="pay">CVV</label>
-                                            <input type="password" name="cvcpwd" placeholder="&#9679;&#9679;&#9679;" class="placeicon" minlength="3" maxlength="3">
+                                            <label class="pay">Last Transaction</label>
+                                            <input type="password" name="cvcpwd" value="&#9679;&#9679;&#9679;" class="placeicon" minlength="3" maxlength="3">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <label class="pay">Expiration Date</label>
+                                            <label class="pay">Add TO Wallet</label>
                                         </div>
                                         <div class="col-md-12">
+                                            <input type="text" name="amount" id="amount" placeholder="Enter Amount" minlength="1" maxlength="10">
+                                            <!--quik pay amounts 2000,1000,500,100,200-->
+                                            <span class="fa fa-question-circle  "></span>
+
                                             <input type="text" name="exp" id="exp" placeholder="MM/YY" minlength="5" maxlength="5">
                                         </div>
                                     </div>

@@ -500,6 +500,7 @@ let filterProducts = async (req, res) => {
     }
 }
 
+
 let displayFilteredProducts = async (req, res) => {
     try {
         
@@ -526,8 +527,6 @@ let displayFilteredProducts = async (req, res) => {
     }
 };
 let Order=require("../models/orederModel");
-const { render } = require("../router/userRoute");
-const { log } = require("winston");
 let userProfile=async(req,res)=>{
     try {
 

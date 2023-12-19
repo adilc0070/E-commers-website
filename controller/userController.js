@@ -9,16 +9,17 @@ let Products=require('../models/productModel')
 let category=require('../models/catogoryModel')
 let address=require('../models/address');
 const cart = require("../models/cart");
+const wallet = require("../models/walletModel");
 
 
-// Initialize the OTP variable
+// Global variables
 let otp = 0;
 let userEmail=""
 let username = "";
 let userVerificationEmail=''
 
 
-//home page
+// Home Page 
 let homePage = async (req, res) => {
     try {
         let produ=await Products.find({block:0})
@@ -32,7 +33,7 @@ let homePage = async (req, res) => {
             if(userDa){
                 res.render("index", { userDa,  cat, produ ,cartData});
             }else{
-                // console.error();
+                
                 res.render("index", { userDa, cat, produ ,cartData});
             }
         }else{
@@ -52,15 +53,15 @@ function validateEmail(email) {
 }
 
 
-//password validation
+//The Password validation function it only validate it contain at least one letter and one number and 8 characters long
 function validatePassword(password) {
-    // Password should be at least 8 characters long and contain both letters and numbers
+    
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
     return passwordRegex.test(password);
 }
 
 
-//----------------------password hashing function---------------------
+//Password Encryption 
 async function hashPassword(password) {
     try {
         const passHash = await bcrypt.hash(password, 10);
@@ -70,7 +71,7 @@ async function hashPassword(password) {
     }
 }
 
-//-------------insertUser function and OTP generation-----------------
+// Insert the users and send the otp in mail
 
 async function insertUser(req, res) {
     try {
@@ -131,7 +132,7 @@ async function insertUser(req, res) {
     }
 }
 
-//--------------signup page----------------
+// Sign up page 
 async function signUpPage(req, res) {
     try {
         let writed = {
@@ -176,11 +177,12 @@ async function loginUser(req, res) {
             email:(req.body.email).trim(),
             password:req.body.password
         }
+        let successMessage=req.query.msg || '';
 
         if (req.body.email === "" || req.body.password === "") {
             emailMessage = "Please Enter Your Email";
             passwordMessage = "Please Enter Your Password";
-            res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
+            res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
             return;
         }
 
@@ -193,10 +195,11 @@ async function loginUser(req, res) {
                 res.render('otp', { msg });
             } else if (!validateEmail((req.body.email).trim()) || (req.body.email).trim() === "") {
                 emailMessage = "Please Enter a Valid Email";
-                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
+                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
             } else if (foundUser.is_block === 1) {
+            
                 blockMessage = "Your account is blocked";
-                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
+                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
             } else {
                 const passwordMatch = await bcrypt.compare(req.body.password, foundUser.password);
 
@@ -206,7 +209,7 @@ async function loginUser(req, res) {
                     res.redirect("/home");
                 } else {
                     passwordMessage = "Incorrect Password";
-                    res.render('signin', { emailMessage, passwordMessage, blockMessage, writed });
+                    res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
                 }
             }
         } else {
@@ -222,16 +225,13 @@ async function loginUser(req, res) {
 
 // Generate OTP
 function generateOtp() {
-    // Generate a 6-digit OTP
     otp = Math.floor(100000 + Math.random() * 900000);
     return otp;
 }
-//otp ValidUpTo90Sec
+//otp expaire function
 let otpExpaire = async (req, res) => {
-    
     setTimeout(() => {
-    
-        return otp = 0;
+        return otp = 1101;
     }, 90000);
 }
 
@@ -241,7 +241,7 @@ const sendVerifyMail = async (email) => {
         otp=GOTP
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 465, // Use port 465 for secure connection
+            port: 465, 
             secure: true,
             auth: {
                 user: process.env.EMAIL,
@@ -273,21 +273,18 @@ const sendVerifyMail = async (email) => {
     }
 };
 
-// Render OTP page
+// Load OTP 
 async function otpLoad(req, res) {
     try {
-        console.log("otpLoad");
         let otpmsg = req.query.msg || '';
-        console.log(otpmsg);
         res.render("otp" , { otpmsg });
     } catch (error) {
         res.status(500).send(error);
     }
 }
-//resendOtp
+// Resend OTP
 let resendOtp=async(req,res)=>{
     try {
-        console.log("resendOtp");
         sendVerifyMail(userEmail);
         let otpmsg = "OTP sent successfully" || '';
         res.render("otp" , { otpmsg });
@@ -299,15 +296,11 @@ let resendOtp=async(req,res)=>{
 // Verify OTP
 async function otpVerify(req, res) {
     try {
-
         let msg
         console.log(req.body.otp, otp);
         if (otp == req.body.otp) {
-
             let updateUser = await user.updateOne({ email: userVerificationEmail}, { $set: { verified: 0 } });
             msg = "OTP verified successfully!"; 
-
-            // Redirect the user with the success message
             res.redirect(`/signin?msg=${encodeURIComponent(msg)}`);
         } else {
             msg = "Wrong OTP"
@@ -318,7 +311,7 @@ async function otpVerify(req, res) {
     }
 }
 
-//==============logout===============
+// Log out 
 let logOut = async (req, res) => {
     if (req.session.user_id) {
         req.session.destroy();
@@ -360,12 +353,11 @@ let resetPassword=async(req,res)=>{
                 console.log("password not updated");
             }
         }
-
     } catch (error) {
         res.status(500).send(error);
     }
 }
-//======================show the product details==================
+// Product Details 
 let productDetail = async (req, res) => {
     try {
         let Id = req.query.id
@@ -377,7 +369,6 @@ let productDetail = async (req, res) => {
             userDa = await user.findById(req.session.user_id)
             res.render("productDetails",{product,userDa,cartData})
         }else{
-            
             res.render("productDetails",{product,userDa,cartData})
         }
     } catch (error) {
@@ -391,7 +382,6 @@ let productPage = async (req, res) => {
         let cartData = await cart.findOne({ userid: req.session.user_id });
         let search = req.query.search
 
-        // Pagination Logic
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 12; // Updated to use the custom limit
         const skip = (page - 1) * limit;
@@ -404,12 +394,10 @@ let productPage = async (req, res) => {
             productCount = await Products.countDocuments({ block: 0 });
             totalPages = Math.ceil(productCount / limit);
         }
-
         let product
         if(search){
             product = await Products.find({ product_name: { $regex: search, $options: 'i' },block: 0 }).skip(skip).limit(limit);
         }else{
-
             product = await Products.find({ block: 0 }).skip(skip).limit(limit);
         }
         // Sorting Logic
@@ -419,27 +407,20 @@ let productPage = async (req, res) => {
         switch (sortOption) {
             case 'Newest':
                 sortQuery = { _id: -1 };
-                console.log(sortQuery);
                 break;
             case 'Oldest':
                 sortQuery = { _id: 1 };
-                console.log(sortQuery);
                 break;
             case 'PriceLowToHigh':
                 sortQuery = { price: 1 };
-                console.log(sortQuery);
                 break;
             case 'PriceHighToLow':
                 sortQuery = { price: -1 };
-                console.log(sortQuery);
                 break;
             default:
                 sortQuery = { _id: -1 };
-                console.log(sortQuery);
-                // Default sorting by newest
                 break;
         }
-
         if(search){
             product = await Products.find({ product_name: { $regex: search, $options: 'i' }, block: 0 })
                 .sort(sortQuery)
@@ -457,8 +438,6 @@ let productPage = async (req, res) => {
             console.log(cattt);
             product=await Products.find({category:cattt})
         }
-        // console.log(product);
-        // res.json({ product, totalPages, currentPage: page });
         res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page,cattt });
     } catch (error) {
         console.log(error.message);
@@ -473,26 +452,19 @@ let filterProducts = async (req, res) => {
         let userDa = await user.findById(req.session.user_id);
         let catago = await category.find({_id: categoryId, blocked: 0 });
         let cartData = await cart.findOne({ userid: req.session.user_id });
-        // Pagination Logic
         const page = parseInt(req.query.page) || 1;
         const limit = 8; 
         const skip = (page - 1) * limit;
         console.log("page",page,limit,skip);
         let cattt=catago[0].name
-        // Filter products by category
         const productCount = await Products.countDocuments({ block: 0 });
         const totalPages = Math.ceil(productCount / limit);
         let product
         if(cattt){
-            console.log("filterProducts category",cattt);
             product = await Products.find({ category: cattt})
-
         }else{
             product = await Products.find({ block: 0 }).skip(skip).limit(limit);
-            log("no category")
         }
-
-        // console.log(product);
         res.render("products", { product, userDa, catago, cartData, totalPages, currentPage: page, cattt });
     } catch (error) {
         console.log(error.message);
@@ -503,33 +475,27 @@ let filterProducts = async (req, res) => {
 
 let displayFilteredProducts = async (req, res) => {
     try {
-        
         const categoryId = req.query.categoryId;
         let userDa = await user.findById(req.session.user_id);
         let catago = await category.find({ blocked: 0 });
         let cartData = await cart.findOne({ userid: req.session.user_id });
-
-        // Pagination Logic
         const page = parseInt(req.query.page) || 1;
         const limit = 8; // Number of products per page
         const skip = (page - 1) * limit;
-
-        // Filter products by category
         const productCount = await Products.countDocuments({ category: categoryId, block: 0 });
         const totalPages = Math.ceil(productCount / limit);
-
         const product = await Products.find({ category: categoryId, block: 0 }).skip(skip).limit(limit);
-
         res.render("filteredProducts", { product, userDa, catago, cartData, totalPages, currentPage: page });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
     }
 };
+
 let Order=require("../models/orederModel");
+
 let userProfile=async(req,res)=>{
     try {
-
         let userDa=await user.findById(req.session.user_id)
         let deliveredOrders=await Order.find({userId:req.session.user_id,status:"delivered"}).sort({date:-1})
         let pendingOrders=await Order.find({userId:req.session.user_id,status:{ $in: ["pending", "shipped"] }}).sort({date:-1})        
@@ -538,16 +504,15 @@ let userProfile=async(req,res)=>{
         console.log(error.message);
     }
 }
+
 let editProfile=async(req,res)=>{
     try {
         let userDa=await user.findById(req.session.user_id)
-
         res.render("dashChanges",{userDa})
     } catch (error) {
         console.log(error.message);
     }
 }
-
 
 let updateProfile=async(req,res)=>{
     try {
@@ -562,32 +527,22 @@ let updateProfile=async(req,res)=>{
         let newName=req.body.username
         let newEmail= req.body.useremail
         let newPassword=req.body.userpassword 
-        let newPhone=req.body.usernumber
-        
-        
+        let newPhone=req.body.usernumber        
         if(newName=='' || newEmail=='' || newPhone==''){
-            console.log("empty");
             res.render("dashChanges",{userDa})
         }else if(!validateEmail(newEmail)){
-            console.log("invalid email");
             res.render("dashChanges",{userDa})
         }else if(!newPhone.length==10){
-            console.log("invalid number");
             res.render("dashChanges",{userDa})
         }else{
-            console.log("valid");
             if(newPassword==''){
-                console.log("no password");
                 newPassword=prePassword
             }else{
-                console.log("password");
                 if(!validatePassword(newPassword)){
-                    console.log("invalid password");
                     res.render("dashChanges",{userDa})
                 }else{
                     newPassword=await hashPassword(newPassword)
                 }
-                console.log("updated");
             }
             let update=await user.updateOne({_id:req.session.user_id},{
                 name:newName,
@@ -605,12 +560,9 @@ let updateProfile=async(req,res)=>{
 
 let addressPage = async (req, res) => {
     try {
-
         let userDa = await user.findById(req.session.user_id);
         let cartData = await cart.findOne({ userid: req.session.user_id })
-
         let addresses = await address.find({ user: req.session.user_id });
-
         res.render("address", { userDa, addresses, cartData });
     } catch (error) {
         console.log(error.message);
@@ -632,9 +584,6 @@ let insertAddress = async (req, res) => {
     try {
         let userDa = await user.findById(req.session.user_id);
         let cartData = await cart.findOne({ userid: req.session.user_id })
-
-
-        // Assuming your form fields are named firstName, lastName, address, city, state, pin, country, phone, email, additionalDetails
         let newAddress = new address({
             user: req.session.user_id,
             addresses: [{
@@ -650,9 +599,7 @@ let insertAddress = async (req, res) => {
                 additional: req.body.additionalDetails,
             }]
         });
-
         await newAddress.save();
-
         res.redirect("/address");
     } catch (error) {
         console.log(error.message);
@@ -662,11 +609,9 @@ let insertAddress = async (req, res) => {
 
 let editAddressPage = async (req, res) => {
     try {
-    //   console.log('Reached editAddressPage route');
       let errors = [];
       let userDa = await user.findById(req.session.user_id);
-      let cartData= await cart.findOne({ userid: req.session.user_id })
-      
+      let cartData= await cart.findOne({ userid: req.session.user_id })      
       let id = req.query.id;
       let addressData = await address.find({ "addresses._id": id });
     //   console.log("addresses", addressData);
@@ -827,23 +772,18 @@ let searchitems = async (req, res) => {
         switch (sortOption) {
             case 'Newest':
                 sortQuery = { _id: -1 };
-                console.log(sortQuery);
                 break;
             case 'Oldest':
                 sortQuery = { _id: 1 };
-                console.log(sortQuery);
                 break;
             case 'PriceLowToHigh':
                 sortQuery = { price: 1 };
-                console.log(sortQuery);
                 break;
             case 'PriceHighToLow':
                 sortQuery = { price: -1 };
-                console.log(sortQuery);
                 break;
             default:
                 sortQuery = { _id: -1 };
-                console.log(sortQuery);
                 // Default sorting by newest
                 break;
         }

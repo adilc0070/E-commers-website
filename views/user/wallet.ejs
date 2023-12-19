@@ -185,8 +185,8 @@ body {
                     <div class="row">
                         <div class="col-md-5 p-0 box">
                             <div class="card rounded-0 border-0 card1" id="bill">
-                                <h3 id="heading1">Last 5 Transactions</h3>
-                                <div class="transaction-container">
+                                <h3 id="heading1">Wallet Is Processing </h3>
+                                <!-- <div class="transaction-container">
                                     <div class="row transaction-row">
                                         <div class="col-lg-7 col-8 mt-4 line pl-4">
                                             <h2 class="bill-head">product_name</h2>
@@ -234,12 +234,13 @@ body {
                                         </div>
                                     </div>
                                     
-                                </div>
+                                </div> -->
                                 <div class="row mt-auto">
                                     <div class="col-md-12 red-bg">
-                                        <p class="bill-date" id="total-label">Available Balance</p>
-                                        <h2 class="bill-head" id="total">₹ 523.65</h2>
-                                        <small class="bill-date" id="total-label">Price includes all taxes</small>
+                                        <!-- <p class="bill-date" id="total-label">Available Balance</p> -->
+                                        <!-- <h2 class="bill-head" id="total">₹ 523.65</h2> -->
+                                        <h2 class="bill-head" id="total">Soon </h2>
+                                        <!-- <small class="bill-date" id="total-label">Price includes all taxes</small> -->
                                     </div>
                                 </div>
                             </div>
@@ -269,15 +270,36 @@ body {
                                         </div>
                                         <div class="col-md-12">
                                             <input type="text" name="amount" id="amount" placeholder="Enter Amount" minlength="1" maxlength="10">
-                                            <!--quik pay amounts 2000,1000,500,100,200-->
-                                            <span class="fa fa-question-circle  "></span>
+                                            <!--quik pay amounts buttons 2000,1000,500,100,200-->
+                                            <div class="d-flex justify-content-between">
+
+                                                <div class="col-md-2">
+                                                    <input type="submit" value="2000" class="btn btn-info placeicon">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="submit" value="1000" class="btn btn-info placeicon">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="submit" value="500" class="btn btn-info placeicon">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="submit" value="100" class="btn btn-info placeicon">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="submit" value="200" class="btn btn-info placeicon">
+                                                </div>
+                                                <!-- custom amount-->
+                                                <div class="col-md-2">
+                                                    <input type="submit" value="Custom" class="btn btn-info placeicon">
+                                                </div>
+                                            </div>
 
                                             <input type="text" name="exp" id="exp" placeholder="MM/YY" minlength="5" maxlength="5">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="submit" value="MAKE A PAYMENT &nbsp; &#xf178;" class="btn btn-info placeicon">
+                                            <input type="submit" value="Add To Wallet &nbsp; &#xf178;" class="btn btn-info placeicon">
                                         </div>
                                     </div>
                                 </div>

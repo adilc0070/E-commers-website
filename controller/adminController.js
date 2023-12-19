@@ -41,10 +41,8 @@ let adminLogin = async (req, res) => {
 let adminLogon = async (req, res) => {
     try {
         let { adminEmail, adminPassword } = req.body;
-        // console.log(adminEmail, adminPassword);
         let admi = await adminModel.findOne({ email: adminEmail });
-        // console.log(admi);
-        let emailErrorMessage; // Initialize these variables
+        let emailErrorMessage;
         let passwordErrorMessage;
 
         if (!adminEmail || !adminPassword) {
@@ -67,16 +65,12 @@ let adminLogon = async (req, res) => {
                 res.render("adminLogIn", { emailErrorMessage, passwordErrorMessage });
             }
         }
-
-        // Render the EJS template with the error messages
     } catch (error) {
-        // res.render('adminLogIn', { message: 'Something went wrong' });
         console.log(error.message);
     }
 };
 let adminRender = async (req, res) => {
     try {
-        // Fetch all orders, pending orders, and delivered orders
         let orders = await Order.find()
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
@@ -86,114 +80,95 @@ let adminRender = async (req, res) => {
         let deliveredOrders = await Order.find({ status: "delivered" })
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
-
-        //fetch user count
         let usersCount = await user.count();
         let purchasersCount = await Order.distinct("userId");
-        //calculate cod delevered orders revenue
-        let cod = await Order.aggregate([
-            {
-                $match: {
-                    paymentType: "cod",
-                    status: "delivered",
+        let codOrders= await Order.find({paymentType:"cod"})
+        let cod
+        if(codOrders.length != 0){
+            cod = await Order.aggregate([
+                {
+                    $match: {
+                        paymentType: "cod",
+                        status: "delivered",
+                    },
                 },
-            },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$amount" },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: "$amount" },
+                    },
                 },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    total: 1,
+                {
+                    $project: {
+                        _id: 0,
+                        total: 1,
+                    },
                 },
-            },
-        ]);
-        cod = cod[0].total || 0
-        //calculate online delevered orders revenue
-        let online = await Order.aggregate([
-            {
-                $match: {
-                    paymentType: "paypal",
-                    status: "delivered",
-                },
-
-            }, {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$amount" },
-                },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    total: 1,
-                },
+            ]);
+            if(cod.length != 0){
+                cod = cod[0].total
+            }else{
+                cod = 0
             }
-        ])
-        online = online[0].total || 0
-        // let wallet = await Order.aggregate([
-        //     {
-        //         $match: {
-        //             paymentType: "wallet",
-        //             status: "delivered",
-        //         },   
-        //     }
-        //     ,{
-        //         $group: {
-        //             _id: null,
-        //             total: { $sum: "$amount" },
-        //         },
-        //     },
-        //     {
-        //         $project: {
-        //             _id: 0,
-        //             total: 1,
-        //         },
-        //     }
-        // ])
-        // wallet=wallet[0].total||0
-        // Initialize variables
+        }
+        let onlineOrders= await Order.find({paymentType:"paypal"})
+        let online
+        if(onlineOrders.length != 0){
+            online = await Order.aggregate([
+                {
+                    $match: {
+                        paymentType: "paypal",
+                        status: "delivered",
+                    },
+    
+                }, {
+                    $group: {
+                        _id: null,
+                        total: { $sum: "$amount" },
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        total: 1,
+                    },
+                }
+            ])
+            if(online.length != 0){
+                online = online[0].total
+            }else{
+                online = 0
+            }
+        }
         let revenue = 0;
         let sales = 0;
         let purchases = 0;
         let pendingRevenue = 0;
         let pendingSales = 0;
-        // Calculate revenue
         deliveredOrders.forEach((order) => {
             order.products.forEach((product) => {
                 revenue += product.productId.price * product.quantity;
                 purchases += product.quantity;
             });
-            sales += 1; // Increment sales for each delivered order
+            sales += 1;
         });
-        // calculate pending revenue
         pendingOrders.forEach((order) => {
             order.products.forEach((product) => {
                 pendingRevenue += product.productId.price * product.quantity;
                 purchases += product.quantity;
             });
-            pendingSales += 1; // Increment sales for each delivered order
+            pendingSales += 1;
         });
-
-        //average pending revenue
-        // Calculate average pending revenue
         let averagePendingRevenue = pendingRevenue / pendingSales || 0;
         let letestSales = await Order.find({ status: "delivered" })
             .sort({ date: -1 })
             .populate("products.productId")
             .populate({ path: "userId", select: "name" }).limit(4);
-
-        // console.log(letestSales);
         letestSales.forEach((order) => {
             order.products.forEach((product) => {
 
             });
         });
-        //find the letest five days pending, returned and delivered orders count
-
         let deliveredOrdersCount = await Order.aggregate([
             {
                 $match: {
@@ -221,7 +196,6 @@ let adminRender = async (req, res) => {
                 }
             }
         ])
-
         let returnedOrdersCount = await Order.aggregate([
             {
                 $match: {
@@ -277,6 +251,7 @@ let adminRender = async (req, res) => {
                 }
             }
         ])
+        // manage varables 
         let dele = new Array(5).fill(0)
         let ret = new Array(5).fill(0)
         let pend = new Array(5).fill(0)
@@ -289,11 +264,6 @@ let adminRender = async (req, res) => {
         for (i = 0; i < pendingOrdersCount.length; i++) {
             pend[i] = pendingOrdersCount[i].count
         }
-        // console.log("deliveredOrdersCount : ", dele);
-        // console.log("returnedOrdersCount : ", ret);
-        // console.log("pendingOrdersCount : ", pend);
-
-        // console.log("user:",userName.name); // Add this line
         res.render("dashboard", {
             orders,
             revenue,
@@ -309,7 +279,6 @@ let adminRender = async (req, res) => {
             cod,
             online,
             dele, ret, pend
-            // wallet
         });
     } catch (error) {
         console.log(error.message);
@@ -321,14 +290,12 @@ const chartFilterWeek = async (req, res) => {
         const totalCodWeek = await Order.countDocuments({
             status: 'delivered',
             paymentType: 'cod',
-            // Add logic to filter data for the last week
             date: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
         });
 
         const totalOnlineWeek = await Order.countDocuments({
             status: 'delivered',
             paymentType: 'paypal',
-            // Add logic to filter data for the last week
             date: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
         });
 
@@ -343,14 +310,12 @@ const chartFilterMonth = async (req, res) => {
         const totalCodMonth = await Order.countDocuments({
             status: 'delivered',
             paymentType: 'cod',
-            // Add logic to filter data for the last Month
             date: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
         });
 
         const totalOnlineMonth = await Order.countDocuments({
             status: 'delivered',
             paymentType: 'paypal',
-            // Add logic to filter data for the last Month
             date: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
         });
 
@@ -365,14 +330,12 @@ const chartFilterYear = async (req, res) => {
         const totalCodYear = await Order.countDocuments({
             status: 'delivered',
             paymentType: 'cod',
-            // Add logic to filter data for the last Year
             date: { $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) }
         });
 
         const totalOnlineYear = await Order.countDocuments({
             status: 'delivered',
             paymentType: 'paypal',
-            // Add logic to filter data for the last Year
             date: { $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) }
         });
 
@@ -386,21 +349,14 @@ let ordersDashboard = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = 8;
-
-        // Fetch all orders
         let allOrders = await Order.find().countDocuments();
-
-        // Calculate total pages based on total orders and page size
         const totalPages = Math.ceil(allOrders / pageSize);
-
-        // Fetch paginated orders
         let orders = await Order.find()
             .sort({ date: -1 })
             .skip((page - 1) * pageSize)
             .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
-        // Fetch all orders, pending orders, and delivered order
         let pendingOrders = await Order.find({ status: { $ne: "delivered" } })
             .sort({ date: -1 })
             .skip((page - 1) * pageSize)
@@ -413,35 +369,27 @@ let ordersDashboard = async (req, res) => {
             .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
-        //fetch user count
         let usersCount = await user.count();
         let purchasersCount = await Order.distinct("userId");
-
-        // Initialize variables
         let revenue = 0;
         let sales = 0;
         let purchases = 0;
         let pendingRevenue = 0;
         let pendingSales = 0;
-        // Calculate revenue
         deliveredOrders.forEach((order) => {
             order.products.forEach((product) => {
                 revenue += product.productId.price * product.quantity;
                 purchases += product.quantity;
             });
-            sales += 1; // Increment sales for each delivered order
+            sales += 1;
         });
-        // calculate pending revenue
         pendingOrders.forEach((order) => {
             order.products.forEach((product) => {
                 pendingRevenue += product.productId.price * product.quantity;
                 purchases += product.quantity;
             });
-            pendingSales += 1; // Increment sales for each delivered order
+            pendingSales += 1;
         });
-
-        //average pending revenue
-        // Calculate average pending revenue
         let averagePendingRevenue = pendingRevenue / pendingSales || 0;
         res.render("orders", {
             orders,
@@ -466,21 +414,14 @@ let salesDashboard = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = 8;
-
-        // Fetch all orders
         let allOrders = await Order.find().countDocuments();
-
-        // Calculate total pages based on total orders and page size
         const totalPages = Math.ceil(allOrders / pageSize);
-
-        // Fetch paginated orders
         let orders = await Order.find()
             .sort({ date: -1 })
             .skip((page - 1) * pageSize)
             .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
-        // Fetch all orders, pending orders, and delivered order
         let pendingOrders = await Order.find({ status: { $ne: "delivered" } })
             .sort({ date: -1 })
             .skip((page - 1) * pageSize)
@@ -493,23 +434,19 @@ let salesDashboard = async (req, res) => {
             .limit(pageSize)
             .populate("products.productId")
             .populate({ path: "userId", select: "name" });
-        //fetch user count
         let usersCount = await user.count();
         let purchasersCount = await Order.distinct("userId");
-
-        // Initialize variables
         let revenue = 0;
         let sales = 0;
         let purchases = 0;
         let pendingRevenue = 0;
         let pendingSales = 0;
-        // Calculate revenue
         deliveredOrders.forEach((order) => {
             order.products.forEach((product) => {
                 revenue += product.productId.price * product.quantity;
                 purchases += product.quantity;
             });
-            sales += 1; // Increment sales for each delivered order
+            sales += 1;
         });
         // calculate pending revenue
         pendingOrders.forEach((order) => {
@@ -517,11 +454,8 @@ let salesDashboard = async (req, res) => {
                 pendingRevenue += product.productId.price * product.quantity;
                 purchases += product.quantity;
             });
-            pendingSales += 1; // Increment sales for each delivered order
+            pendingSales += 1;
         });
-
-        //average pending revenue
-        // Calculate average pending revenue
         let averagePendingRevenue = pendingRevenue / pendingSales || 0;
         res.render("new", {
             orders,
@@ -557,7 +491,6 @@ let blockuser = async (req, res) => {
     try {
         let id = req.query.id;
         let User = await user.updateOne({ _id: id }, { $set: { is_block: 1 } });
-
         res.redirect("/admin/userManagement");
     } catch (error) {
         console.log(error.message);
@@ -586,15 +519,12 @@ let addCategory = async (req, res) => {
     try {
         let categoryErrorMessage;
         let { categoryName } = req.body;
-        // console.log(categoryName);
-        // Use a case-insensitive regular expression for the query
         let existingCategory = await category.findOne({
             name: { $regex: new RegExp(categoryName, "i") },
         });
         if (!existingCategory) {
             let newCategory = new category({ name: categoryName });
             await newCategory.save();
-            // console.log(newCategory);
             res.redirect("/admin/categoryManagement");
         } else {
             categoryErrorMessage = "Category Already Exists";
@@ -608,7 +538,6 @@ let addCategory = async (req, res) => {
 let categoryManagement = async (req, res) => {
     try {
         let cats = await category.find();
-        // console.log(category);
         res.render("categoryManagement", { categories: cats });
     } catch (error) {
         console.log(error.message);
@@ -683,11 +612,7 @@ let productManagement = async (req, res) => {
     try {
         let products = await ProductDB.find();
         let query = {};
-
-        // Check if there is a search query
         if (req.query.search) {
-            console.log("req.query.search");
-            // Case-insensitive search by product name
             query = { product_name: { $regex: new RegExp(req.query.search, 'i') } };
         }
 
@@ -713,16 +638,8 @@ let productAdd = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         let errors = ''
-        // console.log(req.body);
         let details = req.body;
         const files = await req.files;
-        // console.log(files);
-        // console.log(
-        //     files.image1[0].filename,
-        //     files.image2[0].filename,
-        //     files.image3[0].filename,
-        //     files.image4[0].filename
-        // );
         if (details.stock > 0 || details.price > 0) {
             let product = new ProductDB({
                 product_name: details.product_name,
@@ -737,7 +654,6 @@ const addProduct = async (req, res) => {
             });
 
             let result = await product.save();
-            //   console.log(result);
             res.redirect("/admin/productManagement");
         } else {
             errors = 'Please Enter Valid Stock and Price'
@@ -750,7 +666,6 @@ const addProduct = async (req, res) => {
 };
 
 // This Function used to Update Product , includuing Image Managment..
-// ---------------------------------------
 const updateProduct = async (req, res) => {
     try {
         let errors = ''
@@ -760,7 +675,6 @@ const updateProduct = async (req, res) => {
         let details = req.body;
         let imagesFiles = req.files;
         let currentData = await ProductDB.findOne({ _id: req.query.id });
-        // console.log(currentData.images);
 
         let img1, img2, img3, img4;
 
@@ -801,10 +715,6 @@ const updateProduct = async (req, res) => {
             res.render("editProduct", { categories, products, errors });
 
         }
-
-        //   console.log(update);
-
-
     } catch (error) {
         console.log(error.message);
     }
@@ -832,7 +742,6 @@ let blockProduct = async (req, res) => {
                 { _id: req.query.id },
                 { $set: { block: 1 } }
             );
-
             res.redirect("/admin/productManagement");
         } else {
             await ProductDB.updateOne({ _id: req.query.id }, { $set: { block: 0 } });
@@ -882,11 +791,9 @@ const SalesReport = async (req, res) => {
         console.log(error.message);
     }
 }
-let 
-report = async (req, res) => {
+let report = async (req, res) => {
     try {
         let orderdata = await Order.find({}).sort({ date: -1 }).populate('products.productId').populate({ path: 'userId', select: 'name' });
-        //calculate revenue from the delivered orders
         let totalSales = await Order.aggregate([
             {
                 $match: {
@@ -907,9 +814,6 @@ report = async (req, res) => {
             },
         ]);
         totalSales = totalSales[0].total
-        // console.log(totalSales);
-
-        // console.log(orderdata);
         let button = req.query.button
 
         if (button == "lastWeek") {
@@ -1000,7 +904,6 @@ report = async (req, res) => {
             let startDate = new Date(req.query.fromDate)
             let endDate = new Date(req.query.toDate)
             orderdata = await Order.find({ date: { $gte: startDate, $lte: endDate } }).sort({ date: -1 }).populate('products.productId').populate({ path: 'userId', select: 'name' });
-            // console.log(orderdata);
             totalSales = await Order.aggregate([
                 {
                     $match: {
@@ -1026,11 +929,8 @@ report = async (req, res) => {
             ])
             if (orderdata.length == 0) {
                 totalSales = 0
-                // console.log(totalSales);
             } else {
                 totalSales = totalSales[0].total
-                // console.log("orderdata.length:",orderdata.length);
-                // console.log(totalSales);
             }
             console.log("ejsrender");
             ejs.renderFile(
@@ -1060,14 +960,9 @@ report = async (req, res) => {
                         let pdfPromise=new Promise((resolve,reject)=>{
                             pdf.create(data, options).toFile("report.pdf", function (err, pdfPath) {
                                 if (err) {
-                                    console.log("error", err);
                                     resolve("Error generating PDF");
                                 } else {
-                                    console.log("pdfPath", pdfPath);
                                     resolve(pdfPath.filename)
-                                    // const pdfpath = path.join(__dirname, "../report.pdf");
-                                    // console.log("pdfpath", pdfpath);
-                                    // res.json(pdfpath);
                                 }
                             });
                         })

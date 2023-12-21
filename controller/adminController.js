@@ -985,6 +985,7 @@ let report = async (req, res) => {
                                 'Quantity',
                                 'Price',
                                 'Total',
+                                'Payment Method',
                             ]);
                             orderdata.forEach((order) => {
                                 order.products.forEach((product) => {
@@ -994,6 +995,7 @@ let report = async (req, res) => {
                                         product.quantity,
                                         `${product.productId.price.toFixed(2)}`, // Add backticks around the template string
                                         `${(product.quantity * product.productId.price).toFixed(2)}`, // Add backticks around the template string
+                                        order.paymentType
                                     ]);
                                 });
                             })

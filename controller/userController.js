@@ -86,23 +86,23 @@ async function insertUser(req, res) {
         }
         if(exxist){
             emailErrorMsg= "Email Already Exist"
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
+            res.render("signUp", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
         }else if (req.body.name === "") {
             nameErrorMsg= "Please Enter Your Name" 
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
+            res.render("signUp", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
         } else if (!validateEmail(req.body.email)) {
             emailErrorMsg= "Please Enter a Valid Email" 
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
+            res.render("signUp", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg ,confirm_password,writed});
         } else if (!/^\d+$/.test(req.body.phone) || req.body.phone.length !== 10) {
             numberErrorMsg = "Please Enter a Valid 10-digit Phone Number";
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg, passwordErrorMsg, confirm_password, writed});
+            res.render("signUp", { nameErrorMsg, emailErrorMsg, numberErrorMsg, passwordErrorMsg, confirm_password, writed});
         } else if(!validatePassword(req.body.password)){
             passwordErrorMsg= "Please Enter a Valid Password, at least 8 characters long and contain both letters and numbers"
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password, writed});
+            res.render("signUp", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password, writed});
 
         }else if( req.body.confirm_password != req.body.password ){
             confirm_password= "Please Enter Valid Password"
-            res.render("signup", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password, writed});
+            res.render("signUp", { nameErrorMsg, emailErrorMsg, numberErrorMsg ,passwordErrorMsg, confirm_password, writed});
 
         } else {
             const passSec = await hashPassword(req.body.password);
@@ -141,7 +141,7 @@ async function signUpPage(req, res) {
             phone: "",
             password: "",
         }
-        res.render("signup", { writed });
+        res.render("signUp", { writed });
     } catch (error) {
         res.status(500).send(error);
     }
@@ -158,7 +158,7 @@ async function loginPage(req, res) {
                 password: "",
             }
             const successMessage = req.query.msg || ''; 
-            res.render('signin', { successMessage, writed });
+            res.render('signIn', { successMessage, writed });
         }else{
             res.redirect("/home")
         }
@@ -182,7 +182,7 @@ async function loginUser(req, res) {
         if (req.body.email === "" || req.body.password === "") {
             emailMessage = "Please Enter Your Email";
             passwordMessage = "Please Enter Your Password";
-            res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
+            res.render('signIn', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
             return;
         }
 
@@ -195,11 +195,11 @@ async function loginUser(req, res) {
                 res.render('otp', { msg });
             } else if (!validateEmail((req.body.email).trim()) || (req.body.email).trim() === "") {
                 emailMessage = "Please Enter a Valid Email";
-                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
+                res.render('signIn', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
             } else if (foundUser.is_block === 1) {
             
                 blockMessage = "Your account is blocked";
-                res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
+                res.render('signIn', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
             } else {
                 const passwordMatch = await bcrypt.compare(req.body.password, foundUser.password);
 
@@ -209,7 +209,7 @@ async function loginUser(req, res) {
                     res.redirect("/home");
                 } else {
                     passwordMessage = "Incorrect Password";
-                    res.render('signin', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
+                    res.render('signIn', { emailMessage, passwordMessage, blockMessage, writed ,successMessage});
                 }
             }
         } else {
